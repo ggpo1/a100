@@ -1,6 +1,6 @@
 import React from 'react';
-import IMapProps from './../../model/Components/Map/IMapProps';
-import IMapState from './../../model/Components/Map/IMapState';
+import IMapProps from '../../model/components/Map/IMapProps';
+import IMapState from '../../model/components/Map/IMapState';
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
@@ -11,7 +11,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
     render() {
         return (
-            <div>map</div>
+            <div>KONVA MAP</div>
         );
     }
 
