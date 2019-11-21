@@ -1,10 +1,9 @@
 import React from 'react';
 import Konva from 'konva';
-import { render } from 'react-dom';
-import { Stage, Layer, Star, Text, Rect } from 'react-konva';
+import { Stage, Layer, Rect } from 'react-konva';
 
-import IMapProps from './Models/Map/IMapProps';
-import IMapState from './Models/Map/IMapState';
+import IMapProps from './Models/Components/Map/IMapProps';
+import IMapState from './Models/Components/Map/IMapState';
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
@@ -46,7 +45,6 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
   handleMouseMove = e => {
     if (this.state.isMouseDown) {
-      const stage = e.target.getStage();
       console.log('mouse down');
     } else {
       console.log('mouse not down');
@@ -54,7 +52,6 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   }
 
   handleMouseDown = e => {
-    const stage = e.target.getStage();
     //stage.getPointerPosition().x
     //stage.getPointerPosition().y
     this.setState({

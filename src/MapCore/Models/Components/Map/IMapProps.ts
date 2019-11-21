@@ -1,4 +1,4 @@
-import MapSourceLayer from '../MapSourceLayer';
+import MapSourceLayer from '../../MapSourceLayer';
 
 interface IMapProps {
     source: Array<MapSourceLayer>
