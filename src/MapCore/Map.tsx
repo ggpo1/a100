@@ -75,7 +75,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   handleWheel = e => {
     e.evt.preventDefault();
 
-    const scaleBy = 1.04;
+    const scaleBy = 1.025;
     const stage = e.target.getStage();
     const oldScale = stage.scaleX();
     const mousePointTo = {

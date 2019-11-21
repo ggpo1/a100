@@ -1,7 +1,7 @@
 import React from 'react';
 import IMapViewProps from '../model/Components/MapView/IMapViewProps';
 import IMapViewState from '../model/Components/MapView/IMapViewState';
-import Map from '../MapCore/Map';
+import Map from '../../MapCore/Map';
 
 export default class MapView extends React.Component<IMapViewProps, IMapViewState> {
 
@@ -11,7 +11,7 @@ export default class MapView extends React.Component<IMapViewProps, IMapViewStat
 
     render() {
         return (
-            <Map StillageBlocks={[]} />
+            <Map source={[]} />
         );
     }
 

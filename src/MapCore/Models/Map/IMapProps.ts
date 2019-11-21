@@ -1,6 +1,7 @@
+import MapSourceLayer from '../MapSourceLayer';
 
 interface IMapProps {
-    StillageBlocks: []
+    source: Array<MapSourceLayer>
 }
 
 export default IMapProps;
