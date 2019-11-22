@@ -104,7 +104,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
     // TODO: layers render
     layersTitles.push(
-      <div key={"layerTitle_" + -1} className="layer-title" onClick={() => {
+      <div key={"layerTitle_" + -1} style={{ fontWeight: selectedLayer === -1 ? 'bold' : 'normal' }} className="layer-title" onClick={() => {
         this.setState({ ...this.state, ...{ selectedLayer: -1 } })
       }}>
         Все слои
@@ -112,7 +112,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     );
     for (let i = 0; i < source.length; i++) {
       layersTitles.push(
-        <div onClick={() => {
+        <div style={{ fontWeight: selectedLayer === i ? 'bold' : 'normal' }} onClick={() => {
           this.setState({ ...this.state, ...{ selectedLayer: i } })
         }} key={"layerTitle_" + i} className="layer-title">{source[i].title}</div>
       );
@@ -175,6 +175,14 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         </div>
         <div style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
           {layersTitles}
+        </div>
+        <div style={{background: '#E0E0E0'}} className="units-selector">
+          <div style={{ background: '' }} className="unit-header-title">
+            <span style={{ height: '50%' }}>Блок</span>
+          </div>
+          <div style={{ background: '' }} className="unit-content">
+
+          </div>
         </div>
       </div>
     );
