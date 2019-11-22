@@ -4,32 +4,26 @@ import { Stage, Layer, Rect } from 'react-konva';
 
 import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
+import Stillage from './Components/Stillage';
+import LayerType from './Models/Enums/LayerType';
+import './Css/Map.css';
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
-  handleDragStart = e => {
-    e.target.setAttrs({
-      shadowOffset: {
-        x: 2,
-        y: 2
-      },
-      shadowColor: 'grey',
-      scaleX: 1.1,
-      scaleY: 1.1
-    });
-  };
+
+  constructor(props: IMapProps) {
+    super(props);
+    this.state = {
+      selectedLayer: -1,
+      stageScale: 1,
+      stageX: 0,
+      stageY: 0,
+      isMouseDown: false,
+      source: this.props.source,
+    }
+  }
 
 
-  handleDragEnd = e => {
-    e.target.to({
-      duration: 0.5,
-      easing: Konva.Easings.ElasticEaseOut,
-      scaleX: 1,
-      scaleY: 1,
-      shadowOffset: null,
-      shadowColor: 'white',
-    });
-  };
 
   handleMouseDownRect = e => {
     e.target.setAttrs({
@@ -45,9 +39,9 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
   handleMouseMove = e => {
     if (this.state.isMouseDown) {
-      console.log('mouse down');
+      // console.log('mouse down');
     } else {
-      console.log('mouse not down');
+      // console.log('mouse not down');
     }
   }
 
@@ -87,61 +81,102 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     this.setState({
       stageScale: newScale,
       stageX:
-        -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale, 
-        // (newScale * -1),
+        -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale,
+      // (newScale * -1),
       stageY:
         -(mousePointTo.y - stage.getPointerPosition().y / newScale) * newScale
-        // (newScale * -1),
+      // (newScale * -1),
     });
   };
 
 
-  constructor(props: IMapProps) {
-    super(props);
-    this.state = {
-      stageScale: 1,
-      stageX: 0,
-      stageY: 0,
-      isMouseDown: false
-    }
-  }
+
 
   render() {
-    return (
-      <Stage
-        style={{
-          cursor: 'pointer'
-        }}
-        width={window.innerWidth}
-        height={window.innerHeight}
-        onWheel={this.handleWheel}
-        draggable
-        onMouseMove={this.handleMouseMove}
-        onMouseDown={this.handleMouseDown}
-        onMouseUp={this.handleMouseUp}
-        scaleX={this.state.stageScale}
-        scaleY={this.state.stageScale}
-        x={this.state.stageX}
-        y={this.state.stageY}>
-        <Layer>
-          {/* <Text text="Try to drag a star" /> */}
-          {/* {[...Array(1)].map((_, i) => ( */}
+    const { source, selectedLayer } = this.state;
+    let layersTitles: Array<JSX.Element> = [];
+    let objects: Array<JSX.Element> = [];
+    let stillages: Array<JSX.Element> = [];
+    let signatures: Array<JSX.Element> = [];
+    let layers: Array<JSX.Element> = [];
 
-          <Rect
-            x={100}
-            y={100}
-            width={149}
-            height={49}
-            fill="#E2E6EA"
+    let height = window.innerHeight - (window.innerHeight * (4 / 100));
+
+    // TODO: layers render
+    layersTitles.push(
+      <div key={"layerTitle_" + -1} className="layer-title" onClick={() => {
+        this.setState({ ...this.state, ...{ selectedLayer: -1 } })
+      }}>
+        Все слои
+      </div>
+    );
+    for (let i = 0; i < source.length; i++) {
+      layersTitles.push(
+        <div onClick={() => {
+          this.setState({ ...this.state, ...{ selectedLayer: i } })
+        }} key={"layerTitle_" + i} className="layer-title">{source[i].title}</div>
+      );
+    }
+
+    if (selectedLayer === -1) {
+      let layernum = 0;
+      source.forEach(element => {
+        if (element.objects !== undefined) {
+
+        }
+        if (element.stillages !== undefined) {
+          for (let i = 0; i < element.stillages!.length; i++) {
+            stillages.push(
+              <Stillage key={"stillage_" + layernum + "_" + i} source={element.stillages![i]} />
+            );
+          }
+        }
+        if (element.signatures !== undefined) {
+
+        }
+        layernum++;
+      });
+    } else {
+      if (source[selectedLayer] !== undefined) {
+        if (source[selectedLayer].type === LayerType.STILLAGES) {
+          for (let i = 0; i < source[selectedLayer].stillages!.length; i++) {
+            stillages.push(
+              <Stillage key={"stillage_" + selectedLayer + "_" + i} source={source[selectedLayer].stillages![i]} />
+            );
+          }
+        } else if (source[selectedLayer].type === LayerType.SIGNATURES) {
+
+        } else if (source[selectedLayer].type === LayerType.ABSTRACTS) {
+
+        }
+      }
+    }
+
+    return (
+      <div className="map-wrapper">
+        <div className="stage-wrapper">
+          <Stage
             draggable
-            strokeWidth={1} // border width
-            stroke="#3E454D"
-            onDragStart={this.handleDragStart}
-            onDragEnd={this.handleDragEnd}
-          />
-          {/* ))} */}
-        </Layer>
-      </Stage>
+            style={{ cursor: 'pointer' }}
+            width={window.innerWidth}
+            height={height}
+            onWheel={this.handleWheel}
+            onMouseMove={this.handleMouseMove}
+            onMouseDown={this.handleMouseDown}
+            onMouseUp={this.handleMouseUp}
+            scaleX={this.state.stageScale}
+            scaleY={this.state.stageScale}
+            x={this.state.stageX}
+            y={this.state.stageY}>
+            <Layer>
+              {stillages}
+            </Layer>
+          </Stage>
+        </div>
+        <div style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
+          {layersTitles}
+        </div>
+      </div>
     );
   }
 
