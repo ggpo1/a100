@@ -1,7 +1,7 @@
-import MapSourceLayer from '../../MapSourceLayer';
+import MapSourceUnit from '../../MapSourceUnit';
 
 interface IMapProps {
-    source: Array<MapSourceLayer>
+    source: Array<MapSourceUnit>
 }
 
 export default IMapProps;

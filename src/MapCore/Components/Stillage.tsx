@@ -1,6 +1,6 @@
 import React from 'react';
 import Konva from 'konva';
-import { Rect, Text } from 'react-konva';
+import { Rect, Text, Circle } from 'react-konva';
 import IStillageProps from './../Models/Components/Stillage/IStillageProps';
 import IStillageState from './../Models/Components/Stillage/IStillageState';
 import Orientation from './../Models/Enums/Orientation';
@@ -41,6 +41,16 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         const { source } = this.state;
         const stillageSizeReducer = new StillageSizeReducer();
         let stillage;
+        let viks: Array<JSX.Element> = [];
+
+        viks.push(
+            <Circle 
+                radius={12.5}
+                x={100}
+                y={100}
+                fill={'#06F107'}
+            />
+        );
 
         if (source.orientation === Orientation.HORIZONTAL) {
             stillage = (
@@ -73,7 +83,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                 />
             );
         }
-
-        return stillage;
+        let returns = [viks, stillage]
+        return returns;
     }
 }

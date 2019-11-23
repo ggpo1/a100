@@ -14,6 +14,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   constructor(props: IMapProps) {
     super(props);
     this.state = {
+      selectedUnit: 0,
       selectedLayer: -1,
       stageScale: 1,
       stageX: 0,
@@ -93,41 +94,53 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
 
   render() {
-    const { source, selectedLayer } = this.state;
+    const { source, selectedLayer, selectedUnit } = this.state;
+    let unitsTitles: Array<JSX.Element> = [];
     let layersTitles: Array<JSX.Element> = [];
     let objects: Array<JSX.Element> = [];
     let stillages: Array<JSX.Element> = [];
     let signatures: Array<JSX.Element> = [];
     let layers: Array<JSX.Element> = [];
 
+    // calculating height for map stage
     let height = window.innerHeight - (window.innerHeight * (4 / 100));
 
-    // TODO: layers render
+    
+    for (let i = 0; i < source.length; i++) {
+      unitsTitles.push(
+        <div onClick={() => {
+          this.setState({...this.state, ...{ selectedUnit: i }});
+        }} className="unit-title">
+          <span style={{ fontWeight: selectedUnit === i ? 'bold' : 'normal' }}>{source[i].title}</span>
+        </div>
+      );
+    }
+
     layersTitles.push(
-      <div key={"layerTitle_" + -1} style={{ fontWeight: selectedLayer === -1 ? 'bold' : 'normal' }} className="layer-title" onClick={() => {
+      <div key={"layerTitle_" + selectedUnit + "_" + -1} style={{ fontWeight: selectedLayer === -1 ? 'bold' : 'normal' }} className="layer-title" onClick={() => {
         this.setState({ ...this.state, ...{ selectedLayer: -1 } })
       }}>
         Все слои
       </div>
     );
-    for (let i = 0; i < source.length; i++) {
+    for (let i = 0; i < source[selectedUnit].layers.length; i++) {
       layersTitles.push(
         <div style={{ fontWeight: selectedLayer === i ? 'bold' : 'normal' }} onClick={() => {
           this.setState({ ...this.state, ...{ selectedLayer: i } })
-        }} key={"layerTitle_" + i} className="layer-title">{source[i].title}</div>
+        }} key={"layerTitle_" + selectedUnit + "_" + i} className="layer-title">{source[selectedUnit].layers[i].title}</div>
       );
     }
 
     if (selectedLayer === -1) {
       let layernum = 0;
-      source.forEach(element => {
+      source[selectedUnit].layers.forEach(element => {
         if (element.objects !== undefined) {
 
         }
         if (element.stillages !== undefined) {
           for (let i = 0; i < element.stillages!.length; i++) {
             stillages.push(
-              <Stillage key={"stillage_" + layernum + "_" + i} source={element.stillages![i]} />
+              <Stillage key={"stillage_" + selectedUnit + "_" + layernum + "_" + i} source={element.stillages![i]} />
             );
           }
         }
@@ -137,16 +150,16 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         layernum++;
       });
     } else {
-      if (source[selectedLayer] !== undefined) {
-        if (source[selectedLayer].type === LayerType.STILLAGES) {
-          for (let i = 0; i < source[selectedLayer].stillages!.length; i++) {
+      if (source[selectedUnit].layers[selectedLayer] !== undefined) {
+        if (source[selectedUnit].layers[selectedLayer].type === LayerType.STILLAGES) {
+          for (let i = 0; i < source[selectedUnit].layers[selectedLayer].stillages!.length; i++) {
             stillages.push(
-              <Stillage key={"stillage_" + selectedLayer + "_" + i} source={source[selectedLayer].stillages![i]} />
+              <Stillage key={"stillage_" + selectedUnit + "_" + selectedLayer + "_" + i} source={source[selectedUnit].layers[selectedLayer].stillages![i]} />
             );
           }
-        } else if (source[selectedLayer].type === LayerType.SIGNATURES) {
+        } else if (source[selectedUnit].layers[selectedLayer].type === LayerType.SIGNATURES) {
 
-        } else if (source[selectedLayer].type === LayerType.ABSTRACTS) {
+        } else if (source[selectedUnit].layers[selectedLayer].type === LayerType.ABSTRACTS) {
 
         }
       }
@@ -176,12 +189,12 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         <div style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
           {layersTitles}
         </div>
-        <div style={{background: '#E0E0E0'}} className="units-selector">
+        <div style={{ background: '#E0E0E0' }} className="units-selector">
           <div style={{ background: '' }} className="unit-header-title">
-            <span style={{ height: '50%' }}>Блок</span>
+            <span style={{ height: '50%' }}>Выбор блока</span>
           </div>
           <div style={{ background: '' }} className="unit-content">
-
+            {unitsTitles}
           </div>
         </div>
       </div>

@@ -3,7 +3,8 @@ interface VikItem {
     
     place: number,
     level: number,
-    stillageID: number,
+    color: string,
+    stillageID?: number,
 }
 
 export default VikItem;
