@@ -3,6 +3,7 @@ import LayerType from '../../MapCore/Models/Enums/LayerType';
 import Orientation from '../../MapCore/Models/Enums/Orientation';
 import StillageSize from '../../MapCore/Models/Enums/StillageSize/StillageSize';
 import MapSourceUnit from '../../MapCore/Models/MapSourceUnit';
+import DefectColors from '../../MapCore/Models/Enums/Colors/DefectColors';
 
 const MapSource: Array<MapSourceUnit> = [
     {
@@ -18,13 +19,27 @@ const MapSource: Array<MapSourceUnit> = [
                         y: 456,
                         orientation: Orientation.HORIZONTAL,
                         size: StillageSize.NORMAL,
+                        viks: [
+                            {
+                                place: 1,
+                                level: 2,
+                                color: DefectColors.GREEN
+                            }
+                        ]
                     },
                     {
                         title: '1.1.2',
                         x: 100,
                         y: 140,
                         orientation: Orientation.VERTICAL,
-                        size: StillageSize.NORMAL
+                        size: StillageSize.NORMAL,
+                        viks: [
+                            {
+                                place: 1,
+                                level: 2,
+                                color: DefectColors.YELLOW
+                            }
+                        ]
                     },
                     {
                         title: '1.1.3',
@@ -58,7 +73,14 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 660,
                         y: 240,
                         orientation: Orientation.VERTICAL,
-                        size: StillageSize.NORMAL
+                        size: StillageSize.NORMAL,
+                        viks: [
+                            {
+                                place: 1,
+                                level: 2,
+                                color: DefectColors.RED
+                            }
+                        ]
                     },
                     {
                         title: '1.2.3',
@@ -95,21 +117,22 @@ const MapSource: Array<MapSourceUnit> = [
                             {
                                 place: 1,
                                 level: 2,
-                                color: '#FF003C'
+                                color: DefectColors.YELLOW
                             }
                         ]
                     },
-                    {
-                        title: '2.1.4',
-                        x: 510,
-                        y: 450,
-                        orientation: Orientation.VERTICAL,
-                        size: StillageSize.NORMAL
-                    },
+                    // {
+                    //     title: '2.1.4',
+                    //     x: 510,
+                    //     y: 450,
+                    //     orientation: Orientation.VERTICAL,
+                    //     size: StillageSize.NORMAL
+                    // },
                 ]
             }
         ]
-    }
+    },
+    
 ];
 
 export default MapSource;
