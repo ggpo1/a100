@@ -21,125 +21,74 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
 
     render() {
         const { parentX, parentY, parentOrientation, source } = this.state;
-        let vik;
         const defectRadiusReducer = new DefectRadiusReducer();
-        const stillageSizeReducer = new StillageSizeReducer();
+        let vik;
 
         const defectOptions = defectRadiusReducer.GetRadius(source.color);
         if (source.place === 1) {
-            if (source.color !== DefectColors.RED) {
-                vik = 
+            vik =
+                <Circle
+                    radius={defectOptions.radius}
+                    x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
+                    y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
+                    fill={source.color}
+                />
+                ;
+
+        } else if (source.place === 2) {
+            if (parentOrientation === Orientation.VERTICAL) {
+
+                // other colors
+                vik =
                     <Circle
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
-                        y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
+                        y={parentY + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 2)}
                         fill={source.color}
                     />
-                ;
-            } else {
-                vik = 
-                    <Circle
-                        radius={DefectRadius.RED}
-                        x={parentX + DefectRadius.RED}
-                        y={parentY + DefectRadius.RED}
-                        fill={source.color}
-                    />
-                ;
-            }
-        } else if (source.place === 2) {
-            if (parentOrientation === Orientation.VERTICAL) {
-                // place 2 and orientation is vertical
-                if (source.color === DefectColors.RED) {
-                    // red color
-                    vik = 
-                        <Circle
-                            radius={DefectRadius.RED}
-                            x={parentX + DefectRadius.RED}
-                            y={parentY + DefectRadius.RED * 3}
-                            fill={source.color}
-                        />
                     ;
-                } else {
-                    // other colors
-                    vik = 
-                        <Circle
-                            radius={defectOptions.radius}
-                            x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
-                            y={parentY + (defectOptions.radius + defectOptions.centeringValue + DefectRadius.RED * 2)}
-                            fill={source.color}
-                        />
-                    ;
-                }
+
 
             } else {
                 // place 2 and orientation is horizontal
-                if (source.color === DefectColors.RED) {
-                    vik = 
-                        <Circle
-                            radius={defectOptions.radius}
-                            x={parentX + defectOptions.radius * 3}
-                            y={parentY + defectOptions.radius}
-                            fill={source.color}
-                        />
+
+                vik =
+                    <Circle
+                        radius={defectOptions.radius}
+                        x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 2)}
+                        y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
+                        fill={source.color}
+                    />
                     ;
-                } else {
-                    vik = 
-                        <Circle
-                            radius={defectOptions.radius}
-                            x={parentX + (defectOptions.radius + defectOptions.centeringValue + DefectRadius.RED * 2)}
-                            y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
-                            fill={source.color}
-                        />
-                    ;
-                }
+
             }
         } else if (source.place === 3) {
             if (parentOrientation === Orientation.VERTICAL) {
                 // place 3 and orientation is vertical
-                if (source.color === DefectColors.RED) {
-                    // red color
-                    vik = 
-                        <Circle
-                            radius={DefectRadius.RED}
-                            x={parentX + DefectRadius.RED}
-                            y={parentY + DefectRadius.RED * 5}
-                            fill={source.color}
-                        />
+
+                // other colors
+                vik =
+                    <Circle
+                        radius={defectOptions.radius}
+                        x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
+                        y={parentY + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 4)}
+                        fill={source.color}
+                    />
                     ;
-                } else {
-                    // other colors
-                    vik = 
-                        <Circle
-                            radius={defectOptions.radius}
-                            x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
-                            y={parentY + (defectOptions.radius + defectOptions.centeringValue + DefectRadius.RED * 4)}
-                            fill={source.color}
-                        />
-                    ;
-                }
+
             } else {
                 // place 3 and orientations is horizontal
-                if (source.color === DefectColors.RED) {
-                    // red color
-                    vik = 
-                        <Circle
-                            radius={DefectRadius.RED}
-                            x={parentX + DefectRadius.RED * 5}
-                            y={parentY + DefectRadius.RED}
-                            fill={source.color}
-                        />
+
+                // other color
+                vik =
+                    <Circle
+                        radius={defectOptions.radius}
+                        x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 4)}
+                        y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
+                        fill={source.color}
+                    />
                     ;
-                } else {
-                    // other color
-                    vik = 
-                        <Circle
-                            radius={defectOptions.radius}
-                            x={parentX + (defectOptions.radius + defectOptions.centeringValue + DefectRadius.RED * 4)}
-                            y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
-                            fill={source.color}
-                        />
-                    ;
-                }
+
             }
         }
 

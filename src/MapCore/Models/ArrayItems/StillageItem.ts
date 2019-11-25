@@ -2,6 +2,8 @@ import VikItem from './VikItem';
 import Orientation from '../Enums/Orientation';
 import DeviationItem from './DeviationItem';
 import StillageSize from '../Enums/StillageSize/StillageSize';
+import PlaceSignatureItem from './PlaceSignatureItem';
+import SignatureItem from './SignatureItem';
 
 interface StillageItem {
     id?: number,
@@ -12,7 +14,8 @@ interface StillageItem {
     orientation: Orientation,
     viks?: Array<VikItem>,
     deviations?: Array<DeviationItem>,
-    places?: Array<any> // text for places
+    placeSignatures?: Array<PlaceSignatureItem>,
+    signatures?: Array<SignatureItem>,
 }
 
 export default StillageItem;

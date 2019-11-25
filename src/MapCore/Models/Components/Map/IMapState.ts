@@ -7,6 +7,7 @@ interface IMapState {
     stageY: number,
     isMouseDown: boolean,
     source: Array<MapSourceUnit>,
+    isOnlyRed: boolean,
 }
 
 export default IMapState;

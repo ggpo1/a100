@@ -21,10 +21,22 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       stageY: 0,
       isMouseDown: false,
       source: this.props.source,
+      isOnlyRed: true,
     }
+    this.filtersOnChangeAction = this.filtersOnChangeAction.bind(this);
   }
 
-
+  public filtersOnChangeAction(checkName) {
+    switch (checkName) {
+      case 'onlyRed':
+        this.setState({...this.state, ...{ isOnlyRed: !this.state.isOnlyRed }});
+        console.log(this.state.isOnlyRed);
+        break;
+    
+      default:
+        break;
+    }
+  }
 
   handleMouseDownRect = e => {
     e.target.setAttrs({
@@ -105,11 +117,11 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     // calculating height for map stage
     let height = window.innerHeight;
 
-    
+
     for (let i = 0; i < source.length; i++) {
       unitsTitles.push(
         <div onClick={() => {
-          this.setState({...this.state, ...{ selectedUnit: i }});
+          this.setState({ ...this.state, ...{ selectedUnit: i, selectedLayer: -1 } });
         }} className="unit-title">
           <span style={{ fontWeight: selectedUnit === i ? 'bold' : 'normal' }}>{source[i].title}</span>
         </div>
@@ -143,9 +155,6 @@ export default class Map extends React.Component<IMapProps, IMapState> {
               <Stillage key={"stillage_" + selectedUnit + "_" + layernum + "_" + i} source={element.stillages![i]} />
             );
           }
-        }
-        if (element.signatures !== undefined) {
-
         }
         layernum++;
       });
@@ -189,12 +198,26 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         <div style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
           {layersTitles}
         </div>
+
         <div style={{ background: '#E0E0E0' }} className="units-selector">
           <div style={{ background: '' }} className="unit-header-title">
             <span style={{ height: '50%' }}>Выбор блока</span>
           </div>
           <div style={{ background: '' }} className="unit-content">
             {unitsTitles}
+          </div>
+        </div>
+        <div className="filters-selector" style={{ background: '#E0E0E0' }}>
+          <div style={{ background: '' }} className="filter-header-title">
+            <span style={{ height: '50%' }}>Фильтры</span>
+          </div>
+          <div style={{ background: '' }} className="filter-content">
+            <div className="input-checkbox">
+              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{height: '50%'}} type="checkbox" name="option2" value="a2" /></div>
+              <div style={{ height: '100%', paddingLeft: '2%', display: 'flex'}}>
+                только опасные
+              </div>
+            </div>
           </div>
         </div>
       </div>

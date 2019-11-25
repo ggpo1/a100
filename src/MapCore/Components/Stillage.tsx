@@ -1,15 +1,13 @@
 import React from 'react';
 import Konva from 'konva';
-import { Rect, Text, Circle } from 'react-konva';
+import { Rect, Text } from 'react-konva';
 import IStillageProps from './../Models/Components/Stillage/IStillageProps';
 import IStillageState from './../Models/Components/Stillage/IStillageState';
 import Orientation from './../Models/Enums/Orientation';
 import StillageSizeReducer from './../Models/Enums/StillageSize/StillageSizeReducer';
-import DefectColors from '../Models/Enums/Colors/DefectColors';
 import StillageColors from '../Models/Enums/Colors/StillageColors';
-import DefectRadius from '../Models/Enums/DefectRadius/DefectRadius';
-import DefectRadiusReducer from '../Models/Enums/DefectRadius/DefectRadiusReducer';
 import Defect from './Defect';
+import PlaceSignature from './PlaceSignature';
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
     constructor(props) {
@@ -44,15 +42,31 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
 
     render() {
         const { source } = this.state;
-        const defectRadiusReducer = new DefectRadiusReducer();
         const stillageSizeReducer = new StillageSizeReducer();
         let stillage;
         let viks: Array<JSX.Element> = [];
+        let placeSignatures: Array<JSX.Element> = [];
+
+        if (source.placeSignatures !== undefined) {
+            let i = 0;
+            source.placeSignatures.forEach(element => {
+                placeSignatures.push(
+                    <PlaceSignature
+                        parentX={source.x}
+                        parentY={source.y}
+                        parentDefects={source.viks!}
+                        parentOrientation={source.orientation}
+                        source={element}
+                    />
+                );
+            });
+        }
 
         if (source.viks !== undefined) {
+            let i = 0;
             source.viks!.forEach(element => {
                 viks.push(
-                    <Defect 
+                    <Defect key={"defect_" + source.x + "_" + source.y + "_" + source.id + "_" + (++i)}
                         parentX={source.x}
                         parentY={source.y}
                         parentOrientation={source.orientation}
@@ -94,7 +108,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             );
         }
         // let text = <Text text="Тест" x={100} y={100} />
-        let returns = [stillage, viks]
+        let returns = [stillage, viks, placeSignatures]
         return returns;
     }
 }

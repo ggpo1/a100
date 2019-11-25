@@ -19,6 +19,12 @@ const MapSource: Array<MapSourceUnit> = [
                         y: 456,
                         orientation: Orientation.HORIZONTAL,
                         size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '7',
+                            }
+                        ],
                         viks: [
                             {
                                 place: 1,
@@ -47,7 +53,7 @@ const MapSource: Array<MapSourceUnit> = [
                             {
                                 place: 1,
                                 level: 2,
-                                color: DefectColors.YELLOW
+                                color: DefectColors.RED
                             }
                         ]
                     },
@@ -93,12 +99,12 @@ const MapSource: Array<MapSourceUnit> = [
                             {
                                 place: 2,
                                 level: 2,
-                                color: DefectColors.YELLOW
+                                color: DefectColors.GREEN
                             },
                             {
                                 place: 3,
                                 level: 2,
-                                color: DefectColors.GREEN
+                                color: DefectColors.YELLOW
                             }
                         ]
                     },
@@ -108,6 +114,12 @@ const MapSource: Array<MapSourceUnit> = [
                         y: 456,
                         orientation: Orientation.HORIZONTAL,
                         size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '73',
+                            }
+                        ],
                         viks: [
                             {
                                 place: 1, 
@@ -117,12 +129,12 @@ const MapSource: Array<MapSourceUnit> = [
                             {
                                 place: 2, 
                                 level: 3,
-                                color: DefectColors.RED,
+                                color: DefectColors.YELLOW,
                             },
                             {
                                 place: 3, 
                                 level: 3,
-                                color: DefectColors.YELLOW,
+                                color: DefectColors.RED,
                             }
                         ]
                     },
