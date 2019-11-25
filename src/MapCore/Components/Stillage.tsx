@@ -7,8 +7,8 @@ import Orientation from './../Models/Enums/Orientation';
 import StillageSizeReducer from './../Models/Enums/StillageSize/StillageSizeReducer';
 import DefectColors from '../Models/Enums/Colors/DefectColors';
 import StillageColors from '../Models/Enums/Colors/StillageColors';
-import DefectRadius from '../Models/Enums/StillageRadius/DefectRadius';
-import DefectRadiusReducer from '../Models/Enums/StillageRadius/DefectRadiusReducer';
+import DefectRadius from '../Models/Enums/DefectRadius/DefectRadius';
+import DefectRadiusReducer from '../Models/Enums/DefectRadius/DefectRadiusReducer';
 import Defect from './Defect';
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {

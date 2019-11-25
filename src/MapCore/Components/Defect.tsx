@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import IDefectProps from './../Models/Components/Defect/IDefectProps';
 import IDefectState from './../Models/Components/Defect/IDefectState';
-import DefectRadiusReducer from './../Models/Enums/StillageRadius/DefectRadiusReducer';
+import DefectRadiusReducer from '../Models/Enums/DefectRadius/DefectRadiusReducer';
 import StillageSizeReducer from './../Models/Enums/StillageSize/StillageSizeReducer';
 import DefectColors from './../Models/Enums/Colors/DefectColors';
-import DefectRadius from '../Models/Enums/StillageRadius/DefectRadius';
+import DefectRadius from '../Models/Enums/DefectRadius/DefectRadius';
 import Orientation from './../Models/Enums/Orientation';
 import { Circle } from 'react-konva';
 
