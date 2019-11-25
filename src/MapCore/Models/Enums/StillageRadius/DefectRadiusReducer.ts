@@ -16,7 +16,7 @@ export default class DefectRadiusReducer {
             }
         else if (color === DefectColors.RED)
             return {
-                radius: DefectRadius.GREEN,
+                radius: DefectRadius.RED,
                 centeringValue: (DefectRadius.RED - DefectRadius.RED)
             }
         return {

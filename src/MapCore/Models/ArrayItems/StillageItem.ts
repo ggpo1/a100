@@ -12,6 +12,7 @@ interface StillageItem {
     orientation: Orientation,
     viks?: Array<VikItem>,
     deviations?: Array<DeviationItem>,
+    places?: Array<any> // text for places
 }
 
 export default StillageItem;

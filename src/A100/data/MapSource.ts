@@ -23,7 +23,17 @@ const MapSource: Array<MapSourceUnit> = [
                             {
                                 place: 1,
                                 level: 2,
-                                color: DefectColors.GREEN
+                                color: DefectColors.YELLOW
+                            },
+                            {
+                                place: 2, 
+                                level: 3,
+                                color: DefectColors.GREEN,
+                            },
+                            {
+                                place: 3,
+                                level: 3,
+                                color: DefectColors.RED
                             }
                         ]
                     },
@@ -79,6 +89,16 @@ const MapSource: Array<MapSourceUnit> = [
                                 place: 1,
                                 level: 2,
                                 color: DefectColors.RED
+                            },
+                            {
+                                place: 2,
+                                level: 2,
+                                color: DefectColors.YELLOW
+                            },
+                            {
+                                place: 3,
+                                level: 2,
+                                color: DefectColors.GREEN
                             }
                         ]
                     },
@@ -87,14 +107,31 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 123,
                         y: 456,
                         orientation: Orientation.HORIZONTAL,
-                        size: StillageSize.SMALL
+                        size: StillageSize.NORMAL,
+                        viks: [
+                            {
+                                place: 1, 
+                                level: 3,
+                                color: DefectColors.GREEN,
+                            },
+                            {
+                                place: 2, 
+                                level: 3,
+                                color: DefectColors.RED,
+                            },
+                            {
+                                place: 3, 
+                                level: 3,
+                                color: DefectColors.YELLOW,
+                            }
+                        ]
                     },
                     {
                         title: '1.2.4',
                         x: 900,
                         y: 245,
                         orientation: Orientation.VERTICAL,
-                        size: StillageSize.NORMAL
+                        size: StillageSize.NORMAL,
                     }
                 ]
             },

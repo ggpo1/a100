@@ -103,7 +103,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     let layers: Array<JSX.Element> = [];
 
     // calculating height for map stage
-    let height = window.innerHeight - (window.innerHeight * (4 / 100));
+    let height = window.innerHeight;
 
     
     for (let i = 0; i < source.length; i++) {

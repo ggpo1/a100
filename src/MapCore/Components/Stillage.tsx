@@ -9,6 +9,7 @@ import DefectColors from '../Models/Enums/Colors/DefectColors';
 import StillageColors from '../Models/Enums/Colors/StillageColors';
 import DefectRadius from '../Models/Enums/StillageRadius/DefectRadius';
 import DefectRadiusReducer from '../Models/Enums/StillageRadius/DefectRadiusReducer';
+import Defect from './Defect';
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
     constructor(props) {
@@ -50,32 +51,16 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
 
         if (source.viks !== undefined) {
             source.viks!.forEach(element => {
-                if (element.place === 1) {
-                    if (element.color !== DefectColors.RED) {
-                        const defectOptions = defectRadiusReducer.GetRadius(element.color);
-                        viks.push(
-                            <Circle
-                                radius={defectOptions.radius}
-                                x={source.x + (defectOptions.radius + defectOptions.centeringValue)}
-                                y={source.y + (defectOptions.radius + defectOptions.centeringValue)}
-                                fill={element.color}
-                            />
-                        );
-                    } else {
-                        viks.push(
-                            <Circle
-                                radius={DefectRadius.RED}
-                                x={source.x + DefectRadius.RED}
-                                y={source.y + DefectRadius.RED}
-                                fill={element.color}
-                            />
-                        );
-                    }
-                }
+                viks.push(
+                    <Defect 
+                        parentX={source.x}
+                        parentY={source.y}
+                        parentOrientation={source.orientation}
+                        source={element}
+                    />
+                );                
             });
         }
-
-
 
         if (source.orientation === Orientation.HORIZONTAL) {
             stillage = (
@@ -108,8 +93,8 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                 />
             );
         }
-        let text = <Text text="Тест" x={100} y={100} />
-        let returns = [stillage, viks, text]
+        // let text = <Text text="Тест" x={100} y={100} />
+        let returns = [stillage, viks]
         return returns;
     }
 }
