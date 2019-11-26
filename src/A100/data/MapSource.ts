@@ -4,6 +4,7 @@ import Orientation from '../../MapCore/Models/Enums/Orientation';
 import StillageSize from '../../MapCore/Models/Enums/StillageSize/StillageSize';
 import MapSourceUnit from '../../MapCore/Models/MapSourceUnit';
 import DefectColors from '../../MapCore/Models/Enums/Colors/DefectColors';
+import SignaturePosition from './../../MapCore/Models/Enums/SignaturePosition';
 
 const MapSource: Array<MapSourceUnit> = [
     {
@@ -18,6 +19,10 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 250,
                         y: 456,
                         orientation: Orientation.HORIZONTAL,
+                        signature: {
+                            title: '12',
+                            position: SignaturePosition.TOP,
+                        },
                         size: StillageSize.NORMAL,
                         placeSignatures: [
                             {
@@ -40,7 +45,7 @@ const MapSource: Array<MapSourceUnit> = [
                                 color: DefectColors.YELLOW
                             },
                             {
-                                place: 2, 
+                                place: 2,
                                 level: 3,
                                 color: DefectColors.GREEN,
                             },
@@ -56,6 +61,10 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 100,
                         y: 140,
                         orientation: Orientation.HORIZONTAL,
+                        signature: {
+                                title: '1',
+                                position: SignaturePosition.BOTTOM,
+                        },
                         size: StillageSize.NORMAL,
                         placeSignatures: [
                             {
@@ -79,27 +88,6 @@ const MapSource: Array<MapSourceUnit> = [
                             }
                         ]
                     },
-                    {
-                        title: '1.1.3',
-                        x: 450,
-                        y: 140,
-                        orientation: Orientation.HORIZONTAL,
-                        size: StillageSize.NORMAL
-                        
-                    },
-                    {
-                        title: '1.1.4',
-                        x: 390,
-                        y: 240,
-                        orientation: Orientation.VERTICAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '2',
-                            },
-                        ],
-                        size: StillageSize.NORMAL
-                    }
                 ]
             },
             {
@@ -107,17 +95,14 @@ const MapSource: Array<MapSourceUnit> = [
                 type: LayerType.STILLAGES,
                 stillages: [
                     {
-                        title: '1.2.1',
-                        x: 380,
-                        y: 400,
-                        orientation: Orientation.VERTICAL,
-                        size: StillageSize.NORMAL,
-                    },
-                    {
                         title: '1.2.2',
                         x: 660,
                         y: 240,
                         orientation: Orientation.VERTICAL,
+                        signature: {
+                                title: '135',
+                                position: SignaturePosition.LEFT,
+                        },
                         size: StillageSize.NORMAL,
                         placeSignatures: [
                             {
@@ -151,43 +136,6 @@ const MapSource: Array<MapSourceUnit> = [
                             }
                         ]
                     },
-                    {
-                        title: '1.2.3',
-                        x: 123,
-                        y: 456,
-                        orientation: Orientation.HORIZONTAL,
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '73',
-                            }
-                        ],
-                        viks: [
-                            {
-                                place: 1, 
-                                level: 3,
-                                color: DefectColors.GREEN,
-                            },
-                            {
-                                place: 2, 
-                                level: 3,
-                                color: DefectColors.YELLOW,
-                            },
-                            {
-                                place: 3, 
-                                level: 3,
-                                color: DefectColors.RED,
-                            }
-                        ]
-                    },
-                    {
-                        title: '1.2.4',
-                        x: 900,
-                        y: 245,
-                        orientation: Orientation.VERTICAL,
-                        size: StillageSize.NORMAL,
-                    }
                 ]
             },
             {
@@ -199,14 +147,18 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 250,
                         y: 600,
                         orientation: Orientation.VERTICAL,
+                        signature: {
+                                title: '454',
+                                position: SignaturePosition.RIGHT,
+                        },
                         viks: [
                             {
-                                place: 1, 
+                                place: 1,
                                 level: 3,
                                 color: DefectColors.GREEN,
                             },
                             {
-                                place: 3, 
+                                place: 3,
                                 level: 3,
                                 color: DefectColors.RED,
                             }
@@ -229,17 +181,21 @@ const MapSource: Array<MapSourceUnit> = [
                     },
                     {
                         title: '1.2.2',
-                        x: 27,
+                        x: 60,
                         y: 230,
-                        orientation: Orientation.VERTICAL,
+                        orientation: Orientation.HORIZONTAL,
                         size: StillageSize.NORMAL,
                         viks: [
                             {
-                                place: 3, 
+                                place: 3,
                                 level: 3,
                                 color: DefectColors.RED,
                             }
                         ],
+                        signature: {
+                                title: '23',
+                                position: SignaturePosition.BOTTOM,
+                        },
                         placeSignatures: [
                             {
                                 place: 1,
@@ -261,9 +217,13 @@ const MapSource: Array<MapSourceUnit> = [
                         y: 547,
                         orientation: Orientation.HORIZONTAL,
                         size: StillageSize.NORMAL,
+                        signature: {
+                                title: '1',
+                                position: SignaturePosition.TOP,
+                        },
                         viks: [
                             {
-                                place: 1, 
+                                place: 1,
                                 level: 3,
                                 color: DefectColors.GREEN,
                             },
@@ -284,19 +244,51 @@ const MapSource: Array<MapSourceUnit> = [
                         ],
                     },
                     {
+                        title: '2.1.1',
+                        x: 540,
+                        y: 450,
+                        orientation: Orientation.HORIZONTAL,
+                        signature: {
+                                title: '2',
+                                position: SignaturePosition.BOTTOM,
+                        },
+                        size: StillageSize.SMALL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '12',
+                            },
+                            {
+                                place: 2,
+                                title: '13',
+                            },
+                        ],
+                        viks: [
+                            {
+                                place: 1,
+                                level: 2,
+                                color: DefectColors.YELLOW
+                            }
+                        ]
+                    },
+                    {
                         title: '1.2.4',
                         x: 342,
                         y: 500,
                         orientation: Orientation.VERTICAL,
+                        signature: {
+                                title: '1',
+                                position: SignaturePosition.LEFT,
+                        },
                         size: StillageSize.NORMAL,
                         viks: [
                             {
-                                place: 1, 
+                                place: 1,
                                 level: 3,
                                 color: DefectColors.GREEN,
                             },
                             {
-                                place: 2, 
+                                place: 2,
                                 level: 3,
                                 color: DefectColors.YELLOW,
                             },
@@ -343,21 +335,15 @@ const MapSource: Array<MapSourceUnit> = [
                     {
                         startX: 950,
                         startY: 100,
-                        length: 700,
+                        length: 400,
                         orientation: Orientation.VERTICAL,
                     },
                     {
-                        startX: 1100,
-                        startY: 100,
-                        length: 700,
+                        startX: 950,
+                        startY: 650,
+                        length: 150,
                         orientation: Orientation.VERTICAL,
                     },
-                    {
-                        startX: 1200,
-                        startY: 100,
-                        length: 500,
-                        orientation: Orientation.HORIZONTAL,
-                    }
                 ]
             },
         ]
@@ -374,7 +360,21 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 540,
                         y: 450,
                         orientation: Orientation.HORIZONTAL,
-                        size: StillageSize.NORMAL,
+                        signature: {
+                                title: '1',
+                                position: SignaturePosition.TOP,
+                        },
+                        size: StillageSize.SMALL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '12',
+                            },
+                            {
+                                place: 2,
+                                title: '13',
+                            },
+                        ],
                         viks: [
                             {
                                 place: 1,
@@ -394,7 +394,7 @@ const MapSource: Array<MapSourceUnit> = [
             }
         ]
     },
-    
+
 ];
 
 export default MapSource;

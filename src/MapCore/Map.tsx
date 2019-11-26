@@ -238,6 +238,12 @@ export default class Map extends React.Component<IMapProps, IMapState> {
                 только опасные
               </div>
             </div>
+            <div className="input-checkbox">
+              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }} type="checkbox" name="option2" value="a2" /></div>
+              <div style={{ height: '100%', paddingLeft: '2%', display: 'flex' }}>
+                убрать повреждения
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import StillageSizeReducer from './../Models/Enums/StillageSize/StillageSizeRedu
 import StillageColors from '../Models/Enums/Colors/StillageColors';
 import Defect from './Defect';
 import PlaceSignature from './PlaceSignature';
+import Signature from './SIgnature';
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
     constructor(props) {
@@ -46,6 +47,19 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let stillage;
         let viks: Array<JSX.Element> = [];
         let placeSignatures: Array<JSX.Element> = [];
+        let signature;
+
+        if (source.signature !== undefined) {
+            signature =
+                <Signature
+                    parentX={source.x}
+                    parentY={source.y}
+                    parentOrientation={source.orientation}
+                    parentSize={source.size}
+                    source={source.signature}
+                />
+            ;
+        }
 
         if (source.placeSignatures !== undefined) {
             let i = 0;
@@ -72,7 +86,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                         parentOrientation={source.orientation}
                         source={element}
                     />
-                );                
+                );
             });
         }
 
@@ -84,7 +98,6 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     width={stillageSizeReducer.GetSize(source.size).firstSide}
                     height={stillageSizeReducer.GetSize(source.size).secondSide}
                     fill={StillageColors.STILLAGE_NORMAL}
-                    draggable
                     strokeWidth={1} // border width
                     stroke={StillageColors.STILLAGE_NORMAL_STROKE}
                     onDragStart={this.handleDragStart}
@@ -99,7 +112,6 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     width={stillageSizeReducer.GetSize(source.size).secondSide}
                     height={stillageSizeReducer.GetSize(source.size).firstSide}
                     fill={StillageColors.STILLAGE_NORMAL}
-                    draggable
                     strokeWidth={1} // border width
                     stroke={StillageColors.STILLAGE_NORMAL_STROKE}
                     onDragStart={this.handleDragStart}
@@ -108,7 +120,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             );
         }
         // let text = <Text text="Тест" x={100} y={100} />
-        let returns = [stillage, viks, placeSignatures]
+        let returns = [signature, stillage, viks, placeSignatures]
         return returns;
     }
 }

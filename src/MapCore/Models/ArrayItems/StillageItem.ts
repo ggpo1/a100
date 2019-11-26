@@ -15,7 +15,7 @@ interface StillageItem {
     viks?: Array<VikItem>,
     deviations?: Array<DeviationItem>,
     placeSignatures?: Array<PlaceSignatureItem>,
-    signatures?: Array<SignatureItem>,
+    signature?: SignatureItem,
 }
 
 export default StillageItem;
