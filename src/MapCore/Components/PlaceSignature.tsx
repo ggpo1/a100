@@ -20,7 +20,6 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
     render() {
         const { parentX, parentY, parentOrientation, source } = this.state;
         let ps;
-        console.log(this.state.parentDefects)
         if (parentOrientation === Orientation.HORIZONTAL) {
             if (source.place === 1) {
                 if (source.title.length === 1) {

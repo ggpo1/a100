@@ -8,6 +8,7 @@ import Stillage from './Components/Stillage';
 import LayerType from './Models/Enums/LayerType';
 import './Css/Map.css';
 import Wall from './Components/Wall';
+import ComponentsMenuBar from './Components/Page/ComponentsMenuBar';
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
@@ -31,7 +32,6 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     switch (checkName) {
       case 'onlyRed':
         this.setState({ ...this.state, ...{ isOnlyRed: !this.state.isOnlyRed } });
-        console.log(this.state.isOnlyRed);
         break;
 
       default:
@@ -52,11 +52,12 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   }
 
   handleMouseMove = e => {
-    if (this.state.isMouseDown) {
-      // console.log('mouse down');
-    } else {
-      // console.log('mouse not down');
-    }
+    console.log("dragged")
+    // if (this.state.isMouseDown) {
+    //   // console.log('mouse down');
+    // } else {
+    //   // console.log('mouse not down');
+    // }
   }
 
   handleMouseDown = e => {
@@ -202,7 +203,8 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             width={window.innerWidth}
             height={height}
             onWheel={this.handleWheel}
-            onMouseMove={this.handleMouseMove}
+            onDragEnd={this.handleMouseMove}
+            // onMouseMove={this.handleMouseMove}
             onMouseDown={this.handleMouseDown}
             onMouseUp={this.handleMouseUp}
             scaleX={this.state.stageScale}
@@ -218,7 +220,6 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         <div style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
           {layersTitles}
         </div>
-
         <div style={{ background: '#E0E0E0' }} className="units-selector">
           <div style={{ background: '' }} className="unit-header-title">
             <span style={{ height: '50%' }}>Выбор блока</span>
@@ -246,6 +247,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             </div>
           </div>
         </div>
+        <ComponentsMenuBar />
       </div>
     );
   }
