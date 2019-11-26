@@ -190,6 +190,176 @@ const MapSource: Array<MapSourceUnit> = [
                     }
                 ]
             },
+            {
+                title: 'Слой 3',
+                type: LayerType.STILLAGES,
+                stillages: [
+                    {
+                        title: '1.2.1',
+                        x: 250,
+                        y: 600,
+                        orientation: Orientation.VERTICAL,
+                        viks: [
+                            {
+                                place: 1, 
+                                level: 3,
+                                color: DefectColors.GREEN,
+                            },
+                            {
+                                place: 3, 
+                                level: 3,
+                                color: DefectColors.RED,
+                            }
+                        ],
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '1',
+                            },
+                            {
+                                place: 2,
+                                title: '2',
+                            },
+                            {
+                                place: 3,
+                                title: '3',
+                            },
+                        ],
+                        size: StillageSize.NORMAL,
+                    },
+                    {
+                        title: '1.2.2',
+                        x: 27,
+                        y: 230,
+                        orientation: Orientation.VERTICAL,
+                        size: StillageSize.NORMAL,
+                        viks: [
+                            {
+                                place: 3, 
+                                level: 3,
+                                color: DefectColors.RED,
+                            }
+                        ],
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '25',
+                            },
+                            {
+                                place: 2,
+                                title: '26',
+                            },
+                            {
+                                place: 3,
+                                title: '27',
+                            },
+                        ],
+                    },
+                    {
+                        title: '1.2.3',
+                        x: 122,
+                        y: 547,
+                        orientation: Orientation.HORIZONTAL,
+                        size: StillageSize.NORMAL,
+                        viks: [
+                            {
+                                place: 1, 
+                                level: 3,
+                                color: DefectColors.GREEN,
+                            },
+                        ],
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '444',
+                            },
+                            {
+                                place: 2,
+                                title: '124',
+                            },
+                            {
+                                place: 3,
+                                title: '273',
+                            },
+                        ],
+                    },
+                    {
+                        title: '1.2.4',
+                        x: 342,
+                        y: 500,
+                        orientation: Orientation.VERTICAL,
+                        size: StillageSize.NORMAL,
+                        viks: [
+                            {
+                                place: 1, 
+                                level: 3,
+                                color: DefectColors.GREEN,
+                            },
+                            {
+                                place: 2, 
+                                level: 3,
+                                color: DefectColors.YELLOW,
+                            },
+                        ],
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '12',
+                            },
+                            {
+                                place: 2,
+                                title: '13',
+                            },
+                            {
+                                place: 3,
+                                title: '14',
+                            },
+                        ],
+                    }
+                ]
+            },
+            {
+                title: 'Стены',
+                type: LayerType.WALLS,
+                walls: [
+                    {
+                        startX: 10,
+                        startY: 100,
+                        length: 950,
+                        orientation: Orientation.HORIZONTAL,
+                    },
+                    {
+                        startX: 10,
+                        startY: 100,
+                        length: 700,
+                        orientation: Orientation.VERTICAL,
+                    },
+                    {
+                        startX: 10,
+                        startY: 790,
+                        length: 950,
+                        orientation: Orientation.HORIZONTAL,
+                    },
+                    {
+                        startX: 950,
+                        startY: 100,
+                        length: 700,
+                        orientation: Orientation.VERTICAL,
+                    },
+                    {
+                        startX: 1100,
+                        startY: 100,
+                        length: 700,
+                        orientation: Orientation.VERTICAL,
+                    },
+                    {
+                        startX: 1200,
+                        startY: 100,
+                        length: 500,
+                        orientation: Orientation.HORIZONTAL,
+                    }
+                ]
+            },
         ]
     },
     {

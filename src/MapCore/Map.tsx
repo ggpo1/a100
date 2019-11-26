@@ -7,6 +7,7 @@ import IMapState from './Models/Components/Map/IMapState';
 import Stillage from './Components/Stillage';
 import LayerType from './Models/Enums/LayerType';
 import './Css/Map.css';
+import Wall from './Components/Wall';
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
@@ -29,10 +30,10 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   public filtersOnChangeAction(checkName) {
     switch (checkName) {
       case 'onlyRed':
-        this.setState({...this.state, ...{ isOnlyRed: !this.state.isOnlyRed }});
+        this.setState({ ...this.state, ...{ isOnlyRed: !this.state.isOnlyRed } });
         console.log(this.state.isOnlyRed);
         break;
-    
+
       default:
         break;
     }
@@ -113,6 +114,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     let stillages: Array<JSX.Element> = [];
     let signatures: Array<JSX.Element> = [];
     let layers: Array<JSX.Element> = [];
+    let walls: Array<JSX.Element> = [];
 
     // calculating height for map stage
     let height = window.innerHeight;
@@ -156,6 +158,16 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             );
           }
         }
+        if (element.walls !== undefined) {
+          for (let i = 0; i < element.walls!.length; i++) {
+            walls.push(
+              <Wall
+                key={"wall_" + selectedUnit + "_" + layernum + "_" + i}
+                source={element.walls[i]}
+              />
+            );
+          }
+        }
         layernum++;
       });
     } else {
@@ -166,8 +178,15 @@ export default class Map extends React.Component<IMapProps, IMapState> {
               <Stillage key={"stillage_" + selectedUnit + "_" + selectedLayer + "_" + i} source={source[selectedUnit].layers[selectedLayer].stillages![i]} />
             );
           }
-        } else if (source[selectedUnit].layers[selectedLayer].type === LayerType.SIGNATURES) {
-
+        } else if (source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
+          for (let i = 0; i < source[selectedUnit].layers[selectedLayer].walls!.length; i++) {
+            walls.push(
+              <Wall
+                key={"wall_" + selectedUnit + "_" + selectedLayer + "_" + i}
+                source={source[selectedUnit].layers[selectedLayer].walls![i]}
+              />
+            );
+          }
         } else if (source[selectedUnit].layers[selectedLayer].type === LayerType.ABSTRACTS) {
 
         }
@@ -192,6 +211,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             y={this.state.stageY}>
             <Layer>
               {stillages}
+              {walls}
             </Layer>
           </Stage>
         </div>
@@ -213,8 +233,8 @@ export default class Map extends React.Component<IMapProps, IMapState> {
           </div>
           <div style={{ background: '' }} className="filter-content">
             <div className="input-checkbox">
-              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{height: '50%'}} type="checkbox" name="option2" value="a2" /></div>
-              <div style={{ height: '100%', paddingLeft: '2%', display: 'flex'}}>
+              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }} type="checkbox" name="option2" value="a2" /></div>
+              <div style={{ height: '100%', paddingLeft: '2%', display: 'flex' }}>
                 только опасные
               </div>
             </div>
