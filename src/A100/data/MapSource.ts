@@ -22,8 +22,16 @@ const MapSource: Array<MapSourceUnit> = [
                         placeSignatures: [
                             {
                                 place: 1,
-                                title: '7',
-                            }
+                                title: '12',
+                            },
+                            {
+                                place: 2,
+                                title: '112',
+                            },
+                            {
+                                place: 3,
+                                title: '6',
+                            },
                         ],
                         viks: [
                             {
@@ -47,8 +55,22 @@ const MapSource: Array<MapSourceUnit> = [
                         title: '1.1.2',
                         x: 100,
                         y: 140,
-                        orientation: Orientation.VERTICAL,
+                        orientation: Orientation.HORIZONTAL,
                         size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '1',
+                            },
+                            {
+                                place: 2,
+                                title: '2',
+                            },
+                            {
+                                place: 3,
+                                title: '3',
+                            },
+                        ],
                         viks: [
                             {
                                 place: 1,
@@ -62,14 +84,21 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 450,
                         y: 140,
                         orientation: Orientation.HORIZONTAL,
-                        size: StillageSize.SMALL
+                        size: StillageSize.NORMAL
+                        
                     },
                     {
                         title: '1.1.4',
                         x: 390,
                         y: 240,
                         orientation: Orientation.VERTICAL,
-                        size: StillageSize.SMALL
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '2',
+                            },
+                        ],
+                        size: StillageSize.NORMAL
                     }
                 ]
             },
@@ -82,7 +111,7 @@ const MapSource: Array<MapSourceUnit> = [
                         x: 380,
                         y: 400,
                         orientation: Orientation.VERTICAL,
-                        size: StillageSize.SMALL,
+                        size: StillageSize.NORMAL,
                     },
                     {
                         title: '1.2.2',
@@ -90,6 +119,20 @@ const MapSource: Array<MapSourceUnit> = [
                         y: 240,
                         orientation: Orientation.VERTICAL,
                         size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '444',
+                            },
+                            {
+                                place: 2,
+                                title: '124',
+                            },
+                            {
+                                place: 3,
+                                title: '273',
+                            },
+                        ],
                         viks: [
                             {
                                 place: 1,
