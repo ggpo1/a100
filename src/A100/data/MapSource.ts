@@ -60,12 +60,44 @@ const MapSource: Array<MapSourceUnit> = [
                         title: '1.1.2',
                         x: 100,
                         y: 140,
-                        orientation: Orientation.HORIZONTAL,
+                        orientation: Orientation.VERTICAL,
                         signature: {
                                 title: '1',
-                                position: SignaturePosition.BOTTOM,
+                                position: SignaturePosition.RIGHT,
                         },
                         size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '1',
+                            },
+                            {
+                                place: 2,
+                                title: '2',
+                            },
+                            {
+                                place: 3,
+                                title: '3',
+                            },
+                        ],
+                        viks: [
+                            {
+                                place: 1,
+                                level: 2,
+                                color: DefectColors.RED
+                            }
+                        ]
+                    },
+                    {
+                        title: '1.1.2',
+                        x: 200,
+                        y: 140,
+                        orientation: Orientation.VERTICAL,
+                        signature: {
+                                title: '1',
+                                position: SignaturePosition.RIGHT,
+                        },
+                        size: StillageSize.SMALL,
                         placeSignatures: [
                             {
                                 place: 1,

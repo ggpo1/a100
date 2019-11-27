@@ -9,6 +9,11 @@ import LayerType from './Models/Enums/LayerType';
 import './Css/Map.css';
 import Wall from './Components/Wall';
 import ComponentsMenuBar from './Components/Page/ComponentsMenuBar';
+import Orientation from './Models/Enums/Orientation';
+import SignaturePosition from './Models/Enums/SignaturePosition';
+import StillageSize from './Models/Enums/StillageSize/StillageSize';
+import DefectColors from './Models/Enums/Colors/DefectColors';
+import AppState from './Data/AppState';
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
@@ -194,9 +199,67 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       }
     }
 
+    let smallPlaceSignatures = [
+      {
+        place: 1,
+        title: '1',
+      },
+      {
+        place: 2,
+        title: '2',
+      },
+    ];
+
+    let bigPlaceSignatures = [
+      {
+        place: 1,
+        title: '1',
+      },
+      {
+        place: 2,
+        title: '2',
+      },
+      {
+        place: 3,
+        title: '3',
+      },
+    ];
+
     return (
-      <div className="map-wrapper">
-        <div className="stage-wrapper">
+      <div className="map-wrapper"
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          console.log('dragging');
+        }} >
+        <div className="stage-wrapper" onDrop={(e) => {
+          const { source } = this.state;
+          let _selectedLayer;
+          if (selectedLayer === -1) {
+            if (source[selectedUnit].layers[0].stillages !== undefined) {
+              _selectedLayer = 0;
+            }
+          } else {
+            _selectedLayer = selectedLayer;
+          }
+          source[selectedUnit].layers[_selectedLayer].stillages!.push(
+            {
+              title: '2.1.1',
+              x: e.clientX,
+              y: e.clientY,
+              orientation: AppState.State.dragItemProps.stillageOrientation,
+              signature: {
+                title: '1',
+                position: AppState.State.dragItemProps.stillageCaption,
+              },
+              size: AppState.State.dragItemProps.stillageSize,
+              placeSignatures: AppState.State.dragItemProps.stillageSize === StillageSize.NORMAL ? bigPlaceSignatures : smallPlaceSignatures,
+              viks: []
+            },
+          );
+          this.setState({ ...this.state, ...source });
+        }}>
           <Stage
             draggable
             style={{ cursor: 'pointer' }}
@@ -204,6 +267,8 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             height={height}
             onWheel={this.handleWheel}
             onDragEnd={this.handleMouseMove}
+
+            // onDra={() => { alert('dropped') }}
             // onMouseMove={this.handleMouseMove}
             onMouseDown={this.handleMouseDown}
             onMouseUp={this.handleMouseUp}

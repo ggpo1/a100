@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../../Css/ComponentsMenuBar.css';
-import stillage from "../../Assets/compStillage.png";
+import MenuBarElement from './MenuBarElement';
+import LayerType from './../../Models/Enums/LayerType';
 
 export default class ComponentsMenuBar extends Component {
     constructor(props) {
@@ -14,10 +15,18 @@ export default class ComponentsMenuBar extends Component {
                     <span style={{ height: '50%' }}>Элементы</span>
                 </div>
                 <div style={{ background: '' }} className="comp-content">
-                    <div draggable style={{  }} className="comp-title">
-                       <img draggable width={'100%'} height={'auto'} src={stillage} alt=""/>
-                    </div>
-                    
+                    <MenuBarElement source={
+                        {
+                            title: 'Стеллаж',
+                            type: LayerType.STILLAGES,
+                        }
+                    } />
+                    <MenuBarElement source={
+                        {
+                            title: 'Стена',
+                            type: LayerType.WALLS,
+                        }
+                    } />
                 </div>
             </div>
         );
