@@ -25,42 +25,85 @@ class MenuBarElement extends React.Component<IMenuBarElementProps, IMenuBarEleme
             stillageSize: StillageSize.NORMAL,
             stillageOrientation: Orientation.HORIZONTAL,
             stillageCaption: false,
-            source: this.props.source
-        }
+            source: this.props.source,
+            wallOrientation: Orientation.HORIZONTAL,
+        };
+
+        AppState.State = {
+            dragItemProps: {
+                stillageClicked: false,
+                droppedElementType: LayerType.STILLAGES,
+                stillageSize: this.state.stillageSize,
+                stillageOrientation: this.state.stillageOrientation,
+                stillageCaption: SignaturePosition.BOTTOM
+            }
+        };
+
         this.mouseDownHandle = this.mouseDownHandle.bind(this);
+        this.onClickHandle = this.onClickHandle.bind(this);
     }
 
-    public mouseDownHandle() {
-        if (this.state.stillageOrientation === Orientation.HORIZONTAL && this.state.stillageCaption) {
+    public onClickHandle(type: LayerType) {
+        if (type === LayerType.STILLAGES) {
             AppState.State = {
-                dragItemProps: {
-                    stillageSize: this.state.stillageSize,
-                    stillageOrientation: this.state.stillageOrientation,
-                    stillageCaption: SignaturePosition.BOTTOM
+                ...AppState.State,
+                ...{ elementClicked: true }
+            };
+            console.log(AppState.State)
+        } else if (type === LayerType.WALLS) {
+            AppState.State = {
+                ...AppState.State,
+                ...{ elementClicked: true }
+            };
+        }
+    }
+
+    public mouseDownHandle(layerType: LayerType) {
+        if (layerType === LayerType.STILLAGES) {
+            if (this.state.stillageOrientation === Orientation.HORIZONTAL && this.state.stillageCaption) {
+                AppState.State = {
+                    dragItemProps: {
+                        droppedElementType: layerType,
+                        stillageSize: this.state.stillageSize,
+                        stillageOrientation: this.state.stillageOrientation,
+                        stillageCaption: SignaturePosition.BOTTOM
+                    }
+                }
+            } else if (this.state.stillageOrientation === Orientation.HORIZONTAL && !this.state.stillageCaption) {
+                AppState.State = {
+                    dragItemProps: {
+                        droppedElementType: layerType,
+                        stillageSize: this.state.stillageSize,
+                        stillageOrientation: this.state.stillageOrientation,
+                        stillageCaption: SignaturePosition.TOP
+                    }
+                }
+            } else if (this.state.stillageOrientation === Orientation.VERTICAL && this.state.stillageCaption) {
+                AppState.State = {
+                    dragItemProps: {
+                        droppedElementType: layerType,
+                        stillageSize: this.state.stillageSize,
+                        stillageOrientation: this.state.stillageOrientation,
+                        stillageCaption: SignaturePosition.RIGHT
+                    }
+                }
+            } else if (this.state.stillageOrientation === Orientation.VERTICAL && !this.state.stillageCaption) {
+                AppState.State = {
+                    dragItemProps: {
+                        droppedElementType: layerType,
+                        stillageSize: this.state.stillageSize,
+                        stillageOrientation: this.state.stillageOrientation,
+                        stillageCaption: SignaturePosition.LEFT
+                    }
                 }
             }
-        } else if (this.state.stillageOrientation === Orientation.HORIZONTAL && !this.state.stillageCaption) {
+        } else if (layerType === LayerType.WALLS) {
+            console.log(layerType);
+            console.log(this.state.wallOrientation)
             AppState.State = {
                 dragItemProps: {
-                    stillageSize: this.state.stillageSize,
-                    stillageOrientation: this.state.stillageOrientation,
-                    stillageCaption: SignaturePosition.TOP
-                }
-            }
-        } else if (this.state.stillageOrientation === Orientation.VERTICAL && this.state.stillageCaption) {
-            AppState.State = {
-                dragItemProps: {
-                    stillageSize: this.state.stillageSize,
-                    stillageOrientation: this.state.stillageOrientation,
-                    stillageCaption: SignaturePosition.RIGHT
-                }
-            }
-        } else if (this.state.stillageOrientation === Orientation.VERTICAL && !this.state.stillageCaption) {
-            AppState.State = {
-                dragItemProps: {
-                    stillageSize: this.state.stillageSize,
-                    stillageOrientation: this.state.stillageOrientation,
-                    stillageCaption: SignaturePosition.LEFT
+                    droppedElementType: layerType,
+                    wallOrientation: this.state.wallOrientation
                 }
             }
         }
@@ -103,14 +146,16 @@ class MenuBarElement extends React.Component<IMenuBarElementProps, IMenuBarEleme
             }
 
             component = (
-                <div style={{}} className="comp-title" >
+                <div style={{}} className="comp-title" onClick={() => { this.onClickHandle(LayerType.STILLAGES) }} >
                     <div className="comp-item-title">
                         {source.title}
                     </div>
                     <div className="comp-item-photo">
-                        <img onMouseDown={this.mouseDownHandle} draggable style={{ width: '100%', height: 'auto', borderRadius: '7px' }} src={photo} title={'Стеллаж'} alt="Стеллаж" />
+
+                        <img onMouseDown={() => this.mouseDownHandle(LayerType.STILLAGES)} draggable style={{ width: '50%', height: '50%', borderRadius: '7px' }} src={photo} title={'Стеллаж'} alt="Стеллаж" />
                     </div>
                     <div className="comp-item-properties">
+                        размер
                         <div className="comp-item-selector">
                             <button onClick={() => { this.setState({ ...this.state, ...{ stillageSize: StillageSize.NORMAL } }) }} className="left-button" style={{
                                 color: this.state.stillageSize === StillageSize.NORMAL ? 'white' : 'black',
@@ -121,27 +166,27 @@ class MenuBarElement extends React.Component<IMenuBarElementProps, IMenuBarEleme
                                 background: this.state.stillageSize === StillageSize.SMALL ? '#00cc00' : 'white'
                             }}>маленький</button>
                         </div>
-
+                        ориентация
                         <div className="comp-item-selector">
                             <button onClick={() => { this.setState({ ...this.state, ...{ stillageOrientation: Orientation.HORIZONTAL } }) }} className="left-button" style={{
                                 color: this.state.stillageOrientation === Orientation.HORIZONTAL ? 'white' : 'black',
                                 background: this.state.stillageOrientation === Orientation.HORIZONTAL ? '#00cc00' : 'white'
-                            }}>горизонтальный</button>
+                            }}>горизонтальная</button>
                             <button onClick={() => { this.setState({ ...this.state, ...{ stillageOrientation: Orientation.VERTICAL } }) }} className="right-button" style={{
                                 color: this.state.stillageOrientation === Orientation.VERTICAL ? 'white' : 'black',
                                 background: this.state.stillageOrientation === Orientation.VERTICAL ? '#00cc00' : 'white'
-                            }}>вертикальный</button>
+                            }}>вертикальная</button>
                         </div>
-
+                        нумерация
                         <div className="comp-item-selector">
                             <button onClick={() => { this.setState({ ...this.state, ...{ stillageCaption: false } }) }} className="left-button" style={{
                                 color: !this.state.stillageCaption ? 'white' : 'black',
                                 background: !this.state.stillageCaption ? '#00cc00' : 'white'
-                            }}>нумерация {this.state.stillageOrientation === Orientation.HORIZONTAL ? 'сверху' : 'слева'}</button>
+                            }}>{this.state.stillageOrientation === Orientation.HORIZONTAL ? 'сверху' : 'слева'}</button>
                             <button onClick={() => { this.setState({ ...this.state, ...{ stillageCaption: true } }) }} className="right-button" style={{
                                 color: this.state.stillageCaption ? 'white' : 'black',
                                 background: this.state.stillageCaption ? '#00cc00' : 'white'
-                            }}>нумерация {this.state.stillageOrientation === Orientation.HORIZONTAL ? 'снизу' : 'справа'}</button>
+                            }}>{this.state.stillageOrientation === Orientation.HORIZONTAL ? 'снизу' : 'справа'}</button>
                         </div>
 
                     </div>
@@ -150,10 +195,27 @@ class MenuBarElement extends React.Component<IMenuBarElementProps, IMenuBarEleme
             );
         } else if (source.type === LayerType.WALLS) {
             component = (<div style={{}} className="comp-title" >
-                <div className="comp-item-title">
+                <div onClick={() => { this.onClickHandle(LayerType.WALLS)}}
+                     onMouseDown={() => this.mouseDownHandle(LayerType.WALLS)} className="comp-item-title">
                     {source.title}
                 </div>
-            </div>);
+                    <div className="comp-item-properties">
+                        ориентация
+                        <div className="comp-item-selector">
+                            <button onClick={() => { this.setState({ ...this.state, ...{ wallOrientation: Orientation.HORIZONTAL } }) }} className="left-button" style={{
+                                color: this.state.wallOrientation === Orientation.HORIZONTAL ? 'white' : 'black',
+                                background: this.state.wallOrientation === Orientation.HORIZONTAL ? '#00cc00' : 'white'
+                            }}>горизонтальная</button>
+                            <button onClick={() => { this.setState({ ...this.state, ...{ wallOrientation: Orientation.VERTICAL } }) }} className="right-button" style={{
+                                color: this.state.wallOrientation === Orientation.VERTICAL ? 'white' : 'black',
+                                background: this.state.wallOrientation === Orientation.VERTICAL ? '#00cc00' : 'white'
+                            }}>вертикальная</button>
+                        </div>
+
+
+                    </div>
+                </div>
+            );
         }
 
         return component;

@@ -1,11 +1,10 @@
 
 .menubar-wrapper {
-    position: absolute;
+    z-index: 999999;
     display: flex;
     flex-direction: column;
-    width: 15%;
+    width: 100%;
     height: 35%;
-    margin-top: -16.2%;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     -moz-user-select: none;
@@ -20,7 +19,7 @@
     width: 100%;
     height: 10%;
     font-size: 100%;
-    color: '#6B737C';
+    color: #6B737C;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
     justify-content: center;
@@ -29,7 +28,6 @@
 
 .comp-content {
     width: 100%;
-    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -40,20 +38,19 @@
     align-items: center;
     width: 85%;
     margin-left: 5%;
-    padding-left: 2%;
-    padding-right: 2%;
-    height: 60%;
     font-size: 90%;
     margin-top: 5%;
     cursor: default;
     -moz-user-select: none;
     user-select: none;
     -webkit-user-select: none;
-    border: 1px solid black;
+    background: white;
+    border-radius: 10px;
+    padding: 1.5% 1.5%;
 }
 
 .comp-item-photo > img {
-    cursor: pointer;
+    cursor: move;
 }
 
 .comp-item-photo {
@@ -71,17 +68,17 @@
     justify-content: flex-start;
     align-items: center;
     width: 90%;
-    height: 100%;
-    padding: 1%;
+    height: 40%;
+    padding: 0.5%;
 }
 
 .comp-item-title {
     display: flex;
-    height: 30%;
+    height: 10%;
     width: 100%;
     font-size: 90%;
     justify-content: center;
-    color: '#6B737C';
+    color: #6B737C;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -89,14 +86,14 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 30%;
+    height: 10%;
     border-radius: 5px;
     border: 1px solid black;
-    margin-top: 1%;
 }
 
 .comp-item-selector > button {
     width: 50%;
+
     font-size: 80%;
     background: white;
     color: black;

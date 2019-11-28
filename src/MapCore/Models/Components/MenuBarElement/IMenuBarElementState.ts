@@ -5,6 +5,7 @@ import MenuBarItem from './../../ArrayItems/MenuBarItem';
 interface IMenuBarElementState {
     stillageSize: StillageSize,
     stillageOrientation: Orientation,
+    wallOrientation: Orientation,
     stillageCaption: boolean,
     source: MenuBarItem,
 }

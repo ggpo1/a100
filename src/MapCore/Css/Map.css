@@ -23,6 +23,7 @@
     cursor: default;
     box-shadow: 0 0 3pt 1.5pt #cfcfcf;
     opacity: 0.8;
+    z-index: 999999;
 }
 
 .layer-title {
@@ -46,16 +47,14 @@
 }
 
 .units-selector {
-    position: absolute;
+    z-index: 999999;
     display: flex;
     flex-direction: column;
-    width: 15%;
+    width: 100%;
     height: 35%;
-    margin-top: 3.25%;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     -moz-user-select: none;
-    -khtml-user-select: none;
     user-select: none;
     box-shadow: 0 0 3pt 1.5pt #cfcfcf;
     opacity: 0.8;
@@ -66,7 +65,7 @@
     width: 100%;
     height: 10%;
     font-size: 100%;
-    color: '#6B737C';
+    color: #6B737C;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
     justify-content: center;
@@ -93,16 +92,14 @@
 }
 
 .filters-selector {
-    position: absolute;
+    z-index: 999999;
     display: flex;
     flex-direction: column;
-    width: 15%;
+    width: 100%;
     height: 20%;
-    margin-top: 18.25%;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     -moz-user-select: none;
-    -khtml-user-select: none;
     user-select: none;
     box-shadow: 0 0 3pt 1.5pt #cfcfcf;
     opacity: 0.8;
@@ -114,7 +111,7 @@
     width: 100%;
     height: 10%;
     font-size: 100%;
-    color: '#6B737C';
+    color: #6B737C;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
     justify-content: center;
@@ -140,4 +137,16 @@
 
 .input-checkbox > input {
     display: block;
+}
+
+.right-bars-wrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: -1%;
+    width: 15%;
+    height: 90%;
+    /*background: black;*/
+    z-index: 999998;
 }
