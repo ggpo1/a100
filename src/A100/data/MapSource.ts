@@ -1,4 +1,3 @@
-import MapSourceLayer from '../../MapCore/Models/MapSourceLayer';
 import LayerType from '../../MapCore/Models/Enums/LayerType';
 import Orientation from '../../MapCore/Models/Enums/Orientation';
 import StillageSize from '../../MapCore/Models/Enums/StillageSize/StillageSize';

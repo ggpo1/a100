@@ -1,6 +1,5 @@
 import React from 'react';
 import {Layer, Stage} from 'react-konva';
-import EventEmitter from 'EventEmitter';
 
 import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
@@ -13,10 +12,11 @@ import StillageSize from './Models/Enums/StillageSize/StillageSize';
 import AppState from './Data/AppState';
 import Orientation from "./Models/Enums/Orientation";
 import Emit from "./Data/Emit";
+import ElementsPanel from "./Components/Page/Panels/ElementsPanel";
+import ElementSource from "./Data/ElementsSource";
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
-  public mapEmitter: EventEmitter;
   constructor(props: IMapProps) {
     super(props);
     this.state = {
@@ -36,6 +36,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       },
       isDrawing: false,
     };
+    // Биндинг
     this.filtersOnChangeAction = this.filtersOnChangeAction.bind(this);
     this.ElementOnDrop = this.ElementOnDrop.bind(this);
     this.MapWrapperOnClick = this.MapWrapperOnClick.bind(this);
@@ -115,41 +116,43 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   }
 
   public MapWrapperOnClick(clientX, clientY) {
-    const { source, selectedUnit, selectedLayer } = this.state;
-    let _selectedLayer;
-    // console.log(e);
-
-    if (AppState.State.dragItemProps.droppedElementType === LayerType.STILLAGES) {
-      if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
-        this.addElementToSource({ clientX, clientY }, AppState.State.dragItemProps.droppedElementType);
-        AppState.State.elementClicked = false;
-      } else {}
-    } else if (AppState.State.dragItemProps.droppedElementType === LayerType.WALLS) {
-      if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
-        AppState.State.elementClicked = false;
+      if (AppState.State.dragItemProps !== undefined) {
+          if (AppState.State.dragItemProps.droppedElementType === LayerType.STILLAGES) {
+              if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
+                  this.addElementToSource({clientX, clientY}, AppState.State.dragItemProps.droppedElementType);
+                  AppState.State.elementClicked = false;
+              } else {
+              }
+          } else if (AppState.State.dragItemProps.droppedElementType === LayerType.WALLS) {
+              if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
+                  AppState.State.elementClicked = false;
+              }
+          }
       }
-    }
   }
 
   public MapWrapperOnMouseDown(clientX, clientY) {
-    const { source, selectedUnit, selectedLayer } = this.state;
-    if (AppState.State.dragItemProps.droppedElementType === LayerType.WALLS) {
-      if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
-        this.addElementToSource({ clientX, clientY }, AppState.State.dragItemProps.droppedElementType);
-        AppState.State.elementClicked = false;
-        this.setState({
-          ...this.state,
-          ...{ isDrawing: true },
-          ...{ cursorCoords: {
-              startX: clientX,
-              startY: clientY,
-              x: this.state.cursorCoords.x,
-              y: this.state.cursorCoords.y,
-            }}
-        });
+      if (AppState.State.dragItemProps !== undefined) {
+          if (AppState.State.dragItemProps.droppedElementType === LayerType.WALLS) {
+              if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
+                  this.addElementToSource({clientX, clientY}, AppState.State.dragItemProps.droppedElementType);
+                  AppState.State.elementClicked = false;
+                  this.setState({
+                      ...this.state,
+                      ...{isDrawing: true},
+                      ...{
+                          cursorCoords: {
+                              startX: clientX,
+                              startY: clientY,
+                              x: this.state.cursorCoords.x,
+                              y: this.state.cursorCoords.y,
+                          }
+                      }
+                  });
+              }
+          } else {
+          }
       }
-    } else {
-    }
   }
 
   public MapWrapperOnMouseUp(clientX, clientY) {
@@ -341,7 +344,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     let layers: Array<JSX.Element> = [];
     let walls: Array<JSX.Element> = [];
 
-    // calculating height for map stage
+
     let height = window.innerHeight;
 
 
@@ -350,13 +353,19 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         <div onClick={() => {
           this.setState({ ...this.state, ...{ selectedUnit: i, selectedLayer: -1 } });
         }} className="unit-title">
-          <span style={{ fontWeight: selectedUnit === i ? 'bold' : 'normal' }}>{source[i].title}</span>
+          <span style={{
+              fontWeight: selectedUnit === i ? 'bold' : 'normal',
+              color: selectedUnit === i ? '#2f00ff' : 'black'
+          }}>{source[i].title}</span>
         </div>
       );
     }
 
     layersTitles.push(
-      <div key={"layerTitle_" + selectedUnit + "_" + -1} style={{ fontWeight: selectedLayer === -1 ? 'bold' : 'normal' }} className="layer-title" onClick={() => {
+      <div key={"layerTitle_" + selectedUnit + "_" + -1} style={{
+          fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
+          color: selectedLayer === -1 ? '#2f00ff' : 'black'
+      }} className="layer-title" onClick={() => {
         this.setState({ ...this.state, ...{ selectedLayer: -1 } })
       }}>
         Все слои
@@ -364,7 +373,10 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     );
     for (let i = 0; i < source[selectedUnit].layers.length; i++) {
       layersTitles.push(
-        <div style={{ fontWeight: selectedLayer === i ? 'bold' : 'normal' }} onClick={() => {
+        <div style={{
+            fontWeight: selectedLayer === i ? 'bold' : 'normal',
+            color: selectedLayer === i ? '#2f00ff' : 'black'
+        }} onClick={() => {
           this.setState({ ...this.state, ...{ selectedLayer: i } })
         }} key={"layerTitle_" + selectedUnit + "_" + i} className="layer-title">{source[selectedUnit].layers[i].title}</div>
       );
@@ -420,7 +432,10 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
 
 
-    let main, blocks, filters, elements;
+    let main, blocks, filters, elements, elementsPanel;
+
+    // elementsPanel = ;
+
     blocks = (
         <div style={{ background: '#E0E0E0' }} className="units-selector">
           <div style={{ background: '' }} className="unit-header-title">
@@ -452,8 +467,10 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         </div>
       </div>
     );
-    elements = <ComponentsMenuBar />;
-  console.log(this.state.isDrawing)
+    // elements = <ComponentsMenuBar />;
+
+    elementsPanel = <ElementsPanel source={ElementSource} />;
+
     main = (<div className="map-wrapper"
                  onDragOver={(e) => {
                    e.preventDefault();
@@ -486,8 +503,10 @@ export default class Map extends React.Component<IMapProps, IMapState> {
           </Layer>
         </Stage>
       </div>
+        {elementsPanel}
+
       <div className={"right-bars-wrapper"}>
-        {elements}
+
         {blocks}
         {filters}
       </div>
@@ -497,9 +516,9 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
     </div>);
 
-    let components = [main];
+    // let components = [];
 
-    return components;
+    return main;
   }
 
 }
