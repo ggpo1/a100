@@ -7,13 +7,14 @@ import Stillage from './Components/Stillage';
 import LayerType from './Models/Enums/LayerType';
 import './Css/Map.css';
 import Wall from './Components/Wall';
-import ComponentsMenuBar from './Components/Page/ComponentsMenuBar';
-import StillageSize from './Models/Enums/StillageSize/StillageSize';
 import AppState from './Data/AppState';
 import Orientation from "./Models/Enums/Orientation";
 import Emit from "./Data/Emit";
 import ElementsPanel from "./Components/Page/Panels/ElementsPanel";
 import ElementSource from "./Data/ElementsSource";
+import StillageWorker from "./Services/StillageWorker";
+import ElementItem from "./Models/ArrayItems/ElementItem";
+import MapObject from "./Components/MapObject";
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
@@ -39,11 +40,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     // Биндинг
     this.filtersOnChangeAction = this.filtersOnChangeAction.bind(this);
     this.ElementOnDrop = this.ElementOnDrop.bind(this);
-    this.MapWrapperOnClick = this.MapWrapperOnClick.bind(this);
-    this.addElementToSource =  this.addElementToSource.bind(this);
     this.MapWrapperOnMouseMove = this.MapWrapperOnMouseMove.bind(this);
-    this.MapWrapperOnMouseDown = this.MapWrapperOnMouseDown.bind(this);
-    this.MapWrapperOnMouseUp = this.MapWrapperOnMouseUp.bind(this);
     this.deleteWall = this.deleteWall.bind(this);
 
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -52,183 +49,6 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
   public deleteWall() {
     alert('DELETING')
-  }
-
-  public smallPlaceSignatures = [
-    {
-      place: 1,
-      title: '1',
-    },
-    {
-      place: 2,
-      title: '2',
-    },
-  ];
-
-  public bigPlaceSignatures = [
-    {
-      place: 1,
-      title: '1',
-    },
-    {
-      place: 2,
-      title: '2',
-    },
-    {
-      place: 3,
-      title: '3',
-    },
-  ];
-
-  public addElementToSource(e, elementType: LayerType) {
-    console.log(e);
-    const { source, selectedUnit, selectedLayer } = this.state;
-    let _selectedLayer;
-    if (AppState.State.dragItemProps === undefined)
-      return;
-    if (elementType === LayerType.STILLAGES) {
-      if (selectedLayer === -1) {
-        if (source[selectedUnit].layers[0].stillages !== undefined) {
-          _selectedLayer = 0;
-        }
-      } else {
-        _selectedLayer = selectedLayer;
-      }
-      source[selectedUnit].layers[_selectedLayer].stillages!.push(
-          {
-            title: '2.1.1',
-            x: e.clientX,
-            y: e.clientY,
-            orientation: AppState.State.dragItemProps.stillageOrientation,
-            signature: {
-              title: '1',
-              position: AppState.State.dragItemProps.stillageCaption,
-            },
-            size: AppState.State.dragItemProps.stillageSize,
-            placeSignatures: AppState.State.dragItemProps.stillageSize === StillageSize.NORMAL ? this.bigPlaceSignatures : this.smallPlaceSignatures,
-            viks: []
-          },
-      );
-    } else if (elementType === LayerType.WALLS) {
-
-    }
-    this.setState({ ...this.state, ...source });
-  }
-
-  public MapWrapperOnClick(clientX, clientY) {
-      if (AppState.State.dragItemProps !== undefined) {
-          if (AppState.State.dragItemProps.droppedElementType === LayerType.STILLAGES) {
-              if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
-                  this.addElementToSource({clientX, clientY}, AppState.State.dragItemProps.droppedElementType);
-                  AppState.State.elementClicked = false;
-              } else {
-              }
-          } else if (AppState.State.dragItemProps.droppedElementType === LayerType.WALLS) {
-              if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
-                  AppState.State.elementClicked = false;
-              }
-          }
-      }
-  }
-
-  public MapWrapperOnMouseDown(clientX, clientY) {
-      if (AppState.State.dragItemProps !== undefined) {
-          if (AppState.State.dragItemProps.droppedElementType === LayerType.WALLS) {
-              if (AppState.State.elementClicked !== undefined && AppState.State.elementClicked) {
-                  this.addElementToSource({clientX, clientY}, AppState.State.dragItemProps.droppedElementType);
-                  AppState.State.elementClicked = false;
-                  this.setState({
-                      ...this.state,
-                      ...{isDrawing: true},
-                      ...{
-                          cursorCoords: {
-                              startX: clientX,
-                              startY: clientY,
-                              x: this.state.cursorCoords.x,
-                              y: this.state.cursorCoords.y,
-                          }
-                      }
-                  });
-              }
-          } else {
-          }
-      }
-  }
-
-  public MapWrapperOnMouseUp(clientX, clientY) {
-    console.log(this.state.cursorCoords);
-    const { source, selectedUnit, selectedLayer } = this.state;
-    let _length = 0;
-    if (this.state.isDrawing) {
-      if (selectedLayer !== -1) {
-        if (source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
-          // все норм, рисуем на этом слое
-          if (AppState.State.dragItemProps.wallOrientation === Orientation.HORIZONTAL) {
-            _length = Math.abs(this.state.cursorCoords.startX - this.state.cursorCoords.x);
-          } else {
-            _length = Math.abs(this.state.cursorCoords.startY - this.state.cursorCoords.y);
-          }
-          source[selectedUnit].layers[selectedLayer].walls!.push(
-              {
-                startX: this.state.cursorCoords.startX,
-                startY: this.state.cursorCoords.startY,
-                length: _length,
-                orientation: AppState.State.dragItemProps.wallOrientation,
-              },
-          );
-          this.setState(
-              {
-                ...this.state,
-                ...{isDrawing: false},
-                ...{source: source}
-              }
-          );
-        } else {
-          // ищем первый слой со стенами
-          let wallLayerIndex, counter, i = 0;
-          console.log(wallLayerIndex);
-          source[selectedUnit].layers.forEach(element => {
-            if (element.type === LayerType.WALLS && counter === 0) {
-              wallLayerIndex = i;
-              counter++;
-            }
-            i++;
-          });
-          console.log(wallLayerIndex);
-        }
-      }
-    }
-
-    // if (this.state.isDrawing) {
-    //
-    //   if (source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
-    //     // console.log(AppState.State.dragItemProps.wallOrientation);
-    //
-    //   } else {
-    //
-    //
-    //     if (AppState.State.dragItemProps.wallOrientation === Orientation.HORIZONTAL) {
-    //       _length = Math.abs(this.state.cursorCoords.startX - this.state.cursorCoords.x);
-    //     } else {
-    //       _length = Math.abs(this.state.cursorCoords.startY - this.state.cursorCoords.y);
-    //     }
-        // source[selectedUnit].layers[wallLayerIndex].walls!.push(
-        //     {
-        //       startX: this.state.cursorCoords.startX,
-        //       startY: this.state.cursorCoords.startY,
-        //       length: _length,
-        //       orientation: AppState.State.dragItemProps.wallOrientation,
-        //     },
-        // );
-        // this.setState(
-        //     {
-        //       ...this.state,
-        //       ...{isDrawing: false},
-        //       ...{source: source}
-        //     }
-        // );
-      // }
-    // }
   }
 
   public MapWrapperOnMouseMove(e) {
@@ -250,8 +70,41 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   }
 
   public ElementOnDrop(e) {
-    this.addElementToSource(e, AppState.State.dragItemProps.droppedElementType);
+      const { source, selectedUnit, selectedLayer } = this.state;
+      let selected: ElementItem = AppState.State.selectedEl;
+      let stillageWorker = new StillageWorker();
+      if (selected !== undefined) {
+          if (selectedLayer !== -1) {
+              if (selected.type === LayerType.STILLAGES) {
+                  if (source[selectedUnit].layers[selectedLayer].stillages === undefined) {
+                      source[selectedUnit].layers[selectedLayer].stillages = [];
+                  }
+                  source[selectedUnit].layers[selectedLayer].stillages!.push(
+                      stillageWorker.getStillageSourceItem({x: e.clientX, y: e.clientY}, selected.stillageType!)
+                  );
+              } else if (selected.type === LayerType.ABSTRACTS) {
+                  if (source[selectedUnit].layers[selectedLayer].objects === undefined) {
+                      source[selectedUnit].layers[selectedLayer].objects = [];
+                  }
+                  source[selectedUnit].layers[selectedLayer].objects!.push(
+                      {
+                          x: e.clientX,
+                          y: e.clientY,
+                          photo: selected.photo,
+                      }
+                  );
+
+              } else if (selected.type === LayerType.WALLS) {
+                  alert('Чтобы отрисовать стену, кликните на элемент стены, зажмите правую кнопку мыши на карте и потяните.');
+              }
+          } else {
+              alert('Выберите слой')
+          }
+          this.setState({...this.state, ...source});
+      }
   };
+
+
 
   public filtersOnChangeAction(checkName) {
     // switch (checkName) {
@@ -386,7 +239,11 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       let layerNum = 0;
       source[selectedUnit].layers.forEach(element => {
         if (element.objects !== undefined) {
-
+            for (let i = 0; i < element.objects!.length; i++) {
+                objects.push(
+                    <MapObject key={"objects_" + selectedUnit + "_" + layerNum + "_" + i} source={element.objects![i]} />
+                );
+            }
         }
         if (element.stillages !== undefined) {
           for (let i = 0; i < element.stillages!.length; i++) {
@@ -409,24 +266,34 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       });
     } else {
       if (source[selectedUnit].layers[selectedLayer] !== undefined) {
-        if (source[selectedUnit].layers[selectedLayer].type === LayerType.STILLAGES) {
-          for (let i = 0; i < source[selectedUnit].layers[selectedLayer].stillages!.length; i++) {
-            stillages.push(
-              <Stillage key={"stillage_" + selectedUnit + "_" + selectedLayer + "_" + i} source={source[selectedUnit].layers[selectedLayer].stillages![i]} />
-            );
+          if (source[selectedUnit].layers[selectedLayer].stillages !== undefined) {
+              for (let i = 0; i < source[selectedUnit].layers[selectedLayer].stillages!.length; i++) {
+                  stillages.push(
+                      <Stillage key={"stillage_" + selectedUnit + "_" + selectedLayer + "_" + i}
+                                source={source[selectedUnit].layers[selectedLayer].stillages![i]}/>
+                  );
+              }
           }
-        } else if (source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
-          for (let i = 0; i < source[selectedUnit].layers[selectedLayer].walls!.length; i++) {
-            walls.push(
-              <Wall
-                key={"wall_" + selectedUnit + "_" + selectedLayer + "_" + i}
-                source={source[selectedUnit].layers[selectedLayer].walls![i]}
-              />
-            );
+          if (source[selectedUnit].layers[selectedLayer].walls !== undefined) {
+              for (let i = 0; i < source[selectedUnit].layers[selectedLayer].walls!.length; i++) {
+                  walls.push(
+                      <Wall
+                          key={"wall_" + selectedUnit + "_" + selectedLayer + "_" + i}
+                          source={source[selectedUnit].layers[selectedLayer].walls![i]}
+                      />
+                  );
+              }
           }
-        } else if (source[selectedUnit].layers[selectedLayer].type === LayerType.ABSTRACTS) {
-
-        }
+          if (source[selectedUnit].layers[selectedLayer].objects !== undefined) {
+              for (let i = 0; i < source[selectedUnit].layers[selectedLayer].objects!.length; i++) {
+                  walls.push(
+                      <MapObject
+                          key={"object_" + selectedUnit + "_" + selectedLayer + "_" + i}
+                          source={ source[selectedUnit].layers[selectedLayer].objects![i] }
+                      />
+                  );
+              }
+          }
       }
     }
 
@@ -480,9 +347,6 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     >
 
       <div className="stage-wrapper" onDrop={(e) => { this.ElementOnDrop(e) }}
-           onClick={(e) => { this.MapWrapperOnClick(e.clientX, e.clientY) }}
-           onMouseDown={(e) => { this.MapWrapperOnMouseDown(e.clientX, e.clientY) }}
-           onMouseUp={(e) => { this.MapWrapperOnMouseUp(e.clientX, e.clientY) }}
            onMouseMove={(e) => { this.MapWrapperOnMouseMove(e) }}
            id={"stageWrapper"}
       >
@@ -500,6 +364,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
           <Layer>
             {walls}
             {stillages}
+            {objects}
           </Layer>
         </Stage>
       </div>
