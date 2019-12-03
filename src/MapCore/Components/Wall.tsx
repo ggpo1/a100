@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
-import {Rect, Line} from 'react-konva';
+import {Line, Rect} from 'react-konva';
 import IWallProps from './../Models/Components/Wall/IWallProps';
 import IWallState from './../Models/Components/Wall/IWallState';
 import Orientation from './../Models/Enums/Orientation';
+import LabelButton from "./Stage/LabelButton";
+import LabelButtonMode from "../Models/Enums/LabelButtonMode";
+import AppState from "../Data/AppState";
 
 export default class Wall extends Component<IWallProps, IWallState> {
     
@@ -14,10 +17,19 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 x: 0,
                 y: 0,
             },
-            isDeleteModal: false
+            isDeleteModal: false,
+            isAddLabelButton: false,
         };
         this.WallOnClickHandler = this.WallOnClickHandler.bind(this);
         this.WallOnMouseDownHandler = this.WallOnMouseDownHandler.bind(this);
+        this.OnMouseHandler = this.OnMouseHandler.bind(this);
+    }
+
+    public OnMouseHandler(value) {
+        this.setState({
+            ...this.state,
+            ...{ isAddLabelButton: value }
+        });
     }
 
     public WallOnClickHandler() {
@@ -41,54 +53,36 @@ export default class Wall extends Component<IWallProps, IWallState> {
     }
 
     render() {
-        const { source } = this.state;
+        const { source, isAddLabelButton } = this.state;
         let dModal;
+        let labelButton;
 
         let triangle;
 
-        if (this.state.isDeleteModal) {
-            if (this.state.source.orientation === Orientation.HORIZONTAL) {
-                dModal = (
-                    <Rect
-                        // onClick={() => this.WallOnClickHandler()}
-                        // onMouseDown={this.WallOnMouseDownHandler}
-                        x={this.state.cursorCoords.x - 47}
-                        cornerRadius={10}
-                        y={this.state.cursorCoords.y - 58}
-                        width={100}
-                        height={40}
-                        strokeWidth={0.5}
-                        stroke={'black'}
-                        fill={'white'}
-                    />
-                );
-                triangle = (
-                    <Line
-                        x={this.state.cursorCoords.x - 36}
-                        y={this.state.cursorCoords.y - 18}
-                        points={[0, 0, 80, 0, 40, 15]}
-                        closed
-                        strokeWidth={0.5}
-                        stroke={'black'}
-                        fill={"white"}
-                    />
-                );
-            }
+        if (isAddLabelButton) {
+            labelButton = (
+                <LabelButton
+                    key={"labelButton_" + source.startX + "_" + source.startY + "_" + source.length}
+                    parentX={source.startX}
+                    parentY={source.startY}
+                    objectSource={source}
+                    labelMode={LabelButtonMode.ADD}
+                />
+            );
         }
-
         let wall = (
             <Rect
-                onClick={() => this.WallOnClickHandler()}
+                // onClick={() => { this.OnMouseHandler(true) }}
                 onMouseDown={this.WallOnMouseDownHandler}
                 x={source.startX}
-                cornerRadius={10}
                 y={source.startY}
+                cornerRadius={10}
                 width={source.orientation === Orientation.HORIZONTAL ? source.length : 10}
                 height={source.orientation === Orientation.VERTICAL ? source.length : 10}
                 fill={'#dcdcdc'}
             />
         );
 
-        return [wall, triangle, dModal, ];
+        return [wall, labelButton];
     }
 }

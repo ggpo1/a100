@@ -1,5 +1,6 @@
 import LayerType from "../Enums/LayerType";
 import MapStillageType from "../Enums/MapStillageType";
+import Orientation from "../Enums/Orientation";
 
 export default interface ElementItem {
     key?: string,
@@ -7,4 +8,5 @@ export default interface ElementItem {
     stillageType?: MapStillageType,
     type?: LayerType,
     photo: any,
+    orientation?: Orientation,
 }

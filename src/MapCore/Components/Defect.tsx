@@ -7,6 +7,7 @@ import DefectColors from './../Models/Enums/Colors/DefectColors';
 import DefectRadius from '../Models/Enums/DefectRadius/DefectRadius';
 import Orientation from './../Models/Enums/Orientation';
 import { Circle } from 'react-konva';
+import Emit from "../Data/Emit";
 
 export default class Defect extends React.Component<IDefectProps, IDefectState> {
     constructor(props) {
@@ -16,7 +17,13 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
             parentY: this.props.parentY,
             parentOrientation: this.props.parentOrientation,
             source: this.props.source,
-        }
+        };
+
+        this.openModal = this.openModal.bind(this);
+    }
+
+    public openModal() {
+        Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     render() {
@@ -28,6 +35,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
         if (source.place === 1) {
             vik =
                 <Circle
+                    onClick={() => { this.openModal() }}
                     radius={defectOptions.radius}
                     x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
                     y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
@@ -41,6 +49,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other colors
                 vik =
                     <Circle
+                        onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
                         y={parentY + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 2)}
@@ -54,6 +63,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
 
                 vik =
                     <Circle
+                        onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 2)}
                         y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
@@ -69,6 +79,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other colors
                 vik =
                     <Circle
+                        onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
                         y={parentY + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 4)}
@@ -82,6 +93,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other color
                 vik =
                     <Circle
+                        onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 4)}
                         y={parentY + (defectOptions.radius + defectOptions.centeringValue)}

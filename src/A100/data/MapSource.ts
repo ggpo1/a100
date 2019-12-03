@@ -220,20 +220,22 @@ const MapSource: Array<MapSourceUnit> = [
         ]
     },
     {
-        title: 'Склад холодной продукции',
+        title: 'Склад',
         layers: [
             {
                 title: 'Стеллажи',
                 type: LayerType.STILLAGES,
-                stillages: [
+                stillages: []
+                /*
+                *
                     {
                         title: '2.1.1',
                         x: 540,
                         y: 450,
                         orientation: Orientation.HORIZONTAL,
                         signature: {
-                                title: '1',
-                                position: SignaturePosition.TOP,
+                            title: '1',
+                            position: SignaturePosition.TOP,
                         },
                         size: StillageSize.SMALL,
                         placeSignatures: [
@@ -254,15 +256,26 @@ const MapSource: Array<MapSourceUnit> = [
                             }
                         ]
                     },
-                    // {
-                    //     title: '2.1.4',
-                    //     x: 510,
-                    //     y: 450,
-                    //     orientation: Orientation.VERTICAL,
-                    //     size: StillageSize.NORMAL
-                    // },
+                * */
+            },
+            {
+                title: 'Стены',
+                type: LayerType.WALLS,
+                walls: [
+                    {
+                        startX: 600,
+                        startY: 200,
+                        length: 250,
+                        orientation: Orientation.HORIZONTAL,
+                    },
+                    {
+                        startX: 600,
+                        startY: 300,
+                        length: 250,
+                        orientation: Orientation.VERTICAL,
+                    },
                 ]
-            }
+            },
         ]
     },
 

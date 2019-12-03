@@ -7,6 +7,7 @@ interface IWallState {
         y: number,
     },
     isDeleteModal: boolean,
+    isAddLabelButton: boolean,
 }
 
 export default IWallState;

@@ -2,9 +2,11 @@ import React from 'react';
 import IElementsPanelProps from "../../../Models/Components/ElementsPanel/IElementsPanelProps";
 import IElementsPanelState from "../../../Models/Components/ElementsPanel/IElementsPanelState";
 import '../../../Css/ElementsPanel.css'
-import stillageBigHor from "../../../Assets/compStillage.png";
+import search from "../../../Assets/search.png";
 import ElementItem from "../../../Models/ArrayItems/ElementItem";
 import AppState from "../../../Data/AppState";
+import Emit from "../../../Data/Emit";
+
 
 export default class ElementsPanel extends React.Component<IElementsPanelProps, IElementsPanelState> {
 
@@ -33,6 +35,11 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
         AppState.State.selectedEl = el;
     }
 
+    public elementMouseClickHandler(el: ElementItem) {
+        AppState.State.selectedEl = el;
+        Emit.Emitter.emit('cncFlagChange');
+    }
+
     render() {
         const { source, selectedCategory, isToggled } = this.state;
         let content;
@@ -57,9 +64,13 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
             });
 
             if (selectedCategory !== -1) {
-                source[selectedCategory].elements.forEach(el => {
+                source[selectedCategory].elements.forEach((el, i) => {
                     elements.push(
                         <img
+                            key={"el_img_" + selectedCategory + "_" + i}
+                            onClick={() => {
+                                this.elementMouseClickHandler(el);
+                            }}
                             onMouseDown={() => {
                                 this.elementMouseDownHandler(el)
                             }}
@@ -73,9 +84,13 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                 });
             } else {
                 for (let i = 0; i < source.length; i++) {
-                    source[i].elements.forEach(el => {
+                    source[i].elements.forEach((el, j) => {
                         elements.push(
                             <img
+                                key={"el_img_" + i + "_" + j}
+                                onClick={() => {
+                                    this.elementMouseClickHandler(el);
+                                }}
                                 onMouseDown={() => {
                                     this.elementMouseDownHandler(el)
                                 }}
@@ -99,21 +114,21 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                         <div className={'category-elements-wrapper'}>
                             {elements}
                         </div>
-                        <div className={'category-elements-footer'}>
-                            <span style={{ cursor: 'pointer' }} onClick={() => {
-                                this.setState({...this.state, ...{isToggled: true}})
-                            }} className={'selected-text'}>свернуть</span>
+                        <div onClick={() => {
+                            this.setState({...this.state, ...{isToggled: true}})
+                        }} className={'category-elements-footer'}>
+                            <span style={{ cursor: 'pointer' }} className={'selected-text'}>свернуть</span>
                         </div>
                     </div>
                 </div>
             );
         } else {
             content = (
-                <div className={'elements-panel-wrapper-toggled'}>
+                <div onClick={() => {
+                    this.setState({...this.state, ...{isToggled: false}})
+                }} className={'elements-panel-wrapper-toggled'}>
                     <div className={'inner-wrapper-toggled'}>
-                         <span onClick={() => {
-                             this.setState({...this.state, ...{isToggled: false}})
-                         }} style={{ height: '40%', cursor: 'pointer' }} className={'selected-text'}>открыть панель элементов</span>
+                         <span style={{ height: '40%', }} className={'selected-text'}>открыть панель элементов</span>
                     </div>
                 </div>
             );

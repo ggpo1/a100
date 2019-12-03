@@ -2,6 +2,7 @@ import CategoryItem from "../Models/ArrayItems/CategoryItem";
 import Images from "./Images";
 import LayerType from "../Models/Enums/LayerType";
 import MapStillageType from "../Models/Enums/MapStillageType";
+import Orientation from "../Models/Enums/Orientation";
 
 const ElementSource: Array<CategoryItem> = [
     {
@@ -73,12 +74,14 @@ const ElementSource: Array<CategoryItem> = [
                 title: 'Стена горизонтальная',
                 type: LayerType.WALLS,
                 photo: Images.firewall,
+                orientation: Orientation.HORIZONTAL,
             },
             {
                 key: 'wall_vert',
                 title: 'Стена вертикальная',
                 type: LayerType.WALLS,
                 photo: Images.firewall,
+                orientation: Orientation.VERTICAL,
             }
         ],
     },

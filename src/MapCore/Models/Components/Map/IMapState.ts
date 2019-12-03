@@ -15,6 +15,11 @@ interface IMapState {
         y: number,
     },
     isDrawing: boolean,
+    cncFlag: boolean,
+
+    isDefectBrowsePanel: boolean,
+
+    layersSelected: number[],
 }
 
 export default IMapState;
