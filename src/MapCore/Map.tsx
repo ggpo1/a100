@@ -64,6 +64,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   }
 
   public defectBrowsePanelWorker(value: boolean) {
+    console.log(value);
     this.setState({
         ...this.state,
         ...{isDefectBrowsePanel: value}
@@ -525,15 +526,15 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         <div style={{ background: '' }} className="filter-content">
           <div className="input-checkbox">
             <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }} type="checkbox" name="option2" value="a2" /></div>
-            <div style={{ height: '100%', paddingLeft: '2%', display: 'flex' }}>
+            <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
               только опасные
-              </div>
+            </div>
           </div>
           <div className="input-checkbox">
             <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }} type="checkbox" name="option2" value="a2" /></div>
-            <div style={{ height: '100%', paddingLeft: '2%', display: 'flex' }}>
+            <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
               убрать повреждения
-              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -566,11 +567,17 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         onDrop={(e) => { this.ElementOnDrop(e) }}
         onClick={(e) => { this.stageOnClickHandler(e) }}
         onMouseMove={(e) => { this.MapWrapperOnMouseMove(e) }}
+           onTouchMove={(e) => { this.MapWrapperOnMouseMove(e) }}
         //
         id={"stageWrapper"}
       >
         <Stage
           draggable={!this.state.isDrawing}
+
+          onTouchMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => {  } }
+          onTouchStart={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => {  } }
+          onTouchEnd={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => {  } }
+
 
           onMouseMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => {  } }
           onMouseDown={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => {  } }
@@ -580,6 +587,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
           width={window.innerWidth}
           height={height}
           onWheel={this.handleWheel}
+
           scaleX={this.state.stageScale}
           scaleY={this.state.stageScale}
           x={this.state.stageX}

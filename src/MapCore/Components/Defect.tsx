@@ -35,6 +35,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
         if (source.place === 1) {
             vik =
                 <Circle
+                    onTap={() => { this.openModal() }}
                     onClick={() => { this.openModal() }}
                     radius={defectOptions.radius}
                     x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
@@ -49,6 +50,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other colors
                 vik =
                     <Circle
+                        onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
@@ -63,6 +65,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
 
                 vik =
                     <Circle
+                        onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 2)}
@@ -79,6 +82,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other colors
                 vik =
                     <Circle
+                        onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
@@ -93,6 +97,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other color
                 vik =
                     <Circle
+                        onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
                         x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 4)}
