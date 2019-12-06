@@ -73,6 +73,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
         let wall = (
             <Rect
                 // onClick={() => { this.OnMouseHandler(true) }}
+                draggable={false}
                 onMouseDown={this.WallOnMouseDownHandler}
                 x={source.startX}
                 y={source.startY}

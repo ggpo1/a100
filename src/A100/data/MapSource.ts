@@ -5,14 +5,44 @@ import MapSourceUnit from '../../MapCore/Models/MapSourceUnit';
 import DefectColors from '../../MapCore/Models/Enums/Colors/DefectColors';
 import SignaturePosition from './../../MapCore/Models/Enums/SignaturePosition';
 import Images from "../../MapCore/Data/Images";
+import MapIconsType from "../../MapCore/Models/Enums/MapIconsType";
 
 const MapSource: Array<MapSourceUnit> = [
+
+    {
+        title: 'Склад',
+        layers: [
+
+            {
+                title: 'Стены',
+                type: LayerType.WALLS,
+                mapIconsType: MapIconsType.DRAWING,
+                walls: [
+                    {
+                        key: 'source_wall',
+                        startX: 600,
+                        startY: 200,
+                        length: 250,
+                        orientation: Orientation.HORIZONTAL,
+                    },
+                    {
+                        key: 'source_wall',
+                        startX: 600,
+                        startY: 300,
+                        length: 250,
+                        orientation: Orientation.VERTICAL,
+                    },
+                ]
+            },
+        ]
+    },
     {
         title: 'Блок 1',
         layers: [
             {
                 title: 'Стеллажи',
                 type: LayerType.STILLAGES,
+                mapIconsType: MapIconsType.DRAWING,
                 // walls: [
                 //     {
                 //         startX: 500,
@@ -133,6 +163,7 @@ const MapSource: Array<MapSourceUnit> = [
             {
                 title: 'Освещение',
                 type: LayerType.ABSTRACTS,
+                mapIconsType: MapIconsType.IMAGE,
                 objects: [
                     {
                         x: 450,
@@ -142,7 +173,7 @@ const MapSource: Array<MapSourceUnit> = [
                     {
                         x: 450,
                         y: 700,
-                        photo: Images.lightbulb,
+                        photo: Images.idea,
                     },
                     {
                         x: 720,
@@ -162,7 +193,7 @@ const MapSource: Array<MapSourceUnit> = [
                     {
                         x: 150,
                         y: 700,
-                        photo: Images.lightbulb,
+                        photo: Images.idea,
                     },
                     {
                         x: 450,
@@ -177,39 +208,45 @@ const MapSource: Array<MapSourceUnit> = [
                     {
                         x: 150,
                         y: 420,
-                        photo: Images.lightbulb,
+                        photo: Images.idea,
                     },
                 ]
             },
             {
                 title: 'Стены',
                 type: LayerType.WALLS,
+                mapIconsType: MapIconsType.DRAWING,
                 walls: [
                     {
+                        key: 'source_wall',
                         startX: 10,
                         startY: 100,
                         length: 950,
                         orientation: Orientation.HORIZONTAL,
                     },
                     {
+                        key: 'source_wall',
                         startX: 10,
                         startY: 100,
                         length: 700,
                         orientation: Orientation.VERTICAL,
                     },
                     {
+                        key: 'source_wall',
                         startX: 10,
                         startY: 790,
                         length: 950,
                         orientation: Orientation.HORIZONTAL,
                     },
                     {
+                        key: 'source_wall',
                         startX: 950,
                         startY: 100,
                         length: 400,
                         orientation: Orientation.VERTICAL,
                     },
                     {
+                        key: 'source_wall',
                         startX: 950,
                         startY: 650,
                         length: 150,
@@ -219,65 +256,7 @@ const MapSource: Array<MapSourceUnit> = [
             },
         ]
     },
-    {
-        title: 'Склад',
-        layers: [
-            {
-                title: 'Стеллажи',
-                type: LayerType.STILLAGES,
-                stillages: []
-                /*
-                *
-                    {
-                        title: '2.1.1',
-                        x: 540,
-                        y: 450,
-                        orientation: Orientation.HORIZONTAL,
-                        signature: {
-                            title: '1',
-                            position: SignaturePosition.TOP,
-                        },
-                        size: StillageSize.SMALL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '12',
-                            },
-                            {
-                                place: 2,
-                                title: '13',
-                            },
-                        ],
-                        viks: [
-                            {
-                                place: 1,
-                                level: 2,
-                                color: DefectColors.YELLOW
-                            }
-                        ]
-                    },
-                * */
-            },
-            {
-                title: 'Стены',
-                type: LayerType.WALLS,
-                walls: [
-                    {
-                        startX: 600,
-                        startY: 200,
-                        length: 250,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        startX: 600,
-                        startY: 300,
-                        length: 250,
-                        orientation: Orientation.VERTICAL,
-                    },
-                ]
-            },
-        ]
-    },
+
 
 ];
 

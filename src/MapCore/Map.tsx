@@ -17,6 +17,9 @@ import ElementItem from "./Models/ArrayItems/ElementItem";
 import MapObject from "./Components/MapObject";
 import WallItem from "./Models/ArrayItems/WallIem";
 import DefectBrowsePanel from "./Components/Page/Panels/DefectBrowsePanel";
+import MapLayerService from "./Services/MapLayerService";
+import MapSourceLayer from "./Models/MapSourceLayer";
+import MapIconsType from "./Models/Enums/MapIconsType";
 
 
 export default class Map extends React.Component<IMapProps, IMapState> {
@@ -39,7 +42,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       },
       isDrawing: false,
       cncFlag: false,
-      isDefectBrowsePanel: true,
+      isDefectBrowsePanel: false,
       layersSelected: [],
     };
     // Биндинг
@@ -66,8 +69,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   public defectBrowsePanelWorker(value: boolean) {
     console.log(value);
     this.setState({
-        ...this.state,
-        ...{isDefectBrowsePanel: value}
+        isDefectBrowsePanel: value
     });
   }
 
@@ -94,22 +96,8 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             });
           }
         }
-        this.setState({
-          ...this.state,
-          ...{isDrawing: true},
-          ...{
-            cursorCoords: {
-              startX: this.state.cursorCoords.startX,
-              startY: this.state.cursorCoords.startY,
-              x: e.evt.clientX,
-              y: e.evt.clientY,
-            }
-          }
-        });
-        this.setState({
-          ...this.state,
-          ...source,
-        });
+
+
       }
     }
   }
@@ -119,16 +107,13 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       let selected: ElementItem = AppState.State.selectedEl;
       if (selected !== undefined) {
         this.setState({
-          ...this.state,
-          ...{isDrawing: true},
-          ...{
+          isDrawing: true,
             cursorCoords: {
               startX: e.evt.clientX,
               startY: e.evt.clientY,
               x: 0,
               y: 0,
             }
-          }
         });
       }
     }
@@ -139,60 +124,49 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
     if (this.state.cncFlag) {
       this.setState({
-        ...this.state,
-        ...{
           cncFlag: false,
           isDrawing: false,
-        },
-        ...{
           cursorCoords: {
             startX: this.state.cursorCoords.startX,
             startY: this.state.cursorCoords.startY,
             x: e.evt.clientX,
             y: e.evt.clientY,
           }
-        }
       });
-      console.log(this.state.cursorCoords);
+      // console.log(this.state.cursorCoords);
       if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
           let count = 0;
           let badEls: WallItem[] = [];
+          if (source[selectedUnit].layers[selectedLayer].walls !== undefined) {
+            const _length = source[selectedUnit].layers[selectedLayer].walls!.length;
+            source[selectedUnit].layers[selectedLayer].walls![_length - 1].key = 'source_wall';
+          }
           for (let k = 0; k < source[selectedUnit].layers[selectedLayer].walls!.length; k++) {
             if (source[selectedUnit].layers[selectedLayer].walls![k].key === 'wall_for_move') {
               badEls.push(source[selectedUnit].layers[selectedLayer].walls![k]);
               count++;
             }
           }
-
-          for (let k = 0; k < badEls.length; k++) {
-            let index = source[selectedUnit].layers[selectedLayer].walls!.indexOf(badEls[k]);
-            source[selectedUnit].layers[selectedLayer].walls!.splice(index, 1);
-          }
-
-          if (AppState.State.selectedEl.orientation === Orientation.HORIZONTAL) {
-            source[selectedUnit].layers[selectedLayer].walls!.push({
-              startX: cursorCoords.startX,
-              startY: cursorCoords.startY,
-              length: Math.abs(cursorCoords.x) - Math.abs(cursorCoords.startX),
-              orientation: AppState.State.selectedEl.orientation
-            });
-
-          } else {
-            source[selectedUnit].layers[selectedLayer].walls!.push({
-              startX: cursorCoords.startX,
-              startY: cursorCoords.startY,
-              length: Math.abs(cursorCoords.y) - Math.abs(cursorCoords.startY),
-              orientation: AppState.State.selectedEl.orientation
-            });
-          }
-          console.log(count);
           console.log(badEls);
-
-
+          if (badEls.length !== 0) {
+            for (let k = 0; k < badEls.length; k++) {
+              let index = source[selectedUnit].layers[selectedLayer].walls!.indexOf(badEls[k]);
+              source[selectedUnit].layers[selectedLayer].walls!.splice(index, 1);
+            }
+          }
+          /* Без этого не работает */
+          const _layers = this.state.layersSelected;
+          this.setState({
+            layersSelected: []
+          });
+          this.setState({
+            layersSelected: _layers
+          });
+          /* _____________________ */
+          console.log(this.state.source);
       } else {
         alert('Выберите слой со стенами!');
       }
-      console.log(this.state.source);
     }
   }
 
@@ -206,19 +180,13 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       }
       if (source.length + 1 === layersSelected.length) {
         this.setState({
-          ...this.state,
-          ...{
             layersSelected,
             selectedLayer: -1,
-          },
         });
       } else {
         this.setState({
-          ...this.state,
-          ...{
             layersSelected,
             selectedLayer: layersSelected.length === 0 ? -1 : i,
-          },
         });
       }
   }
@@ -231,15 +199,73 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   // cnc flag changing (need)
   public cncFlagChange() {
     this.setState({
-      ...this.state,
-      ...{ cncFlag: !this.state.cncFlag }
+      cncFlag: !this.state.cncFlag
     });
   }
 
+  public getLayerIndexByType(type: LayerType) {
+    const { source, selectedUnit } = this.state;
+    let layerIndex = -1;
+    for (let i = 0; i < source[selectedUnit].layers.length; i++) {
+      const el = source[selectedUnit].layers[i];
+      if (type === el.type) {
+        layerIndex = i;
+      }
+    }
+    return layerIndex;
+  }
+
   public addElement(clientX: number, clientY: number) {
-    const { source, selectedUnit, selectedLayer, cncFlag } = this.state;
+    const { source, selectedUnit, selectedLayer, layersSelected, cncFlag } = this.state;
     let selected: ElementItem = AppState.State.selectedEl;
     let stillageWorker = new StillageWorker();
+
+    if (selected !== undefined) {
+      let _layerIndex = this.getLayerIndexByType(selected.type!);
+      let layer: MapSourceLayer;
+      if (_layerIndex === -1) {
+        let ls = new MapLayerService();
+        source[selectedUnit].layers.push(
+            {
+              title:  ls.getLayerNameByType(selected.type!),
+              type: selected.type!,
+              mapIconsType: ls.getMapIconsTypeByLayerType(selected.type!),
+              walls: [],
+              stillages: [],
+              objects: [],
+            }
+        );
+        _layerIndex = this.getLayerIndexByType(selected.type!);
+      }
+
+      layer = source[selectedUnit].layers[_layerIndex];
+
+      if (layer.mapIconsType === MapIconsType.DRAWING) {
+        if (layer.type === LayerType.STILLAGES) {
+          if (layer.stillages === undefined) {
+            source[selectedUnit].layers[selectedLayer].stillages = [];
+          }
+          layer.stillages!.push(
+              stillageWorker.getStillageSourceItem({ x: clientX, y: clientY }, selected.stillageType!)
+          );
+        }
+      } else {
+        if (layer.type === LayerType.LIGHTING) {
+          layer.objects!.push(
+              {
+                x: clientX,
+                y: clientY,
+                photo: selected.photo,
+              }
+          );
+        }
+      }
+      source[selectedUnit].layers[_layerIndex] = layer;
+      layersSelected.push(_layerIndex);
+      this.setState({ source, selectedLayer: _layerIndex });
+
+    }
+    /*
     if (selected !== undefined) {
       if (selectedLayer !== -1) {
         if (selected.type === LayerType.STILLAGES) {
@@ -267,8 +293,9 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       } else {
         alert('Выберите слой');
       }
-      this.setState({ ...this.state, ...source, ...{ cncFlag: !this.state.cncFlag } });
+      this.setState({ cncFlag: !this.state.cncFlag, source });
     }
+     */
   }
 
   public stageOnClickHandler(e) {
@@ -281,19 +308,14 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   // saving cur pos (need)
   public MapWrapperOnMouseMove(e) {
     if (this.state.isDrawing) {
-      this.setState(
-        {
-          ...this.state,
-          ...{
-            cursorCoords: {
-              startX: this.state.cursorCoords.startX,
-              startY: this.state.cursorCoords.startY,
-              x: e.clientX,
-              y: e.clientY,
-            }
-          }
+      this.setState({
+        cursorCoords: {
+          startX: this.state.cursorCoords.startX,
+          startY: this.state.cursorCoords.startY,
+          x: e.clientX,
+          y: e.clientY,
         }
-      );
+      });
     }
   }
 
@@ -412,7 +434,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
         color: selectedLayer === -1 ? '#2f00ff' : 'black'
       }} className="layer-title" onClick={() => {
-        this.setState({ ...this.state, ...{ layersSelected, selectedLayer: -1 } })
+        this.setState({ layersSelected, selectedLayer: -1 })
       }}>
         Все слои
       </div>

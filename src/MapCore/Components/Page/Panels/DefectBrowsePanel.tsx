@@ -4,6 +4,7 @@ import IDefectBrowsePanelState from "../../../Models/Components/DefectBrowsePane
 import '../../../Css/DefectBrowsePanel.css';
 import Emit from "../../../Data/Emit";
 import DefectColors from "../../../Models/Enums/Colors/DefectColors";
+import Images from "../../../Data/Images";
 
 export default class DefectBrowsePanel extends React.Component<IDefectBrowsePanelProps, IDefectBrowsePanelState> {
     constructor(props) {
@@ -26,10 +27,16 @@ export default class DefectBrowsePanel extends React.Component<IDefectBrowsePane
             <div className={'wrapper'}>
                 <div style={{ marginLeft: "-" + this.state.panelWidthPer + "px" }} className={'panel'}>
                     <div className={'header'}>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                        <div>
+                            <div><img onClick={() => { this.closePanel() }} src={Images.closeShape} alt=""/></div>
+                            <div>Повреждение</div>
+                        </div>
+                        <div>
+                            Всего: 2
+                        </div>
+                        <div>
+
+                        </div>
                     </div>
                     <div className={'content'}>
                             <div>
@@ -60,7 +67,6 @@ export default class DefectBrowsePanel extends React.Component<IDefectBrowsePane
                                 <div className={'info-text info-title'}>Тип дефекта</div>
                                 <div className={'info-text info-value'}>Повреждение</div>
                             </div>
-                            <div></div>
                             <div className={'columned'}>
                                 <div className={'info-text info-title'}>Производитель</div>
                                 <div className={'info-text info-value'}>МетОриентир</div>
@@ -72,23 +78,40 @@ export default class DefectBrowsePanel extends React.Component<IDefectBrowsePane
                             <div className={'columned'}>
                                 <div className={'info-text info-title'}>Элемент заменен</div>
                                 <div className={'info-text info-value'}>
-                                    <input type="checkbox" checked />
+                                    Да
                                 </div>
                             </div>
                             <div className={'columned'}>
                                 <div className={'info-text info-title'}>Дата замены</div>
                                 <div className={'info-text info-value'}>10.12.2019</div>
                             </div>
+                            <div className={'columned'}>
+                                <div className={'info-text info-title'}>Остаток комплектующих для замены</div>
+                                <div className={'info-text info-value'}>0</div>
+                            </div>
+                            <div className={'columned comment-block'}>
+                                <div style={{ width: '95%' }} className={'info-text info-title'}>Комментарий</div>
+                                <div style={{ width: '95%' }} className={'info-text info-value'}>Ryan Adams, whose new album Prisoner is out this Friday, was the latest guest on Marc Maron’s podcast “WTF.” Adams discussed encountering the Rolling Stones early in his career (and talking penny</div>
+                            </div>
                     </div>
                     <div className={'content-second'}>
-                        <div className={'comment-block'}>
-                            <div><div className={'info-text info-title'}>Комментарий</div></div>
-                            <div><div className={'info-text info-value'}>
-                                Ryan Adams, whose new album Prisoner is out this Friday, was the latest guest on Marc Maron’s podcast “WTF.” Adams discussed encountering the Rolling Stones early in his career (and talking penny
-                            </div></div>
-                        </div>
-                        <div className={'gallery-block'}>
-
+                        <div>
+                            <div>
+                                <div className={'info-text info-title'}>Повреждение до ремонта</div>
+                                <div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className={'info-text info-title'}>Повреждение после ремонта</div>
+                                <div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className={'footer'}>
@@ -102,9 +125,7 @@ export default class DefectBrowsePanel extends React.Component<IDefectBrowsePane
                         </div>
                     </div>
                 </div>
-                <div onClick={() => { this.closePanel() }} className={'close-block'}>
-
-                </div>
+                <div onClick={() => { this.closePanel() }} className={'close-block'}></div>
             </div>
         );
     }

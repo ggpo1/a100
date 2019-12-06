@@ -1,4 +1,5 @@
 import MapSourceUnit from '../../MapSourceUnit';
+import WallItem from "../../ArrayItems/WallIem";
 interface IMapState {
     selectedUnit: number,
     selectedLayer: number,
@@ -18,7 +19,6 @@ interface IMapState {
     cncFlag: boolean,
 
     isDefectBrowsePanel: boolean,
-
     layersSelected: number[],
 }
 

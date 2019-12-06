@@ -8,10 +8,13 @@ import stillage7 from "../Assets/compStillageSmallVertLeft.png";
 import stillage8 from "../Assets/compStillageSmallVertRight.png";
 
 import lightbulb from "../Assets/lightbulb.png";
+import idea from "../Assets/idea.png";
 
 import firewall from "../Assets/firewall.png";
 import wallHor from "../Assets/wallHor.png";
 import wallVert from "../Assets/wallVert.png";
+
+import closeShape from "../Assets/closeShape.png";
 
 const Images = {
     stillage1,
@@ -24,10 +27,13 @@ const Images = {
     stillage8,
 
     lightbulb,
+    idea,
 
     firewall,
     wallHor,
-    wallVert
+    wallVert,
+
+    closeShape
 };
 
     export default Images;

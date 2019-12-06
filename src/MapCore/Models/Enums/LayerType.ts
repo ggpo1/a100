@@ -3,6 +3,7 @@ enum LayerType {
     STILLAGES = 'stillages',
     SIGNATURES = 'signatures',
     WALLS = 'walls',
+    LIGHTING = 'lighting',
 }
 
 export default LayerType;

@@ -89,10 +89,16 @@ const ElementSource: Array<CategoryItem> = [
         title: 'Освещение',
         elements: [
             {
-                key: 'wall_hor',
+                key: 'first_light',
                 title: 'Светильник',
-                type: LayerType.ABSTRACTS,
+                type: LayerType.LIGHTING,
                 photo: Images.lightbulb,
+            },
+            {
+                key: 'second_light',
+                title: 'Светильник',
+                type: LayerType.LIGHTING,
+                photo: Images.idea,
             },
         ],
     }
