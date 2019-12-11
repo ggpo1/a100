@@ -6,7 +6,7 @@ import Orientation from "../Models/Enums/Orientation";
 
 const ElementSource: Array<CategoryItem> = [
     {
-        title: 'Стеллажи',
+        title: 'стеллажи',
         elements: [
             {
                 key: 'stillage_1',
@@ -67,7 +67,7 @@ const ElementSource: Array<CategoryItem> = [
         ],
     },
     {
-        title: 'Стены',
+        title: 'стены',
         elements: [
             {
                 key: 'wall_hor',
@@ -86,7 +86,7 @@ const ElementSource: Array<CategoryItem> = [
         ],
     },
     {
-        title: 'Освещение',
+        title: 'освещение',
         elements: [
             {
                 key: 'first_light',

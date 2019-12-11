@@ -2,10 +2,10 @@ import React from 'react';
 import IElementsPanelProps from "../../../Models/Components/ElementsPanel/IElementsPanelProps";
 import IElementsPanelState from "../../../Models/Components/ElementsPanel/IElementsPanelState";
 import '../../../Css/ElementsPanel.css'
-import search from "../../../Assets/search.png";
 import ElementItem from "../../../Models/ArrayItems/ElementItem";
 import AppState from "../../../Data/AppState";
 import Emit from "../../../Data/Emit";
+import LayerType from "../../../Models/Enums/LayerType";
 
 
 export default class ElementsPanel extends React.Component<IElementsPanelProps, IElementsPanelState> {
@@ -36,6 +36,9 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
     }
 
     public elementMouseClickHandler(el: ElementItem) {
+        if (el.type === LayerType.WALLS) {
+            Emit.Emitter.emit('checkWallLayer');
+        }
         AppState.State.selectedEl = el;
         Emit.Emitter.emit('cncFlagChange');
     }
@@ -48,15 +51,19 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
 
         if (!isToggled) {
             categories.push(
-                <div onClick={() => this.categoryTitleClickHandler(-1)}
+                <div
+                    key={'category_title_all'}
+                    onClick={() => this.categoryTitleClickHandler(-1)}
                      className={'category-tab-title' + (selectedCategory === -1 ? ' selected-text' : '')}>
-                    Все
+                    все
                 </div>
             );
 
             source.forEach((el, i) => {
                 categories.push(
-                    <div onClick={() => this.categoryTitleClickHandler(i)}
+                    <div
+                        key={'category_title_' + el.title + '_' + i}
+                        onClick={() => this.categoryTitleClickHandler(i)}
                          className={'category-tab-title' + (selectedCategory === i ? ' selected-text' : '')}>
                         {el.title}
                     </div>

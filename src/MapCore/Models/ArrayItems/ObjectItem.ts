@@ -4,7 +4,8 @@ import DeviationItem from './DeviationItem';
 import SignatureItem from './SignatureItem';
 
 interface ObjectItem {
-    id?: number,
+    id: number,
+    key: string,
     x: number,
     y: number,
     width?: number,

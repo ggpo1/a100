@@ -26,30 +26,15 @@ export default class Wall extends Component<IWallProps, IWallState> {
     }
 
     public OnMouseHandler(value) {
-        this.setState({
-            ...this.state,
-            ...{ isAddLabelButton: value }
-        });
+        this.setState({isAddLabelButton: value});
     }
 
     public WallOnClickHandler() {
-        // console.log(this.state.source);
-        // Emit.Emitter.emit('deleteWall');
-        this.setState(
-            {
-                ...this.state,
-                ...{ isDeleteModal: true }
-            }
-        );
+        this.setState({isDeleteModal: true});
     }
 
     public WallOnMouseDownHandler(e) {
-        this.setState(
-            {
-                ...this.state,
-                ...{ cursorCoords: { x: e.evt.clientX, y: e.evt.clientY } }
-            }
-        );
+        this.setState({ cursorCoords: { x: e.evt.clientX, y: e.evt.clientY } });
     }
 
     render() {
@@ -59,6 +44,10 @@ export default class Wall extends Component<IWallProps, IWallState> {
 
         let triangle;
 
+        console.log('\n\n---------------------------------------------');
+        console.log('\tWALL ' + source.id);
+        console.log('---------------------------------------------');
+        console.log('\twallKey: ' + source.key);
         if (isAddLabelButton) {
             labelButton = (
                 <LabelButton
@@ -72,6 +61,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
         }
         let wall = (
             <Rect
+                key={source.key + '_react'}
                 // onClick={() => { this.OnMouseHandler(true) }}
                 draggable={false}
                 onMouseDown={this.WallOnMouseDownHandler}
@@ -83,7 +73,8 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 fill={'#dcdcdc'}
             />
         );
-
-        return [wall, labelButton];
+        console.log('\t' + wall.key);
+        console.log('---------------------------------------------');
+        return [wall];
     }
 }

@@ -35,6 +35,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
         if (source.place === 1) {
             vik =
                 <Circle
+                    key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
                     onTap={() => { this.openModal() }}
                     onClick={() => { this.openModal() }}
                     radius={defectOptions.radius}
@@ -50,6 +51,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other colors
                 vik =
                     <Circle
+                        key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
                         onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
@@ -65,6 +67,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
 
                 vik =
                     <Circle
+                        key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
                         onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
@@ -82,6 +85,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other colors
                 vik =
                     <Circle
+                        key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
                         onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}
@@ -97,6 +101,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 // other color
                 vik =
                     <Circle
+                        key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
                         onTap={() => { this.openModal() }}
                         onClick={() => { this.openModal() }}
                         radius={defectOptions.radius}

@@ -6,7 +6,8 @@ import WallItem from './ArrayItems/WallIem';
 import MapIconsType from "./Enums/MapIconsType";
 
 interface MapSourceLayer {
-    id?: number,
+    id: number,
+    key: string,
     title: string,
     type: LayerType,
     mapIconsType: MapIconsType,

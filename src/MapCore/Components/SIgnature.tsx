@@ -72,6 +72,7 @@ export default class Signature extends Component<ISignatureProps, ISignatureStat
 
         let block = (
             <Rect
+                key={'signature_rect' + '_' + parentX + '_' + parentY + '_' + parentSize + '_' + parentOrientation + '_' + source.position + '_' + source.title}
                 cornerRadius={4}
                 x={_x}
                 y={_y}
@@ -192,6 +193,7 @@ export default class Signature extends Component<ISignatureProps, ISignatureStat
 
         let title = (
             <Text
+                key={'signature_text' + '_' + parentX + '_' + parentY + '_' + parentSize + '_' + parentOrientation + '_' + source.position + '_' + source.title}
                 x={_x}
                 y={_y}
                 text={source.title}

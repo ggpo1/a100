@@ -1,7 +1,8 @@
 import MapSourceLayer from "./MapSourceLayer";
 
 interface MapSourceUnit {
-    id?: number,
+    id: number,
+    key: string,
     title: string,
     layers: Array<MapSourceLayer>,
 }

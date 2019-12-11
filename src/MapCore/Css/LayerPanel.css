@@ -1,0 +1,17 @@
+
+
+.add-layer-title {
+     display: block;
+     height: auto;
+     color: #008000;
+ }
+.add-layer-title:before {
+    box-sizing: border-box;
+    height: 100px;
+    width: 100px;
+    background: black;
+}
+
+.add-layer-block > span {
+    color: #00e600;
+}

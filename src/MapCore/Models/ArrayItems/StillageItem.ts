@@ -6,8 +6,8 @@ import PlaceSignatureItem from './PlaceSignatureItem';
 import SignatureItem from './SignatureItem';
 
 interface StillageItem {
-    id?: number,
-    title: string,
+    id: number,
+    key: string,
     x: number,
     y: number,
     size: StillageSize,

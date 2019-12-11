@@ -9,6 +9,7 @@ import StillageColors from '../Models/Enums/Colors/StillageColors';
 import Defect from './Defect';
 import PlaceSignature from './PlaceSignature';
 import Signature from './SIgnature';
+import DefectService from "../Services/DefectService";
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
     constructor(props) {
@@ -48,10 +49,14 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let viks: Array<JSX.Element> = [];
         let placeSignatures: Array<JSX.Element> = [];
         let signature;
-
+        console.log('\n\n---------------------------------------------');
+        console.log('\tSTILLAGE ' + source.id);
+        console.log('---------------------------------------------');
+        console.log('\tstillageID: ' + source.id + ', stillageKey: ' + source.key);
         if (source.signature !== undefined) {
             signature =
                 <Signature
+                    key={source.key + '_signature'}
                     parentX={source.x}
                     parentY={source.y}
                     parentOrientation={source.orientation}
@@ -59,6 +64,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     source={source.signature}
                 />
             ;
+            console.log('\t' + signature.key)
         }
 
         if (source.placeSignatures !== undefined) {
@@ -66,6 +72,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             source.placeSignatures.forEach(element => {
                 placeSignatures.push(
                     <PlaceSignature
+                        key={source.key + '_placeSignature_' + (i++)}
                         parentX={source.x}
                         parentY={source.y}
                         parentDefects={source.viks!}
@@ -73,26 +80,31 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                         source={element}
                     />
                 );
+                console.log('\t' + placeSignatures[placeSignatures.length - 1].key);
             });
         }
 
         if (source.viks !== undefined) {
             let i = 0;
+            let dS = new DefectService();
             source.viks!.forEach(element => {
                 viks.push(
-                    <Defect key={"defect_" + source.x + "_" + source.y + "_" + source.id + "_" + (++i)}
+                    <Defect
+                        key={source.key + '_defect_' + (i++)}
                         parentX={source.x}
                         parentY={source.y}
                         parentOrientation={source.orientation}
                         source={element}
                     />
                 );
+                console.log('\t' + viks[viks.length -1].key)
             });
         }
 
         if (source.orientation === Orientation.HORIZONTAL) {
             stillage = (
                 <Rect
+                    key={source.key + '_rect'}
                     x={source.x}
                     y={source.y}
                     width={stillageSizeReducer.GetSize(source.size).firstSide}
@@ -107,6 +119,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         } else if (source.orientation === Orientation.VERTICAL) {
             stillage = (
                 <Rect
+                    key={source.key + '_rect'}
                     x={source.x}
                     y={source.y}
                     width={stillageSizeReducer.GetSize(source.size).secondSide}
@@ -119,8 +132,13 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                 />
             );
         }
-        // let text = <Text text="Тест" x={100} y={100} />
-        let returns = [signature, stillage, viks, placeSignatures]
+        console.log('\t' + stillage.key);
+        console.log('---------------------------------------------');
+
+        let returns: Array<JSX.Element> = [signature, stillage, viks, placeSignatures];
+
+        // console.log('stillage stop');
+
         return returns;
     }
 }

@@ -5,26 +5,43 @@ import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
 import Stillage from './Components/Stillage';
 import LayerType from './Models/Enums/LayerType';
-import './Css/Map.css';
 import Wall from './Components/Wall';
 import AppState from './Data/AppState';
 import Orientation from "./Models/Enums/Orientation";
 import Emit from "./Data/Emit";
 import ElementsPanel from "./Components/Page/Panels/ElementsPanel";
 import ElementSource from "./Data/ElementsSource";
-import StillageWorker from "./Services/StillageWorker";
+import StillageService from "./Services/StillageService";
 import ElementItem from "./Models/ArrayItems/ElementItem";
 import MapObject from "./Components/MapObject";
 import WallItem from "./Models/ArrayItems/WallIem";
 import DefectBrowsePanel from "./Components/Page/Panels/DefectBrowsePanel";
-import MapLayerService from "./Services/MapLayerService";
 import MapSourceLayer from "./Models/MapSourceLayer";
 import MapIconsType from "./Models/Enums/MapIconsType";
 
+import './Css/Map.css';
+import './Css/LayerPanel.css';
+import AddLayerSubModal from "./Components/Page/Modals/AddLayerSubModal";
+import WallService from "./Services/WallService";
+import ObjectService from "./Services/ObjectService";
+import LayerService from "./Services/LayerService";
 
-export default class Map extends React.Component<IMapProps, IMapState> {
+
+export default class Map extends React.PureComponent<IMapProps, IMapState> {
+
+  public stillageService!: StillageService;
+  public objectService!: ObjectService;
+  public layerService!: LayerService;
+  public wallService!: WallService;
+
   constructor(props: IMapProps) {
     super(props);
+
+    this.stillageService = new StillageService();
+    this.objectService = new ObjectService();
+    this.layerService = new LayerService();
+    this.wallService = new WallService();
+
     this.state = {
       selectedUnit: 0,
       selectedLayer: -1,
@@ -44,8 +61,23 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       cncFlag: false,
       isDefectBrowsePanel: false,
       layersSelected: [],
+      isAddLayerModal: false,
+      moveStageParams: {
+        x: 0,
+        y: 0,
+      },
+      upDownCoords: {
+        up: {
+          x: 0,
+          y: 0,
+        },
+        down: {
+          x: 0,
+          y: 0,
+        }
+      }
     };
-    // Биндинг
+
     this.filtersOnChangeAction = this.filtersOnChangeAction.bind(this);
     this.ElementOnDrop = this.ElementOnDrop.bind(this);
     this.MapWrapperOnMouseMove = this.MapWrapperOnMouseMove.bind(this);
@@ -57,13 +89,33 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     this.StageOnMouseUpHandler = this.StageOnMouseUpHandler.bind(this);
     this.StageOnMouseMoveHandler = this.StageOnMouseMoveHandler.bind(this);
     this.defectBrowsePanelWorker = this.defectBrowsePanelWorker.bind(this);
+    this.addLayerModalWorker = this.addLayerModalWorker.bind(this);
+    this.checkWallLayer = this.checkWallLayer.bind(this);
+    this.stageDragEnd = this.stageDragEnd.bind(this);
 
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
 
     Emit.Emitter.addListener('defectBrowsePanelWorkerHandle', this.defectBrowsePanelWorker);
     // Событие для изменения cncFlag
-    Emit.Emitter.addListener('cncFlagChange', this.cncFlagChange)
+    Emit.Emitter.addListener('cncFlagChange', this.cncFlagChange);
 
+    Emit.Emitter.addListener('checkWallLayer', this.checkWallLayer);
+
+  }
+
+  private stageDragEnd(x: number, y: number) {
+    console.log(this.state.source);
+    this.setState({
+      moveStageParams: {
+        x: x,
+        y: y,
+      }
+    });
+  }
+
+  private addLayerModalWorker(modalMode: boolean) {
+    console.log(modalMode);
+    this.setState({ isAddLayerModal: modalMode });
   }
 
   public defectBrowsePanelWorker(value: boolean) {
@@ -73,31 +125,53 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     });
   }
 
+  private checkWallLayer() {
+    const { source, selectedUnit, layersSelected, selectedLayer } = this.state;
+    let index = this.getLayerIndexByType(LayerType.WALLS);
+    let _source = source[selectedUnit];
+
+    if (index === -1) {
+      _source.layers.push(
+          this.layerService.getLayerSourceItem(source[selectedUnit], LayerType.WALLS)
+      );
+    }
+
+    index = this.getLayerIndexByType(LayerType.WALLS);
+    layersSelected.push(index);
+    this.setState({layersSelected, selectedLayer: index});
+  }
+
   private StageOnMouseMoveHandler(e) {
     const { source, selectedUnit, selectedLayer, layersSelected, cursorCoords, isDrawing } = this.state;
+    const clearLength = 25;
+
     if (this.state.cncFlag) {
       if (isDrawing) {
         if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
           if (AppState.State.selectedEl.orientation === Orientation.HORIZONTAL) {
-            source[selectedUnit].layers[selectedLayer].walls!.push({
-              key: 'wall_for_move',
-              startX: cursorCoords.startX,
-              startY: cursorCoords.startY,
-              length: Math.abs(e.evt.clientX + 25) - Math.abs(cursorCoords.startX),
-              orientation: AppState.State.selectedEl.orientation
-            });
+            source[selectedUnit].layers[selectedLayer].walls!.push(
+                this.wallService.getWallSourceItem(
+                    source[selectedUnit].layers[selectedLayer],
+                    (e.evt.clientX - this.state.moveStageParams.x),
+                    (this.state.cursorCoords.startY - this.state.moveStageParams.y),
+                    clearLength,
+                    AppState.State.selectedEl.orientation
+                )
+            );
           } else {
-            source[selectedUnit].layers[selectedLayer].walls!.push({
-              key: 'wall_for_move',
-              startX: cursorCoords.startX,
-              startY: cursorCoords.startY,
-              length: Math.abs(e.evt.clientY + 25) - Math.abs(cursorCoords.startY),
-              orientation: AppState.State.selectedEl.orientation
-            });
+            source[selectedUnit].layers[selectedLayer].walls!.push(
+                this.wallService.getWallSourceItem(
+                    source[selectedUnit].layers[selectedLayer],
+                    (this.state.cursorCoords.startX - this.state.moveStageParams.x),
+                    (e.evt.clientY - this.state.moveStageParams.y),
+                    clearLength,
+                    AppState.State.selectedEl.orientation
+                )
+            );
           }
+          this.setState({source});
+          // this.forceUpdate(() => this.setState({source}));
         }
-
-
       }
     }
   }
@@ -113,7 +187,14 @@ export default class Map extends React.Component<IMapProps, IMapState> {
               startY: e.evt.clientY,
               x: 0,
               y: 0,
-            }
+            },
+          upDownCoords: {
+            up: this.state.upDownCoords.up,
+            down: {
+              x: e.evt.clientX,
+              y: e.evt.clientY,
+            },
+          }
         });
       }
     }
@@ -121,7 +202,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
   private StageOnMouseUpHandler(e) {
     const { source, selectedUnit, selectedLayer, layersSelected, cursorCoords } = this.state;
-
+    console.warn(source[selectedUnit].layers)
     if (this.state.cncFlag) {
       this.setState({
           cncFlag: false,
@@ -131,29 +212,69 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             startY: this.state.cursorCoords.startY,
             x: e.evt.clientX,
             y: e.evt.clientY,
+          },
+          upDownCoords: {
+            up: {
+              x: e.evt.clientX,
+              y: e.evt.clientY,
+            },
+            down: this.state.upDownCoords.down,
           }
       });
       // console.log(this.state.cursorCoords);
       if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
           let count = 0;
           let badEls: WallItem[] = [];
+          let wall;
           if (source[selectedUnit].layers[selectedLayer].walls !== undefined) {
             const _length = source[selectedUnit].layers[selectedLayer].walls!.length;
-            source[selectedUnit].layers[selectedLayer].walls![_length - 1].key = 'source_wall';
+            wall = source[selectedUnit].layers[selectedLayer].walls![_length - 1];
+            wall = this.wallService.getWallSourceItem(
+                source[selectedUnit].layers[selectedLayer],
+                wall.startX,
+                wall.startY,
+                wall.length,
+                wall.orientation,
+            );
+            wall.key = source[selectedUnit].layers[selectedLayer].key + '_wall_' + wall.id;
+            source[selectedUnit].layers[selectedLayer].walls![_length - 1] = wall;
+            console.log(wall);
           }
+          console.warn(source);
           for (let k = 0; k < source[selectedUnit].layers[selectedLayer].walls!.length; k++) {
-            if (source[selectedUnit].layers[selectedLayer].walls![k].key === 'wall_for_move') {
+            if (source[selectedUnit].layers[selectedLayer].walls![k].key!.includes('wall_for_move')) {
               badEls.push(source[selectedUnit].layers[selectedLayer].walls![k]);
               count++;
             }
           }
-          console.log(badEls);
+          // console.log(badEls);
           if (badEls.length !== 0) {
             for (let k = 0; k < badEls.length; k++) {
               let index = source[selectedUnit].layers[selectedLayer].walls!.indexOf(badEls[k]);
               source[selectedUnit].layers[selectedLayer].walls!.splice(index, 1);
             }
           }
+          // простановка новой длины отрисовывающейся стены, потому что маленькие стены равны по 25
+
+          let _walls = source[selectedUnit].layers[selectedLayer].walls;
+          // console.log(this.state.upDownCoords);
+          if (_walls![_walls!.length - 1].orientation === Orientation.HORIZONTAL) {
+            _walls![_walls!.length - 1].length = Math.abs(this.state.cursorCoords.startX - this.state.cursorCoords.x) + 25;
+            if (this.state.upDownCoords.down.x > this.state.upDownCoords.up.x ) {
+              _walls![_walls!.length - 1].startX = this.state.upDownCoords.up.x;
+            } else if (this.state.upDownCoords.down.x < this.state.upDownCoords.up.x) {
+              _walls![_walls!.length - 1].startX = this.state.upDownCoords.down.x;
+            }
+          } else {
+            _walls![_walls!.length - 1].length = Math.abs(this.state.cursorCoords.startY - this.state.cursorCoords.y) + 25;
+            if (this.state.upDownCoords.down.y > this.state.upDownCoords.up.y ) {
+              _walls![_walls!.length - 1].startY = this.state.upDownCoords.up.y;
+            } else if (this.state.upDownCoords.down.y < this.state.upDownCoords.up.y) {
+              _walls![_walls!.length - 1].startY = this.state.upDownCoords.down.y;
+            }
+          }
+
+          // костыльное обновление state
           /* Без этого не работает */
           const _layers = this.state.layersSelected;
           this.setState({
@@ -162,6 +283,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
           this.setState({
             layersSelected: _layers
           });
+          // this.setState({source});
           /* _____________________ */
           console.log(this.state.source);
       } else {
@@ -218,22 +340,14 @@ export default class Map extends React.Component<IMapProps, IMapState> {
   public addElement(clientX: number, clientY: number) {
     const { source, selectedUnit, selectedLayer, layersSelected, cncFlag } = this.state;
     let selected: ElementItem = AppState.State.selectedEl;
-    let stillageWorker = new StillageWorker();
+
 
     if (selected !== undefined) {
       let _layerIndex = this.getLayerIndexByType(selected.type!);
       let layer: MapSourceLayer;
       if (_layerIndex === -1) {
-        let ls = new MapLayerService();
         source[selectedUnit].layers.push(
-            {
-              title:  ls.getLayerNameByType(selected.type!),
-              type: selected.type!,
-              mapIconsType: ls.getMapIconsTypeByLayerType(selected.type!),
-              walls: [],
-              stillages: [],
-              objects: [],
-            }
+            this.layerService.getLayerSourceItem(source[selectedUnit], selected.type!)
         );
         _layerIndex = this.getLayerIndexByType(selected.type!);
       }
@@ -246,61 +360,38 @@ export default class Map extends React.Component<IMapProps, IMapState> {
             source[selectedUnit].layers[selectedLayer].stillages = [];
           }
           layer.stillages!.push(
-              stillageWorker.getStillageSourceItem({ x: clientX, y: clientY }, selected.stillageType!)
+              this.stillageService.getStillageSourceItem(
+                  source[selectedUnit].layers[_layerIndex],
+                  { x: (clientX - this.state.moveStageParams.x), y: (clientY - this.state.moveStageParams.y) },
+                  selected.stillageType!
+              )
           );
         }
       } else {
         if (layer.type === LayerType.LIGHTING) {
           layer.objects!.push(
-              {
-                x: clientX,
-                y: clientY,
-                photo: selected.photo,
-              }
+              this.objectService.getObjectSourceItem(
+                  source[selectedUnit].layers[_layerIndex],
+                  {x: (clientX - this.state.moveStageParams.x), y: (clientY - this.state.moveStageParams.y)},
+                  selected.photo
+              )
           );
         }
       }
       source[selectedUnit].layers[_layerIndex] = layer;
       layersSelected.push(_layerIndex);
-      this.setState({ source, selectedLayer: _layerIndex });
-
+      this.forceUpdate(() => this.setState({ source, selectedLayer: _layerIndex }));
     }
-    /*
-    if (selected !== undefined) {
-      if (selectedLayer !== -1) {
-        if (selected.type === LayerType.STILLAGES) {
-          if (source[selectedUnit].layers[selectedLayer].stillages === undefined) {
-            source[selectedUnit].layers[selectedLayer].stillages = [];
-          }
-          source[selectedUnit].layers[selectedLayer].stillages!.push(
-            stillageWorker.getStillageSourceItem({ x: clientX, y: clientY }, selected.stillageType!)
-          );
-        } else if (selected.type === LayerType.ABSTRACTS) {
-          if (source[selectedUnit].layers[selectedLayer].objects === undefined) {
-            source[selectedUnit].layers[selectedLayer].objects = [];
-          }
-          source[selectedUnit].layers[selectedLayer].objects!.push(
-            {
-              x: clientX,
-              y: clientY,
-              photo: selected.photo,
-            }
-          );
-
-        } else if (selected.type === LayerType.WALLS) {
-          alert('Чтобы отрисовать стену, кликните на элемент стены, зажмите левую кнопку мыши на карте и потяните.');
-        }
-      } else {
-        alert('Выберите слой');
-      }
-      this.setState({ cncFlag: !this.state.cncFlag, source });
-    }
-     */
   }
 
   public stageOnClickHandler(e) {
     if (this.state.cncFlag) {
-      this.addElement(e.clientX, e.clientY);
+      let selected: ElementItem = AppState.State.selectedEl;
+      if (selected != undefined) {
+
+      } else {
+        this.addElement(e.clientX, e.clientY);
+      }
     }
   }
 
@@ -416,39 +507,46 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
     let height = window.innerHeight;
 
+    // вывод списка блоков
     for (let i = 0; i < source.length; i++) {
       unitsTitles.push(
-        <div onClick={() => {
-          this.setState({ ...this.state, ...{ selectedUnit: i, selectedLayer: -1 } });
-        }} className="unit-title">
-          <span style={{
-            fontWeight: selectedUnit === i ? 'bold' : 'normal',
-            color: selectedUnit === i ? '#2f00ff' : 'black'
+        <div
+            key={source[i].key + '_unitNameDiv_' + i}
+            onClick={() => {
+              this.setState({ ...this.state, ...{ selectedUnit: i, selectedLayer: -1, layersSelected: [] } });
+            }} className="unit-title">
+          <span
+            key={source[i].key + '_unitNameDivSpan_' + i}
+            style={{
+              fontWeight: selectedUnit === i ? 'bold' : 'normal',
+              color: selectedUnit === i ? '#2f00ff' : 'black'
           }}>{source[i].title}</span>
         </div>
       );
     }
-
+    layersTitles = [];
+    /* добавления слоя для отображения всех слоев */
     layersTitles.push(
-      <div key={"layerTitle_" + selectedUnit + "_" + -1} style={{
+      <div key={source[selectedUnit].key + '_layerNameDiv_-1'} style={{
         fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
         color: selectedLayer === -1 ? '#2f00ff' : 'black'
       }} className="layer-title" onClick={() => {
         this.setState({ layersSelected, selectedLayer: -1 })
       }}>
-        Все слои
+        все слои
       </div>
     );
+    /* добавление заголовков слоев */
     for (let i = 0; i < source[selectedUnit].layers.length; i++) {
       layersTitles.push(
-        <div style={{
+        <div key={source[selectedUnit].layers[i].key + '_layerNameDiv_' + i} style={{
           fontWeight: layersSelected.includes(i, 0) ? 'bold' : 'normal',
           color: layersSelected.includes(i, 0) ? '#2f00ff' : 'black'
         }} onClick={() => {
-            this.selectLayerToList(i)
-        }} key={"layerTitle_" + selectedUnit + "_" + i} className="layer-title">
+            this.selectLayerToList(i);
+        }} className="layer-title">
           <input
-            key={"layerTitle_checkbox_" + selectedUnit + "_" + i}
+            key={source[selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
             onChange={() => { console.log(i) }}
             style={{ outline: 'none', marginRight: 5 }}
             checked={ layersSelected.includes(i, 0) }
@@ -457,20 +555,30 @@ export default class Map extends React.Component<IMapProps, IMapState> {
       );
     }
 
+    console.log('------------------------SHAPES RENDERING------------------------')
+    // инициализация фигур сервисов
+    let wS = new WallService();
+    let sS = new StillageService();
     if (selectedLayer === -1) {
       let layerNum = 0;
       source[selectedUnit].layers.forEach(element => {
         if (element.objects !== undefined) {
           for (let i = 0; i < element.objects!.length; i++) {
             objects.push(
-              <MapObject key={"objects_" + selectedUnit + "_" + layerNum + "_" + i} source={element.objects![i]} />
+              <MapObject
+                  key={element.objects[i].key}
+                  source={element.objects![i]}
+              />
             );
           }
         }
         if (element.stillages !== undefined) {
           for (let i = 0; i < element.stillages!.length; i++) {
             stillages.push(
-              <Stillage key={"stillage_" + selectedUnit + "_" + layerNum + "_" + i} source={element.stillages![i]} />
+              <Stillage
+                  key={element.stillages[i].key}
+                  source={element.stillages![i]}
+              />
             );
           }
         }
@@ -478,7 +586,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
           for (let i = 0; i < element.walls!.length; i++) {
             walls.push(
               <Wall
-                key={"wall_" + selectedUnit + "_" + layerNum + "_" + i}
+                key={element.walls[i].key}
                 source={element.walls[i]}
               />
             );
@@ -493,16 +601,19 @@ export default class Map extends React.Component<IMapProps, IMapState> {
                   if (source[selectedUnit].layers[el].stillages !== undefined) {
                     for (let i = 0; i < source[selectedUnit].layers[el].stillages!.length; i++) {
                       stillages.push(
-                        <Stillage key={"stillage_" + selectedUnit + "_" + el + "_" + i}
-                          source={source[selectedUnit].layers[el].stillages![i]} />
+                        <Stillage
+                            key={source[selectedUnit].layers[el].stillages![i].key}
+                            source={source[selectedUnit].layers[el].stillages![i]}
+                        />
                       );
                     }
                   }
                   if (source[selectedUnit].layers[el].walls !== undefined) {
                     for (let i = 0; i < source[selectedUnit].layers[el].walls!.length; i++) {
+                      let element = source[selectedUnit].layers[el].walls![i];
                       walls.push(
                         <Wall
-                          key={"wall_" + selectedUnit + "_" + el + "_" + i}
+                          key={element.key}
                           source={source[selectedUnit].layers[el].walls![i]}
                         />
                       );
@@ -512,7 +623,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
                     for (let i = 0; i < source[selectedUnit].layers[el].objects!.length; i++) {
                       walls.push(
                         <MapObject
-                          key={"object_" + selectedUnit + "_" + el + "_" + i}
+                          key={source[selectedUnit].layers[el].objects![i].key}
                           source={source[selectedUnit].layers[el].objects![i]}
                         />
                       );
@@ -526,14 +637,14 @@ export default class Map extends React.Component<IMapProps, IMapState> {
 
 
 
-    let main, blocks, filters, elements, elementsPanel, defectBrowsePanel;
+    let main, blocks, filters, elements, elementsPanel, defectBrowsePanel, addLayerSubModal;
 
     // elementsPanel = ;
 
     blocks = (
       <div style={{ background: '#E0E0E0' }} className="units-selector">
         <div style={{ background: '' }} className="unit-header-title">
-          <span style={{ height: '50%' }}>Выбор блока</span>
+          <span style={{ height: '50%' }}>выбор блока</span>
         </div>
         <div style={{ background: '' }} className="unit-content">
           {unitsTitles}
@@ -543,7 +654,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     filters = (
       <div className="filters-selector" style={{ background: '#E0E0E0' }}>
         <div style={{ background: '' }} className="filter-header-title">
-          <span style={{ height: '50%' }}>Фильтры</span>
+          <span style={{ height: '50%' }}>фильтры</span>
         </div>
         <div style={{ background: '' }} className="filter-content">
           <div className="input-checkbox">
@@ -564,6 +675,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
     // elements = <ComponentsMenuBar />;
 
     elementsPanel = <ElementsPanel source={ElementSource} />;
+    addLayerSubModal = <AddLayerSubModal />
 
     if (isDefectBrowsePanel) {
       defectBrowsePanel = <DefectBrowsePanel />;
@@ -600,6 +712,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
           onTouchStart={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => {  } }
           onTouchEnd={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => {  } }
 
+          onDragEnd={e => {this.stageDragEnd(e.target.x(), e.target.y())}}
 
           onMouseMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => {  } }
           onMouseDown={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => {  } }
@@ -632,6 +745,7 @@ export default class Map extends React.Component<IMapProps, IMapState> {
         {layersTitles}
       </div>
       {defectBrowsePanel}
+      {/*{addLayerSubModal}*/}
     </div>);
 
     // let components = [];

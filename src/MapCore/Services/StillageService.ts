@@ -2,8 +2,11 @@ import MapStillageType from "../Models/Enums/MapStillageType";
 import Orientation from "../Models/Enums/Orientation";
 import SignaturePosition from "../Models/Enums/SignaturePosition";
 import StillageSize from "../Models/Enums/StillageSize/StillageSize";
+import StillageItem from "../Models/ArrayItems/StillageItem";
+import MapSourceUnit from "../Models/MapSourceUnit";
+import MapSourceLayer from "../Models/MapSourceLayer";
 
-export default class StillageWorker {
+export default class StillageService {
 
     public smallPlaceSignatures = [
         {
@@ -31,11 +34,21 @@ export default class StillageWorker {
         },
     ];
 
-    public getStillageSourceItem(coords: { x: number, y: number }, type: MapStillageType) {
+    public getStillageSourceItem(selectedLayer: MapSourceLayer, coords: { x: number, y: number }, type: MapStillageType) {
+        let _id = -50; let _key = '';
+        for (const el of selectedLayer.stillages!) {
+            if (el.id > _id) {
+                _id = el.id;
+            }
+        }
+        _id++;
+        _key = selectedLayer.key + '_stillage_' + _id.toString();
+
         switch (type) {
             case MapStillageType.NORMAL_BOTTOM: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.HORIZONTAL,
@@ -50,7 +63,8 @@ export default class StillageWorker {
             }
             case MapStillageType.NORMAL_TOP: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.HORIZONTAL,
@@ -65,7 +79,8 @@ export default class StillageWorker {
             }
             case MapStillageType.NORMAL_LEFT_VERT: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.VERTICAL,
@@ -80,7 +95,8 @@ export default class StillageWorker {
             }
             case MapStillageType.NORMAL_RIGHT_VERT: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.VERTICAL,
@@ -95,7 +111,8 @@ export default class StillageWorker {
             }
             case MapStillageType.SMALL_BOTTOM: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.HORIZONTAL,
@@ -110,7 +127,8 @@ export default class StillageWorker {
             }
             case MapStillageType.SMALL_TOP: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.HORIZONTAL,
@@ -125,7 +143,8 @@ export default class StillageWorker {
             }
             case MapStillageType.SMALL_LEFT_VERT: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.VERTICAL,
@@ -140,7 +159,8 @@ export default class StillageWorker {
             }
             case MapStillageType.SMALL_RIGHT_VERT: {
                 return {
-                    title: '',
+                    id: _id,
+                    key: _key,
                     x: coords.x,
                     y: coords.y,
                     orientation: Orientation.VERTICAL,
@@ -154,5 +174,13 @@ export default class StillageWorker {
                 };
             }
         }
+    }
+
+    public getStillageUniqKey(element: StillageItem) {
+        return 'stillage' + element.x + '_' + element.y + '_' + element.size + '_' + element.orientation;
+    }
+
+    public getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
     }
 }

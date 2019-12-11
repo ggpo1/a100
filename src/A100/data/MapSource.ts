@@ -9,51 +9,22 @@ import MapIconsType from "../../MapCore/Models/Enums/MapIconsType";
 
 const MapSource: Array<MapSourceUnit> = [
 
-    {
-        title: 'Склад',
-        layers: [
 
-            {
-                title: 'Стены',
-                type: LayerType.WALLS,
-                mapIconsType: MapIconsType.DRAWING,
-                walls: [
-                    {
-                        key: 'source_wall',
-                        startX: 600,
-                        startY: 200,
-                        length: 250,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        key: 'source_wall',
-                        startX: 600,
-                        startY: 300,
-                        length: 250,
-                        orientation: Orientation.VERTICAL,
-                    },
-                ]
-            },
-        ]
-    },
     {
+        id: 0,
+        key: 'unit_0',
         title: 'Блок 1',
         layers: [
             {
+                id: 0,
+                key: 'unit_0_layer_0',
                 title: 'Стеллажи',
                 type: LayerType.STILLAGES,
                 mapIconsType: MapIconsType.DRAWING,
-                // walls: [
-                //     {
-                //         startX: 500,
-                //         startY: 100,
-                //         length: 700,
-                //         orientation: Orientation.VERTICAL,
-                //     },
-                // ],
                 stillages: [
                     {
-                        title: '1.1.1',
+                        id: 0,
+                        key: 'unit_0_layer_0_stillage_0',
                         x: 250,
                         y: 456,
                         orientation: Orientation.HORIZONTAL,
@@ -94,169 +65,67 @@ const MapSource: Array<MapSourceUnit> = [
                             }
                         ]
                     },
-                    {
-                        title: '1.1.2',
-                        x: 100,
-                        y: 140,
-                        orientation: Orientation.VERTICAL,
-                        signature: {
-                                title: '1',
-                                position: SignaturePosition.RIGHT,
-                        },
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '1',
-                            },
-                            {
-                                place: 2,
-                                title: '2',
-                            },
-                            {
-                                place: 3,
-                                title: '3',
-                            },
-                        ],
-                        viks: [
-                            {
-                                place: 1,
-                                level: 2,
-                                color: DefectColors.RED
-                            }
-                        ]
-                    },
-                    {
-                        title: '1.1.2',
-                        x: 200,
-                        y: 140,
-                        orientation: Orientation.VERTICAL,
-                        signature: {
-                                title: '1',
-                                position: SignaturePosition.RIGHT,
-                        },
-                        size: StillageSize.SMALL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '1',
-                            },
-                            {
-                                place: 2,
-                                title: '2',
-                            },
-                            {
-                                place: 3,
-                                title: '3',
-                            },
-                        ],
-                        viks: [
-                            {
-                                place: 1,
-                                level: 2,
-                                color: DefectColors.RED
-                            }
-                        ]
-                    },
                 ]
             },
             {
+                id: 1,
+                key: 'unit_0_layer_1',
                 title: 'Освещение',
-                type: LayerType.ABSTRACTS,
+                type: LayerType.LIGHTING,
                 mapIconsType: MapIconsType.IMAGE,
                 objects: [
                     {
+                        id: 0,
+                        key: 'unit_0_layer_1_object_0',
                         x: 450,
                         y: 150,
                         photo: Images.lightbulb,
-                    },
-                    {
-                        x: 450,
-                        y: 700,
-                        photo: Images.idea,
-                    },
-                    {
-                        x: 720,
-                        y: 150,
-                        photo: Images.lightbulb,
-                    },
-                    {
-                        x: 150,
-                        y: 150,
-                        photo: Images.lightbulb,
-                    },
-                    {
-                        x: 720,
-                        y: 700,
-                        photo: Images.lightbulb,
-                    },
-                    {
-                        x: 150,
-                        y: 700,
-                        photo: Images.idea,
-                    },
-                    {
-                        x: 450,
-                        y: 420,
-                        photo: Images.lightbulb,
-                    },
-                    {
-                        x: 720,
-                        y: 420,
-                        photo: Images.lightbulb,
-                    },
-                    {
-                        x: 150,
-                        y: 420,
-                        photo: Images.idea,
                     },
                 ]
             },
             {
+                id: 2,
+                key: 'unit_0_layer_2',
                 title: 'Стены',
                 type: LayerType.WALLS,
                 mapIconsType: MapIconsType.DRAWING,
                 walls: [
                     {
-                        key: 'source_wall',
+                        id: 0,
+                        key: 'unit_0_layer_2_wall_0',
                         startX: 10,
                         startY: 100,
                         length: 950,
                         orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        key: 'source_wall',
-                        startX: 10,
-                        startY: 100,
-                        length: 700,
-                        orientation: Orientation.VERTICAL,
-                    },
-                    {
-                        key: 'source_wall',
-                        startX: 10,
-                        startY: 790,
-                        length: 950,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        key: 'source_wall',
-                        startX: 950,
-                        startY: 100,
-                        length: 400,
-                        orientation: Orientation.VERTICAL,
-                    },
-                    {
-                        key: 'source_wall',
-                        startX: 950,
-                        startY: 650,
-                        length: 150,
-                        orientation: Orientation.VERTICAL,
                     },
                 ]
             },
         ]
     },
-
+    {
+        id: 1,
+        key: 'unit_1',
+        title: 'Склад',
+        layers: [
+            {
+                id: 0,
+                key: 'unit_1_layer_0',
+                title: 'Стены',
+                type: LayerType.WALLS,
+                mapIconsType: MapIconsType.DRAWING,
+                walls: [
+                    {
+                        id: 0,
+                        key: 'unit_1_layer_0_wall_0',
+                        startX: 300,
+                        startY: 300,
+                        length: 700,
+                        orientation: Orientation.HORIZONTAL,
+                    },
+                ],
+            }
+        ]
+    },
 
 ];
 

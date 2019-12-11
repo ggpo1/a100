@@ -1,7 +1,8 @@
 import Orientation from './../Enums/Orientation';
 
 interface WallItem {
-    key?: string,
+    id: number,
+    key: string,
     startX: number,
     startY: number,
     length: number,
