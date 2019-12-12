@@ -16,6 +16,22 @@ const MapSource: Array<MapSourceUnit> = [
         title: 'Блок 1',
         layers: [
             {
+                id: 1,
+                key: 'unit_0_layer_1',
+                title: 'Освещение',
+                type: LayerType.LIGHTING,
+                mapIconsType: MapIconsType.IMAGE,
+                objects: [
+                    {
+                        id: 0,
+                        key: 'unit_0_layer_1_object_0',
+                        x: 450,
+                        y: 150,
+                        photo: Images.lightbulb,
+                    },
+                ]
+            },
+            {
                 id: 0,
                 key: 'unit_0_layer_0',
                 title: 'Стеллажи',
@@ -64,22 +80,6 @@ const MapSource: Array<MapSourceUnit> = [
                                 color: DefectColors.RED
                             }
                         ]
-                    },
-                ]
-            },
-            {
-                id: 1,
-                key: 'unit_0_layer_1',
-                title: 'Освещение',
-                type: LayerType.LIGHTING,
-                mapIconsType: MapIconsType.IMAGE,
-                objects: [
-                    {
-                        id: 0,
-                        key: 'unit_0_layer_1_object_0',
-                        x: 450,
-                        y: 150,
-                        photo: Images.lightbulb,
                     },
                 ]
             },

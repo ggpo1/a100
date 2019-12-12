@@ -12,11 +12,9 @@ export default class WallService {
                               orientation: Orientation
     ): WallItem {
         let newWall;
-        let _id = -50; let _key = ''; let ids: number[] = [];
-        for (const el of selectedLayer.walls!) {
-            ids.push(el.id);
-        }
-        _id = Math.max.apply(null, ids);
+        let _id; let _key = '';
+
+        _id = this.getMaxIDBinary(selectedLayer.walls!);
         _id++;
         _key = selectedLayer.key + '_wall_' + _id.toString();
 
@@ -31,5 +29,29 @@ export default class WallService {
 
 
         return newWall;
+    }
+
+    public getMaxIDBinary(list: Array<WallItem>) {
+        let startI = 0; let endI = list.length - 1;
+
+        let _max = list[0].id;
+        while (true) {
+            if (list[startI].id > _max && list[startI].id >= list[endI].id) {
+                _max = list[startI].id;
+            } else if (list[endI].id > _max && list[endI].id >= list[startI].id) {
+                _max = list[endI].id;
+            }
+            if (list.length % 2 !== 0) {
+                if (startI === endI) {
+                    return _max;
+                }
+            } else {
+                if ((list.length / 2) === startI) {
+                    return _max;
+                }
+            }
+            startI++;
+            endI--;
+        }
     }
 }

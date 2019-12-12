@@ -25,6 +25,33 @@ export default class LayerService {
         }
     }
 
+    public getLayerIndexByTypeBinary(list: Array<MapSourceLayer>, type: LayerType) {
+        let start = 0; let end = list.length - 1;
+
+        list.sort((a, b) => {
+            if (a.type > b.type) {
+                return 1;
+            }
+            if (a.type < b.type) {
+                return -1;
+            }
+            // a должно быть равным b
+            return 0;
+        });
+
+        while (start <= end) {
+            let mid = Math.floor((start + end)/2);
+            if (list[mid].type === type) {
+                return mid;
+            } else if (list[mid].type < type) {
+                start = mid + 1;
+            } else {
+                end = mid - 1;
+            }
+        }
+        return -1;
+    }
+
     private getLayerNameByType(type: LayerType): string {
         switch (type) {
             case LayerType.STILLAGES: return 'Стеллажи';

@@ -43,7 +43,7 @@ export default class StillageService {
         }
         _id++;
         _key = selectedLayer.key + '_stillage_' + _id.toString();
-
+        this.maxBinarySearch(selectedLayer.stillages!);
         switch (type) {
             case MapStillageType.NORMAL_BOTTOM: {
                 return {
@@ -176,11 +176,22 @@ export default class StillageService {
         }
     }
 
-    public getStillageUniqKey(element: StillageItem) {
-        return 'stillage' + element.x + '_' + element.y + '_' + element.size + '_' + element.orientation;
+    public maxBinarySearch(list: Array<StillageItem>) {
+        let start = 0;
+        let end = list.length - 1;
+        let max = -50;
+
+        while (start <= end ) {
+            let mid = Math.floor((start + end) / 2);
+            if (list[mid].id > max) {
+                end = mid - 1;
+                max = list[mid].id;
+            } else {
+                start = mid + 1;
+            }
+        }
+        console.error('BINARY MAX: ' + max);
+        return max;
     }
 
-    public getRandomInt(max) {
-        return Math.floor(Math.random() * Math.floor(max));
-    }
 }

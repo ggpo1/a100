@@ -127,7 +127,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   private checkWallLayer() {
     const { source, selectedUnit, layersSelected, selectedLayer } = this.state;
-    let index = this.getLayerIndexByType(LayerType.WALLS);
+    // let _sU = selectedUnit;
+    // let _sL = selectedLayer;
+    // let _lS = layersSelected;
+    //
+    // this.setState({ ...this.state, ...{ selectedUnit: 0, selectedLayer: -1, layersSelected: [] } });
+    // this.setState({ ...this.state, ...{ selectedUnit: _sU, selectedLayer: _sL, layersSelected: _lS } });
+
+    let index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
     let _source = source[selectedUnit];
 
     if (index === -1) {
@@ -136,7 +143,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       );
     }
 
-    index = this.getLayerIndexByType(LayerType.WALLS);
+    index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
     layersSelected.push(index);
     this.setState({layersSelected, selectedLayer: index});
   }
@@ -169,7 +176,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 )
             );
           }
-          this.setState({source});
+          // this.setState({source});
           // this.forceUpdate(() => this.setState({source}));
         }
       }
@@ -201,8 +208,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   private StageOnMouseUpHandler(e) {
-    const { source, selectedUnit, selectedLayer, layersSelected, cursorCoords } = this.state;
-    console.warn(source[selectedUnit].layers)
+
+    // console.warn(source[selectedUnit].layers)
     if (this.state.cncFlag) {
       this.setState({
           cncFlag: false,
@@ -221,6 +228,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             down: this.state.upDownCoords.down,
           }
       });
+      const { source, selectedUnit, selectedLayer, layersSelected, cursorCoords } = this.state;
       // console.log(this.state.cursorCoords);
       if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
           let count = 0;
@@ -257,21 +265,34 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           // простановка новой длины отрисовывающейся стены, потому что маленькие стены равны по 25
 
           let _walls = source[selectedUnit].layers[selectedLayer].walls;
-          // console.log(this.state.upDownCoords);
-          if (_walls![_walls!.length - 1].orientation === Orientation.HORIZONTAL) {
-            _walls![_walls!.length - 1].length = Math.abs(this.state.cursorCoords.startX - this.state.cursorCoords.x) + 25;
-            if (this.state.upDownCoords.down.x > this.state.upDownCoords.up.x ) {
-              _walls![_walls!.length - 1].startX = this.state.upDownCoords.up.x;
-            } else if (this.state.upDownCoords.down.x < this.state.upDownCoords.up.x) {
-              _walls![_walls!.length - 1].startX = this.state.upDownCoords.down.x;
-            }
+          let lastWall = _walls![_walls!.length - 1];
+
+          if (lastWall.orientation === Orientation.HORIZONTAL) {
+            lastWall.length = Math.abs(this.state.cursorCoords.startX - this.state.cursorCoords.x) + 25;
           } else {
-            _walls![_walls!.length - 1].length = Math.abs(this.state.cursorCoords.startY - this.state.cursorCoords.y) + 25;
-            if (this.state.upDownCoords.down.y > this.state.upDownCoords.up.y ) {
-              _walls![_walls!.length - 1].startY = this.state.upDownCoords.up.y;
-            } else if (this.state.upDownCoords.down.y < this.state.upDownCoords.up.y) {
-              _walls![_walls!.length - 1].startY = this.state.upDownCoords.down.y;
+            lastWall.length = Math.abs(this.state.cursorCoords.startY - this.state.cursorCoords.y) + 25;
+          }
+
+          if (lastWall.orientation === Orientation.HORIZONTAL) {
+
+            if (this.state.upDownCoords.down.x <= this.state.upDownCoords.up.x) {
+              if (this.state.upDownCoords.down.x < this.state.upDownCoords.up.x) {
+                lastWall.startX = this.state.upDownCoords.down.x - this.state.moveStageParams.x;
+              }
+            } else {
+              lastWall.startX = this.state.upDownCoords.up.x - this.state.moveStageParams.x;
             }
+
+          } else {
+
+            if (this.state.upDownCoords.down.y <= this.state.upDownCoords.up.y) {
+              if (this.state.upDownCoords.down.y < this.state.upDownCoords.up.y) {
+                lastWall.startY = this.state.upDownCoords.down.y - this.state.moveStageParams.y;
+              }
+            } else {
+              lastWall.startY = this.state.upDownCoords.up.y - this.state.moveStageParams.y;
+            }
+
           }
 
           // костыльное обновление state
@@ -325,17 +346,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     });
   }
 
-  public getLayerIndexByType(type: LayerType) {
-    const { source, selectedUnit } = this.state;
-    let layerIndex = -1;
-    for (let i = 0; i < source[selectedUnit].layers.length; i++) {
-      const el = source[selectedUnit].layers[i];
-      if (type === el.type) {
-        layerIndex = i;
-      }
-    }
-    return layerIndex;
-  }
+
 
   public addElement(clientX: number, clientY: number) {
     const { source, selectedUnit, selectedLayer, layersSelected, cncFlag } = this.state;
@@ -343,13 +354,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     if (selected !== undefined) {
-      let _layerIndex = this.getLayerIndexByType(selected.type!);
+      let _layerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, selected.type!);
       let layer: MapSourceLayer;
       if (_layerIndex === -1) {
         source[selectedUnit].layers.push(
             this.layerService.getLayerSourceItem(source[selectedUnit], selected.type!)
         );
-        _layerIndex = this.getLayerIndexByType(selected.type!);
+        _layerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, selected.type!);
       }
 
       layer = source[selectedUnit].layers[_layerIndex];
@@ -687,6 +698,18 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         check = true;
       }
     }
+
+    /* очистка списка стен от дублей с одинаковыми key */
+    let keys: string[] = [];
+    walls.forEach((el) => {
+      if (keys.indexOf(el.key!.toString()) === -1) {
+        keys.push(el.key!.toString());
+      }
+    });
+    walls = walls.filter((item, index) => {
+      return index === keys.indexOf(item.key!.toString());
+    });
+
 
     main = (<div className="map-wrapper"
       onDragOver={(e) => {
