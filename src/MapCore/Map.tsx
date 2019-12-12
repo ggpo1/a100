@@ -126,13 +126,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   private checkWallLayer() {
-    const { source, selectedUnit, layersSelected, selectedLayer } = this.state;
-    // let _sU = selectedUnit;
-    // let _sL = selectedLayer;
-    // let _lS = layersSelected;
-    //
-    // this.setState({ ...this.state, ...{ selectedUnit: 0, selectedLayer: -1, layersSelected: [] } });
-    // this.setState({ ...this.state, ...{ selectedUnit: _sU, selectedLayer: _sL, layersSelected: _lS } });
+    const { source, selectedUnit, layersSelected } = this.state;
 
     let index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
     let _source = source[selectedUnit];
@@ -149,7 +143,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   private StageOnMouseMoveHandler(e) {
-    const { source, selectedUnit, selectedLayer, layersSelected, cursorCoords, isDrawing } = this.state;
+    const { source, selectedUnit, selectedLayer, isDrawing } = this.state;
     const clearLength = 25;
 
     if (this.state.cncFlag) {
@@ -176,8 +170,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 )
             );
           }
-          // this.setState({source});
-          // this.forceUpdate(() => this.setState({source}));
         }
       }
     }
@@ -208,8 +200,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   private StageOnMouseUpHandler(e) {
-
-    // console.warn(source[selectedUnit].layers)
     if (this.state.cncFlag) {
       this.setState({
           cncFlag: false,
@@ -228,8 +218,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             down: this.state.upDownCoords.down,
           }
       });
-      const { source, selectedUnit, selectedLayer, layersSelected, cursorCoords } = this.state;
-      // console.log(this.state.cursorCoords);
+      const { source, selectedUnit, selectedLayer } = this.state;
       if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
           let count = 0;
           let badEls: WallItem[] = [];
@@ -246,16 +235,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             );
             wall.key = source[selectedUnit].layers[selectedLayer].key + '_wall_' + wall.id;
             source[selectedUnit].layers[selectedLayer].walls![_length - 1] = wall;
-            console.log(wall);
           }
-          console.warn(source);
           for (let k = 0; k < source[selectedUnit].layers[selectedLayer].walls!.length; k++) {
             if (source[selectedUnit].layers[selectedLayer].walls![k].key!.includes('wall_for_move')) {
               badEls.push(source[selectedUnit].layers[selectedLayer].walls![k]);
               count++;
             }
           }
-          // console.log(badEls);
+
           if (badEls.length !== 0) {
             for (let k = 0; k < badEls.length; k++) {
               let index = source[selectedUnit].layers[selectedLayer].walls!.indexOf(badEls[k]);
@@ -304,11 +291,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           this.setState({
             layersSelected: _layers
           });
-          // this.setState({source});
           /* _____________________ */
           console.log(this.state.source);
-      } else {
-        alert('Выберите слой со стенами!');
       }
     }
   }
@@ -426,54 +410,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   };
 
   public filtersOnChangeAction(checkName) {
-    // switch (checkName) {
-    //   case 'onlyRed':
-    //     this.setState({ ...this.state, ...{ isOnlyRed: !this.state.isOnlyRed } });
-    //     break;
-    //
-    //   default:
-    //     break;
-    // }
+
   }
 
-  handleMouseDownRect = e => {
-    e.target.setAttrs({
-      shadowOffset: {
-        x: 2,
-        y: 2
-      },
-      shadowColor: 'grey',
-      scaleX: 1.1,
-      scaleY: 1.1
-    });
-  };
-
-  handleMouseMove = e => {
-    console.log("dragged")
-    // if (this.state.isMouseDown) {
-    //   // console.log('mouse down');
-    // } else {
-    //   // console.log('mouse not down');
-    // }
-  };
-
-  handleMouseDown = e => {
-    //stage.getPointerPosition().x
-    //stage.getPointerPosition().y
-    this.setState({
-      ...this.state,
-      ...{ isMouseDown: true, }
-    })
-    // 
-    // stage.
-  };
-
-  handleMouseUp = e => {
-    this.setState({
-      ...this.state,
-      ...{ isMouseDown: false, }
-    })
-  };
 
   handleWheel = e => {
     e.evt.preventDefault();
@@ -494,10 +433,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       stageScale: newScale,
       stageX:
         -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale,
-      // (newScale * -1),
       stageY:
         -(mousePointTo.y - stage.getPointerPosition().y / newScale) * newScale
-      // (newScale * -1),
     });
   };
 
@@ -648,9 +585,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
 
-    let main, blocks, filters, elements, elementsPanel, defectBrowsePanel, addLayerSubModal;
-
-    // elementsPanel = ;
+    let main, blocks, filters, elementsPanel, defectBrowsePanel, addLayerSubModal;
 
     blocks = (
       <div style={{ background: '#E0E0E0' }} className="units-selector">
@@ -683,10 +618,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         </div>
       </div>
     );
-    // elements = <ComponentsMenuBar />;
 
     elementsPanel = <ElementsPanel source={ElementSource} />;
-    addLayerSubModal = <AddLayerSubModal />
 
     if (isDefectBrowsePanel) {
       defectBrowsePanel = <DefectBrowsePanel />;
@@ -720,12 +653,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     >
 
       <div className="stage-wrapper"
-        // events
         onDrop={(e) => { this.ElementOnDrop(e) }}
         onClick={(e) => { this.stageOnClickHandler(e) }}
         onMouseMove={(e) => { this.MapWrapperOnMouseMove(e) }}
-           onTouchMove={(e) => { this.MapWrapperOnMouseMove(e) }}
-        //
+        onTouchMove={(e) => { this.MapWrapperOnMouseMove(e) }}
         id={"stageWrapper"}
       >
         <Stage
@@ -768,11 +699,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         {layersTitles}
       </div>
       {defectBrowsePanel}
-      {/*{addLayerSubModal}*/}
     </div>);
-
-    // let components = [];
-
     return main;
   }
 }
