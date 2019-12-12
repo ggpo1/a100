@@ -10,6 +10,7 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
         super(props);
 
         this.state = {
+            sourceKey: this.props.sourceKey,
             parentX: this.props.parentX,
             parentY: this.props.parentY,
             objectSource: this.props.objectSource,
@@ -22,12 +23,13 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
     }
 
     render() {
-        const { parentX, parentY, objectSource, labelMode } = this.state;
+        const { sourceKey, parentX, parentY, objectSource, labelMode } = this.state;
         let startLabelButton, endLabelButton;
         if (objectSource !== undefined) {
             if (objectSource.orientation === Orientation.HORIZONTAL) {
                 startLabelButton = (
                     <Circle
+                        key={sourceKey + '_startLabelButton'}
                         onMouseOver={() => { this.OnMouseHandler(true) }}
                         onMouseLeave={() => { this.OnMouseHandler(false) }}
                         radius={10.5}
@@ -40,6 +42,7 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
                 );
                 endLabelButton = (
                     <Circle
+                        key={sourceKey + '_endLabelButton'}
                         onMouseOver={() => { this.OnMouseHandler(true) }}
                         onMouseLeave={() => { this.OnMouseHandler(false) }}
                         radius={10.5}
@@ -53,6 +56,7 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
             } else if (objectSource.orientation === Orientation.VERTICAL) {
                 startLabelButton = (
                     <Circle
+                        key={sourceKey + '_startLabelButton'}
                         onMouseOver={() => { this.OnMouseHandler(true) }}
                         onMouseLeave={() => { this.OnMouseHandler(false) }}
                         radius={10.5}
@@ -65,6 +69,7 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
                 );
                 endLabelButton = (
                     <Circle
+                        key={sourceKey + '_endLabelButton'}
                         onMouseOver={() => { this.OnMouseHandler(true) }}
                         onMouseLeave={() => { this.OnMouseHandler(false) }}
                         radius={10.5}

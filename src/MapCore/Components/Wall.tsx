@@ -51,7 +51,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
         if (isAddLabelButton) {
             labelButton = (
                 <LabelButton
-                    key={"labelButton_" + source.startX + "_" + source.startY + "_" + source.length}
+                    sourceKey={source.key + '_labelButton'}
                     parentX={source.startX}
                     parentY={source.startY}
                     objectSource={source}
@@ -62,7 +62,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
         let wall = (
             <Rect
                 key={source.key + '_react'}
-                // onClick={() => { this.OnMouseHandler(true) }}
+                onClick={() => { this.OnMouseHandler(true) }}
                 draggable={false}
                 onMouseDown={this.WallOnMouseDownHandler}
                 x={source.startX}
@@ -75,6 +75,6 @@ export default class Wall extends Component<IWallProps, IWallState> {
         );
         console.log('\t' + wall.key);
         console.log('---------------------------------------------');
-        return [wall];
+        return [wall, labelButton];
     }
 }

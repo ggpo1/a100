@@ -98,7 +98,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('defectBrowsePanelWorkerHandle', this.defectBrowsePanelWorker);
     // Событие для изменения cncFlag
     Emit.Emitter.addListener('cncFlagChange', this.cncFlagChange);
-
+    // Событие для проверки слоя для отрисовки при нажтии на элемент в панели элемента
     Emit.Emitter.addListener('checkWallLayer', this.checkWallLayer);
 
   }
@@ -252,35 +252,12 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           // простановка новой длины отрисовывающейся стены, потому что маленькие стены равны по 25
 
           let _walls = source[selectedUnit].layers[selectedLayer].walls;
-          let lastWall = _walls![_walls!.length - 1];
-
-          if (lastWall.orientation === Orientation.HORIZONTAL) {
-            lastWall.length = Math.abs(this.state.cursorCoords.startX - this.state.cursorCoords.x) + 25;
-          } else {
-            lastWall.length = Math.abs(this.state.cursorCoords.startY - this.state.cursorCoords.y) + 25;
-          }
-
-          if (lastWall.orientation === Orientation.HORIZONTAL) {
-
-            if (this.state.upDownCoords.down.x <= this.state.upDownCoords.up.x) {
-              if (this.state.upDownCoords.down.x < this.state.upDownCoords.up.x) {
-                lastWall.startX = this.state.upDownCoords.down.x - this.state.moveStageParams.x;
-              }
-            } else {
-              lastWall.startX = this.state.upDownCoords.up.x - this.state.moveStageParams.x;
-            }
-
-          } else {
-
-            if (this.state.upDownCoords.down.y <= this.state.upDownCoords.up.y) {
-              if (this.state.upDownCoords.down.y < this.state.upDownCoords.up.y) {
-                lastWall.startY = this.state.upDownCoords.down.y - this.state.moveStageParams.y;
-              }
-            } else {
-              lastWall.startY = this.state.upDownCoords.up.y - this.state.moveStageParams.y;
-            }
-
-          }
+          _walls![_walls!.length - 1] = this.wallService.setSourceWallParams(
+              _walls![_walls!.length - 1],
+              this.state.cursorCoords,
+              this.state.upDownCoords,
+              this.state.moveStageParams
+          );
 
           // костыльное обновление state
           /* Без этого не работает */
