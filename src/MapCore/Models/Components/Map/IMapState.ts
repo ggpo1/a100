@@ -33,6 +33,16 @@ interface IMapState {
             x: number,
             y: number,
         }
+    },
+
+    // resizing
+    isWallResizingNow: boolean,
+    selectedWallToResize: WallItem | undefined,
+    resizeCursorCoordinates: {
+        startX: number,
+        startY: number,
+        actionEndX: number,
+        actionEndY: number,
     }
 }
 

@@ -2,6 +2,9 @@ import MapSourceLayer from "../Models/MapSourceLayer";
 import LayerType from "../Models/Enums/LayerType";
 import MapIconsType from "../Models/Enums/MapIconsType";
 import MapSourceUnit from "../Models/MapSourceUnit";
+import LayerIndexByType from "../Models/LayerIndexByType";
+import bs from 'js-binary-search';
+
 
 export default class LayerService {
     public getLayerSourceItem(selectedUnit: MapSourceUnit, type: LayerType) {
@@ -71,5 +74,34 @@ export default class LayerService {
             case LayerType.SIGNATURES: return MapIconsType.DRAWING;
             case LayerType.ABSTRACTS: return MapIconsType.IMAGE;
         }
+    }
+
+    public getLayerIndex(selectedLayers: Array<number>, layersList: Array<MapSourceLayer>, type: LayerType): LayerIndexByType{
+        console.error(selectedLayers);
+        let returnState = {
+            selected: {
+                is: false,
+                index: -1,
+            },
+            created: {
+                is: false,
+                index: -1,
+            }
+        };
+        let object = bs.search_in_associative(layersList, 'type', type);
+        returnState.created.index = object.index;
+        object = object.item;
+
+        if (returnState.created.index !== -1) {
+            returnState.created.is = true;
+            returnState.selected.index = bs.search(selectedLayers, returnState.created.index).index;
+            if (returnState.selected.index !== -1 && returnState.selected.index !== undefined) {
+                returnState.selected.is = true;
+            } else {
+                returnState.selected.is = false;
+                returnState.selected.index = -1;
+            }
+        }
+        return returnState;
     }
 }

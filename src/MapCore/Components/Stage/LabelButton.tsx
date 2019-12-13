@@ -3,7 +3,8 @@ import {Circle} from "react-konva";
 import ILabelButtonProps from "../../Models/Components/LabelButton/ILabelButtonProps";
 import ILabelButtonState from "../../Models/Components/LabelButton/ILabelButtonState";
 import Orientation from "../../Models/Enums/Orientation";
-import AppState from "../../Data/AppState";
+// import AppState from "../../Data/AppState";
+import Emit from "../../Data/Emit";
 
 export default class LabelButton extends React.Component<ILabelButtonProps, ILabelButtonState> {
     constructor(props) {
@@ -18,8 +19,12 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
         }
     }
 
-    public OnMouseHandler(value) {
-        AppState.State.isAddLabelButton = value;
+    public OnMouseHandler(e, type) {
+        switch (type) {
+            case 'down': Emit.Emitter.emit('wallLabelButtonInteractionWayDown', e, this.state.objectSource); break;
+            case 'up': Emit.Emitter.emit('wallLabelButtonInteractionWayUp', e, this.state.objectSource); break;
+            default:
+        }
     }
 
     render() {
@@ -29,61 +34,74 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
             if (objectSource.orientation === Orientation.HORIZONTAL) {
                 startLabelButton = (
                     <Circle
-                        key={sourceKey + '_startLabelButton'}
-                        onMouseOver={() => { this.OnMouseHandler(true) }}
-                        onMouseLeave={() => { this.OnMouseHandler(false) }}
+                        key={sourceKey + '_startLabelButton_horizontal'}
                         radius={10.5}
                         x={parentX}
                         y={parentY + 5}
                         strokeWidth={0.5}
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
+
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
                     />
                 );
                 endLabelButton = (
                     <Circle
-                        key={sourceKey + '_endLabelButton'}
-                        onMouseOver={() => { this.OnMouseHandler(true) }}
-                        onMouseLeave={() => { this.OnMouseHandler(false) }}
+                        key={sourceKey + '_endLabelButton_horizontal'}
                         radius={10.5}
                         x={parentX + objectSource.length}
                         y={parentY + 5}
                         strokeWidth={0.5}
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
+
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
                     />
                 );
             } else if (objectSource.orientation === Orientation.VERTICAL) {
                 startLabelButton = (
                     <Circle
-                        key={sourceKey + '_startLabelButton'}
-                        onMouseOver={() => { this.OnMouseHandler(true) }}
-                        onMouseLeave={() => { this.OnMouseHandler(false) }}
+                        key={sourceKey + '_startLabelButton_vertical'}
                         radius={10.5}
                         x={parentX + 5}
                         y={parentY - 8}
                         strokeWidth={0.5}
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
+
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
                     />
                 );
                 endLabelButton = (
                     <Circle
-                        key={sourceKey + '_endLabelButton'}
-                        onMouseOver={() => { this.OnMouseHandler(true) }}
-                        onMouseLeave={() => { this.OnMouseHandler(false) }}
+                        key={sourceKey + '_endLabelButton_vertical'}
                         radius={10.5}
                         x={parentX + 5}
                         y={parentY + objectSource.length + 8}
                         strokeWidth={0.5}
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
+
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
                     />
                 );
             }
 
         }
-
+        console.log('\tstartLabelKey: ' + startLabelButton.key);
+        console.log('\tendLabelKey: ' + endLabelButton.key);
         return [startLabelButton, endLabelButton];
     }
 

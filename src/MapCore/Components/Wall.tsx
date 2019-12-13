@@ -25,8 +25,8 @@ export default class Wall extends Component<IWallProps, IWallState> {
         this.OnMouseHandler = this.OnMouseHandler.bind(this);
     }
 
-    public OnMouseHandler(value) {
-        this.setState({isAddLabelButton: value});
+    public OnMouseHandler() {
+        this.setState({isAddLabelButton: !this.state.isAddLabelButton});
     }
 
     public WallOnClickHandler() {
@@ -58,11 +58,13 @@ export default class Wall extends Component<IWallProps, IWallState> {
                     labelMode={LabelButtonMode.ADD}
                 />
             );
+            console.log('\t' + labelButton.key);
         }
         let wall = (
             <Rect
                 key={source.key + '_react'}
-                onClick={() => { this.OnMouseHandler(true) }}
+                onDblClick={() => { this.OnMouseHandler() }}
+                onDblTap={() => { this.OnMouseHandler() }}
                 draggable={false}
                 onMouseDown={this.WallOnMouseDownHandler}
                 x={source.startX}

@@ -107,6 +107,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     key={source.key + '_rect'}
                     x={source.x}
                     y={source.y}
+                    onDblClick={() => {  }}
                     width={stillageSizeReducer.GetSize(source.size).firstSide}
                     height={stillageSizeReducer.GetSize(source.size).secondSide}
                     fill={StillageColors.STILLAGE_NORMAL}

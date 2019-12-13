@@ -21,7 +21,6 @@ import MapIconsType from "./Models/Enums/MapIconsType";
 
 import './Css/Map.css';
 import './Css/LayerPanel.css';
-import AddLayerSubModal from "./Components/Page/Modals/AddLayerSubModal";
 import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
@@ -41,6 +40,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.objectService = new ObjectService();
     this.layerService = new LayerService();
     this.wallService = new WallService();
+
+
 
     this.state = {
       selectedUnit: 0,
@@ -75,6 +76,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           x: 0,
           y: 0,
         }
+      },
+
+      // resizing
+      isWallResizingNow: false,
+      selectedWallToResize: undefined,
+      resizeCursorCoordinates: {
+        startX: 0, startY: 0,
+        actionEndX: 0, actionEndY: 0,
       }
     };
 
@@ -92,16 +101,53 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.addLayerModalWorker = this.addLayerModalWorker.bind(this);
     this.checkWallLayer = this.checkWallLayer.bind(this);
     this.stageDragEnd = this.stageDragEnd.bind(this);
+    this.wallLabelButtonInteractionWayUp = this.wallLabelButtonInteractionWayUp.bind(this);
+    this.wallLabelButtonInteractionWayDown = this.wallLabelButtonInteractionWayDown.bind(this);
 
+    // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
-
+    // Событие для открытия/закрытия окна просмотра повреждений
     Emit.Emitter.addListener('defectBrowsePanelWorkerHandle', this.defectBrowsePanelWorker);
     // Событие для изменения cncFlag
     Emit.Emitter.addListener('cncFlagChange', this.cncFlagChange);
     // Событие для проверки слоя для отрисовки при нажтии на элемент в панели элемента
     Emit.Emitter.addListener('checkWallLayer', this.checkWallLayer);
+    // Событие зажатия левой кноки или пальца для дорисовки стены с помощью ползунка
+    Emit.Emitter.addListener('wallLabelButtonInteractionWayUp', this.wallLabelButtonInteractionWayUp);
+    // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
+    Emit.Emitter.addListener('wallLabelButtonInteractionWayDown', this.wallLabelButtonInteractionWayDown);
 
   }
+
+  // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
+  private wallLabelButtonInteractionWayUp(e) {
+    const { source, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize } = this.state;
+    let { selectedLayer } = this.state;
+    if (isWallResizingNow && selectedWallToResize) {
+      // console.error(this.state.selectedWallToResize);
+      // console.table({x: e.clientX, y: e.clientY});
+
+      let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
+      if (!layerFlag.selected.is) {
+        layersSelected.push(layerFlag.created.index);
+        selectedLayer = layerFlag.created.index;
+      }
+      console.error(selectedLayer);
+      let index = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, selectedWallToResize.id);
+      console.error(index);
+
+
+      this.setState({isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected, selectedLayer: selectedLayer});
+    }
+  }
+
+  // Событие зажатия левой кноки или пальца для дорисовки стены с помощью ползунка
+  private wallLabelButtonInteractionWayDown(e, wallSource: WallItem) {
+    console.log('DOWN')
+    this.setState({selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
+  }
+
+
 
   private stageDragEnd(x: number, y: number) {
     console.log(this.state.source);
@@ -109,7 +155,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       moveStageParams: {
         x: x,
         y: y,
-      }
+      },
     });
   }
 
@@ -200,6 +246,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   private StageOnMouseUpHandler(e) {
+    if (this.state.isWallResizingNow) {
+      this.setState({isWallResizingNow: false, isDrawing: false})
+    }
     if (this.state.cncFlag) {
       this.setState({
           cncFlag: false,
@@ -634,6 +683,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         onClick={(e) => { this.stageOnClickHandler(e) }}
         onMouseMove={(e) => { this.MapWrapperOnMouseMove(e) }}
         onTouchMove={(e) => { this.MapWrapperOnMouseMove(e) }}
+           onMouseUp={(e) => { this.wallLabelButtonInteractionWayUp(e) }}
         id={"stageWrapper"}
       >
         <Stage

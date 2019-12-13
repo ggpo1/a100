@@ -3,6 +3,8 @@ import MapSourceUnit from "../Models/MapSourceUnit";
 import Orientation from "../Models/Enums/Orientation";
 import AppState from "../Data/AppState";
 import MapSourceLayer from "../Models/MapSourceLayer";
+import {NodeWorker} from "inspector";
+import bs from 'js-binary-search';
 
 export default class WallService {
     public getWallSourceItem(selectedLayer: MapSourceLayer,
@@ -85,4 +87,9 @@ export default class WallService {
             endI--;
         }
     }
+
+    public getWallIndexByID(list: Array<WallItem>, id) {
+        return bs.search_in_associative(list, 'id', id);
+    }
+
 }
