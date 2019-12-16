@@ -140,10 +140,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       console.error(_wall);
       if (_wall.orientation === Orientation.HORIZONTAL) {
         if (e.clientX > _wall.startX) {
-          _wall.length += e.clientX - (_wall.startX + _wall.length);
+          _wall.length += e.clientX - (_wall.startX + _wall.length) - this.state.moveStageParams.x;
         } else {
-          _wall.length += Math.abs(_wall.startX - e.clientX);
-          _wall.startX = e.clientX;
+          _wall.length += Math.abs(_wall.startX - e.clientX) + this.state.moveStageParams.x;
+          _wall.startX = e.clientX - this.state.moveStageParams.x;
         }
       } else {
 
