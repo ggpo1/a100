@@ -6,6 +6,7 @@ import Orientation from './../Models/Enums/Orientation';
 import LabelButton from "./Stage/LabelButton";
 import LabelButtonMode from "../Models/Enums/LabelButtonMode";
 import AppState from "../Data/AppState";
+import Emit from "../Data/Emit";
 
 export default class Wall extends Component<IWallProps, IWallState> {
     
@@ -23,6 +24,12 @@ export default class Wall extends Component<IWallProps, IWallState> {
         this.WallOnClickHandler = this.WallOnClickHandler.bind(this);
         this.WallOnMouseDownHandler = this.WallOnMouseDownHandler.bind(this);
         this.OnMouseHandler = this.OnMouseHandler.bind(this);
+        this.OnMouseHandlerValue = this.OnMouseHandlerValue.bind(this);
+        Emit.Emitter.addListener('wallMouseDbl', this.OnMouseHandlerValue);
+    }
+
+    public OnMouseHandlerValue(value) {
+        this.setState({isAddLabelButton: value});
     }
 
     public OnMouseHandler() {
@@ -51,6 +58,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
         if (isAddLabelButton) {
             labelButton = (
                 <LabelButton
+                    key={source.key + '_labelButton'}
                     sourceKey={source.key + '_labelButton'}
                     parentX={source.startX}
                     parentY={source.startY}
@@ -62,7 +70,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
         }
         let wall = (
             <Rect
-                key={source.key + '_react'}
+                key={source.key + '_rect'}
                 onDblClick={() => { this.OnMouseHandler() }}
                 onDblTap={() => { this.OnMouseHandler() }}
                 draggable={false}

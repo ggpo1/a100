@@ -133,17 +133,30 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         selectedLayer = layerFlag.created.index;
       }
       console.error(selectedLayer);
-      let index = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, selectedWallToResize.id);
-      console.error(index);
+      let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, selectedWallToResize.id);
+      console.error(found);
+      console.error(e.clientX);
+      let _wall: WallItem = found.item;
+      console.error(_wall);
+      if (_wall.orientation === Orientation.HORIZONTAL) {
+        if (e.clientX > _wall.startX) {
+          _wall.length += e.clientX - (_wall.startX + _wall.length);
+        } else {
+          _wall.length += Math.abs(_wall.startX - e.clientX);
+          _wall.startX = e.clientX;
+        }
+      } else {
 
-
-      this.setState({isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected, selectedLayer: selectedLayer});
+      }
+      source[selectedUnit].layers[selectedLayer].walls![found.index] = _wall;
+      Emit.Emitter.emit('wallMouseDbl', false);
+      this.setState({source, isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected, selectedLayer: selectedLayer});
     }
   }
 
   // Событие зажатия левой кноки или пальца для дорисовки стены с помощью ползунка
   private wallLabelButtonInteractionWayDown(e, wallSource: WallItem) {
-    console.log('DOWN')
+    console.log('DOWN');
     this.setState({selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
   }
 
