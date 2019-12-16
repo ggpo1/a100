@@ -24,6 +24,7 @@ import './Css/LayerPanel.css';
 import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
+import {start} from "repl";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -79,6 +80,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       },
 
       // resizing
+      isStart: false,
       isWallResizingNow: false,
       selectedWallToResize: undefined,
       resizeCursorCoordinates: {
@@ -121,48 +123,27 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
   private wallLabelButtonInteractionWayUp(e) {
-    const { source, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize } = this.state;
+    const { source, isStart, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize } = this.state;
     let { selectedLayer } = this.state;
     if (isWallResizingNow && selectedWallToResize) {
-      // console.error(this.state.selectedWallToResize);
-      // console.table({x: e.clientX, y: e.clientY});
-
       let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
       if (!layerFlag.selected.is) {
         layersSelected.push(layerFlag.created.index);
         selectedLayer = layerFlag.created.index;
       }
-      // console.error(selectedLayer);
       let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, selectedWallToResize.id);
-      // console.error(found);
-      // console.error(e.clientX);
       let _wall: WallItem = found.item;
-      // console.error(_wall);
-      if (_wall.orientation === Orientation.HORIZONTAL) {
-        if (e.clientX > _wall.startX) {
-          _wall.length += e.clientX - (_wall.startX + _wall.length) - this.state.moveStageParams.x;
-        } else {
-          _wall.length += Math.abs(_wall.startX - e.clientX) + this.state.moveStageParams.x;
-          _wall.startX = e.clientX - this.state.moveStageParams.x;
-        }
-      } else {
-        if (e.clientY > _wall.startY) {
-          _wall.length += e.clientY - (_wall.startY + _wall.length) - this.state.moveStageParams.y;
-        } else {
-          _wall.length += Math.abs(_wall.startY - e.clientY) + this.state.moveStageParams.y;
-          _wall.startY = e.clientY - this.state.moveStageParams.y;
-        }
-      }
+      _wall = this.wallService.resizeWall(e, _wall, isStart, this.state.moveStageParams);
       source[selectedUnit].layers[selectedLayer].walls![found.index] = _wall;
-      Emit.Emitter.emit('wallMouseDbl', false);
       this.setState({source, isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected, selectedLayer: selectedLayer});
+      Emit.Emitter.emit('wallMouseDbl', false);
     }
   }
 
   // Событие зажатия левой кноки или пальца для дорисовки стены с помощью ползунка
-  private wallLabelButtonInteractionWayDown(e, wallSource: WallItem) {
+  private wallLabelButtonInteractionWayDown(e, wallSource: WallItem, isStart: boolean) {
     console.log('DOWN');
-    this.setState({selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
+    this.setState({isStart, selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
   }
 
 

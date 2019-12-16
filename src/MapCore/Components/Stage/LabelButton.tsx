@@ -19,10 +19,10 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
         }
     }
 
-    public OnMouseHandler(e, type) {
+    public OnMouseHandler(e, type, isStart: boolean) {
         switch (type) {
-            case 'down': Emit.Emitter.emit('wallLabelButtonInteractionWayDown', e, this.state.objectSource); break;
-            case 'up': Emit.Emitter.emit('wallLabelButtonInteractionWayUp', e, this.state.objectSource); break;
+            case 'down': Emit.Emitter.emit('wallLabelButtonInteractionWayDown', e, this.state.objectSource, isStart); break;
+            case 'up': Emit.Emitter.emit('wallLabelButtonInteractionWayUp', e, this.state.objectSource, isStart); break;
             default:
         }
     }
@@ -42,10 +42,10 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
 
-                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
-                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down', true)}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down', true)}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up', true)}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up', true)}}
                     />
                 );
                 endLabelButton = (
@@ -58,10 +58,10 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
 
-                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
-                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down', false)}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down', false)}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up', false)}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up', false)}}
                     />
                 );
             } else if (objectSource.orientation === Orientation.VERTICAL) {
@@ -75,10 +75,10 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
 
-                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
-                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down', true)}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down', true)}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up', true)}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up', true)}}
                     />
                 );
                 endLabelButton = (
@@ -91,10 +91,10 @@ export default class LabelButton extends React.Component<ILabelButtonProps, ILab
                         stroke={'#2f00ff'}
                         fill={'#E0E0E0'}
 
-                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down')}}
-                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up')}}
-                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up')}}
+                        onMouseDown={(e) => {this.OnMouseHandler(e, 'down', false)}}
+                        onTouchStart={(e) => {this.OnMouseHandler(e, 'down', false)}}
+                        onMouseUp={(e) => {this.OnMouseHandler(e, 'up', false)}}
+                        onTouchEnd={(e) => {this.OnMouseHandler(e, 'up', false)}}
                     />
                 );
             }

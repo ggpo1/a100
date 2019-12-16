@@ -77,7 +77,6 @@ export default class LayerService {
     }
 
     public getLayerIndex(selectedLayers: Array<number>, layersList: Array<MapSourceLayer>, type: LayerType): LayerIndexByType{
-        console.error(selectedLayers);
         let returnState = {
             selected: {
                 is: false,
