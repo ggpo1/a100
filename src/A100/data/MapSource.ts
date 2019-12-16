@@ -45,6 +45,14 @@ const MapSource: Array<MapSourceUnit> = [
                         length: 400,
                         orientation: Orientation.HORIZONTAL,
                     },
+                    {
+                        id: 2,
+                        key: 'unit_1_layer_0_wall_2',
+                        startX: 300,
+                        startY: 400,
+                        length: 200,
+                        orientation: Orientation.VERTICAL,
+                    },
                 ],
             }
         ]

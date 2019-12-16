@@ -132,12 +132,12 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         layersSelected.push(layerFlag.created.index);
         selectedLayer = layerFlag.created.index;
       }
-      console.error(selectedLayer);
+      // console.error(selectedLayer);
       let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, selectedWallToResize.id);
-      console.error(found);
-      console.error(e.clientX);
+      // console.error(found);
+      // console.error(e.clientX);
       let _wall: WallItem = found.item;
-      console.error(_wall);
+      // console.error(_wall);
       if (_wall.orientation === Orientation.HORIZONTAL) {
         if (e.clientX > _wall.startX) {
           _wall.length += e.clientX - (_wall.startX + _wall.length) - this.state.moveStageParams.x;
@@ -146,7 +146,12 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           _wall.startX = e.clientX - this.state.moveStageParams.x;
         }
       } else {
-
+        if (e.clientY > _wall.startY) {
+          _wall.length += e.clientY - (_wall.startY + _wall.length) - this.state.moveStageParams.y;
+        } else {
+          _wall.length += Math.abs(_wall.startY - e.clientY) + this.state.moveStageParams.y;
+          _wall.startY = e.clientY - this.state.moveStageParams.y;
+        }
       }
       source[selectedUnit].layers[selectedLayer].walls![found.index] = _wall;
       Emit.Emitter.emit('wallMouseDbl', false);
