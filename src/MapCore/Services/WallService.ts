@@ -96,37 +96,26 @@ export default class WallService {
         if (_wall.orientation === Orientation.HORIZONTAL) {
             if (isStart) {
                 if (e.clientX > _wall.startX) {
-                    _wall.length -= e.clientX - _wall.startX;
+                    _wall.length -= (e.clientX - moveStageParams.x) - _wall.startX;
                     _wall.startX = e.clientX - moveStageParams.x;
                 } else {
-                    _wall.length += Math.abs(e.clientX - _wall.startX);
+                    _wall.length += Math.abs((e.clientX - moveStageParams.x) - _wall.startX);
                     _wall.startX = e.clientX - moveStageParams.x;
                 }
             } else {
-                _wall.length += e.clientX - (_wall.startX + _wall.length) - moveStageParams.x;
-                // if (e.clientX > _wall.startX) {
-                //
-                // } else {
-                //   _wall.length += Math.abs(_wall.startX - e.clientX) + this.state.moveStageParams.x;
-                //   // _wall.startX = e.clientX - this.state.moveStageParams.x;
-                // }
+                _wall.length += (e.clientX - moveStageParams.x) - (_wall.startX + _wall.length);
             }
         } else {
             if (isStart) {
                 if (e.clientY > _wall.startY) {
-                    _wall.length -= e.clientY - _wall.startY;
+                    _wall.length -= (e.clientY - moveStageParams.y) - _wall.startY;
                     _wall.startY = e.clientY - moveStageParams.y;
                 } else {
-                    _wall.length += Math.abs(e.clientY - _wall.startY);
+                    _wall.length += Math.abs((e.clientY - moveStageParams.y) - _wall.startY);
                     _wall.startY = e.clientY - moveStageParams.y;
                 }
             } else {
-                _wall.length += e.clientY - (_wall.startY + _wall.length) - moveStageParams.y;
-                // if (e.clientY > _wall.startY) {
-                //
-                // } else {
-                //
-                // }
+                _wall.length += (e.clientY - moveStageParams.y) - (_wall.startY + _wall.length);
             }
         }
         return _wall;
