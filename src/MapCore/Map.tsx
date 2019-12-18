@@ -44,6 +44,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      wallIndex: -1,
       selectedUnit: 0,
       selectedLayer: -1,
       stageScale: 1,
@@ -238,6 +239,32 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   private StageOnMouseMoveHandler(e) {
+    const { source, selectedUnit, selectedLayer, isDrawing, wallIndex, moveStageParams, cursorCoords } = this.state;
+
+    if (this.state.cncFlag) {
+      if (isDrawing) {
+        let _wall = source[selectedUnit].layers[selectedLayer].walls![wallIndex];
+        if (_wall.orientation === Orientation.HORIZONTAL) {
+          if (_wall.startX < (e.evt.clientX - moveStageParams.x)) {
+            let _length = Math.abs(_wall.startX - (e.evt.clientX - moveStageParams.x));
+            _wall.length += _length - _wall.length;
+          } else if (_wall.startX > (e.evt.clientX - moveStageParams.x)) {
+            _wall.startX = (e.evt.clientX - moveStageParams.x);
+            _wall.length = Math.abs(_wall.startX - cursorCoords.startX);
+          }
+        } else {
+          if (_wall.startY < (e.evt.clientY - moveStageParams.y)) {
+            let _length = Math.abs(_wall.startY - (e.evt.clientY - moveStageParams.y));
+            _wall.length += _length - _wall.length;
+          } else if (_wall.startY > (e.evt.clientY - moveStageParams.y)) {
+            _wall.startY = (e.evt.clientY - moveStageParams.y);
+            _wall.length = Math.abs(_wall.startY - cursorCoords.startY);
+          }
+        }
+      }
+    }
+
+    /*
     const { source, selectedUnit, selectedLayer, isDrawing } = this.state;
     const clearLength = 25;
 
@@ -268,9 +295,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         }
       }
     }
+     */
   }
 
   private StageOnMouseDownHandler(e) {
+    const { source, selectedUnit, selectedLayer } = this.state;
     if (this.state.cncFlag) {
       let selected: ElementItem = AppState.State.selectedEl;
       if (selected !== undefined) {
@@ -290,6 +319,25 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             },
           }
         });
+
+        // adding new wall for resizing in the future moving
+        if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
+
+            source[selectedUnit].layers[selectedLayer].walls!.push(
+                this.wallService.getWallSourceItem(
+                    source[selectedUnit].layers[selectedLayer],
+                    (e.evt.clientX - this.state.moveStageParams.x),
+                    (e.evt.clientY - this.state.moveStageParams.y),
+                    25,
+                    AppState.State.selectedEl.orientation
+                )
+            );
+
+          let walls = source[selectedUnit].layers[selectedLayer].walls!;
+          let wallIndex = this.wallService.getWallIndexByID(walls, walls[walls.length - 1].id).index;
+          source[selectedUnit].layers[selectedLayer].walls = walls;
+          this.setState({wallIndex, source});
+        }
       }
     }
   }
@@ -316,6 +364,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             down: this.state.upDownCoords.down,
           }
       });
+      /*
       const { source, selectedUnit, selectedLayer } = this.state;
       if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
           let count = 0;
@@ -352,7 +401,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           );
 
           // костыльное обновление state
-          /* Без этого не работает */
+          // Без этого не работает
           const _layers = this.state.layersSelected;
           this.setState({
             layersSelected: []
@@ -360,9 +409,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           this.setState({
             layersSelected: _layers
           });
-          /* _____________________ */
+          // _____________________
           console.log(this.state.source);
+
       }
+       */
     }
   }
 

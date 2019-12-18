@@ -1,6 +1,7 @@
 import MapSourceUnit from '../../MapSourceUnit';
 import WallItem from "../../ArrayItems/WallIem";
 interface IMapState {
+    wallIndex: number,
     selectedUnit: number, // индекс выбранного блока
     selectedLayer: number, // индекс выбранного слоя deprecated
     stageScale: number, // оэф зума сцены
