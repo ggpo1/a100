@@ -26,7 +26,8 @@ export default class WallService {
             startX: startX,
             startY: startY,
             length: length,
-            orientation: AppState.State.selectedEl.orientation
+            // orientation: AppState.State.selectedEl.orientation
+            orientation: orientation
         };
 
 
@@ -105,7 +106,7 @@ export default class WallService {
             } else {
                 _wall.length += (e.clientX - moveStageParams.x) - (_wall.startX + _wall.length);
             }
-        } else {
+        } else if (_wall.orientation === Orientation.VERTICAL) {
             if (isStart) {
                 if (e.clientY > _wall.startY) {
                     _wall.length -= (e.clientY - moveStageParams.y) - _wall.startY;

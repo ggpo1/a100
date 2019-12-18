@@ -24,7 +24,6 @@ import './Css/LayerPanel.css';
 import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
-import {start} from "repl";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -80,6 +79,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       },
 
       // resizing
+      isIncreaseResizingLength: false,
+      resizingWallIndex: 0,
       isStart: false,
       isWallResizingNow: false,
       selectedWallToResize: undefined,
@@ -121,10 +122,45 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   }
 
+  // saving cur pos and wall resizing move rendering
+  public MapWrapperOnMouseMove(e) {
+
+
+    const { source, selectedUnit, layersSelected, selectedWallToResize, resizingWallIndex, isStart } = this.state;
+    let { selectedLayer } = this.state;
+    // move_resizing
+    if (this.state.isWallResizingNow) {
+      const clearLength = 25;
+
+      Emit.Emitter.emit('wallMouseDbl', false);
+
+      let _wall = source[selectedUnit].layers[selectedLayer].walls![resizingWallIndex];
+
+      _wall = this.wallService.resizeWall(e, _wall, isStart, this.state.moveStageParams);
+
+      source[selectedUnit].layers[selectedLayer].walls![resizingWallIndex] = _wall;
+
+      this.setState({source});
+
+    }
+    if (this.state.isDrawing) {
+      this.setState({
+        cursorCoords: {
+          startX: this.state.cursorCoords.startX,
+          startY: this.state.cursorCoords.startY,
+          x: e.clientX,
+          y: e.clientY,
+        }
+      });
+    }
+  }
+
   // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
   private wallLabelButtonInteractionWayUp(e) {
     const { source, isStart, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize } = this.state;
     let { selectedLayer } = this.state;
+    let count = 0;
+    let badEls: WallItem[] = [];
     if (isWallResizingNow && selectedWallToResize) {
       let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
       if (!layerFlag.selected.is) {
@@ -135,15 +171,29 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       let _wall: WallItem = found.item;
       _wall = this.wallService.resizeWall(e, _wall, isStart, this.state.moveStageParams);
       source[selectedUnit].layers[selectedLayer].walls![found.index] = _wall;
-      this.setState({source, isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected, selectedLayer: selectedLayer});
+
+      source[selectedUnit].layers[selectedLayer].walls = this.layerService.deleteBadWalls(
+          source[selectedUnit].layers[selectedLayer].walls!
+      );
+
+      this.setState({resizingWallIndex: found.index, source, isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected, selectedLayer: selectedLayer});
       Emit.Emitter.emit('wallMouseDbl', false);
     }
   }
 
   // Событие зажатия левой кноки или пальца для дорисовки стены с помощью ползунка
   private wallLabelButtonInteractionWayDown(e, wallSource: WallItem, isStart: boolean) {
-    console.log('DOWN');
-    this.setState({isStart, selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
+    Emit.Emitter.emit('wallMouseDbl', false);
+    const { source, layersSelected, selectedUnit } = this.state; let selectedLayer = -1;
+    let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
+    if (!layerFlag.selected.is) {
+      layersSelected.push(layerFlag.created.index);
+    }
+    selectedLayer = layerFlag.created.index;
+    this.setState({layersSelected, selectedLayer});
+    console.error(selectedLayer);
+    let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, wallSource.id);
+    this.setState({resizingWallIndex: found.index, isStart, selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
   }
 
 
@@ -282,21 +332,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 wall.orientation,
             );
             wall.key = source[selectedUnit].layers[selectedLayer].key + '_wall_' + wall.id;
-            source[selectedUnit].layers[selectedLayer].walls![_length - 1] = wall;
-          }
-          for (let k = 0; k < source[selectedUnit].layers[selectedLayer].walls!.length; k++) {
-            if (source[selectedUnit].layers[selectedLayer].walls![k].key!.includes('wall_for_move')) {
-              badEls.push(source[selectedUnit].layers[selectedLayer].walls![k]);
-              count++;
-            }
           }
 
-          if (badEls.length !== 0) {
-            for (let k = 0; k < badEls.length; k++) {
-              let index = source[selectedUnit].layers[selectedLayer].walls!.indexOf(badEls[k]);
-              source[selectedUnit].layers[selectedLayer].walls!.splice(index, 1);
-            }
-          }
+
+          wall.id = this.wallService.getMaxID(source[selectedUnit].layers[selectedLayer].walls!);
+          wall.key = source[selectedUnit].layers[selectedLayer].key + '_wall_' + wall.id;
+          source[selectedUnit].layers[selectedLayer].walls![source[selectedUnit].layers[selectedLayer].walls!.length - 1] = wall;
+          source[selectedUnit].layers[selectedLayer].walls = this.layerService.deleteBadWalls(
+              source[selectedUnit].layers[selectedLayer].walls!
+          );
           // простановка новой длины отрисовывающейся стены, потому что маленькие стены равны по 25
 
           let _walls = source[selectedUnit].layers[selectedLayer].walls;
@@ -415,21 +459,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     }
   }
 
-
-  // saving cur pos (need)
-  public MapWrapperOnMouseMove(e) {
-    if (this.state.isDrawing) {
-      this.setState({
-        cursorCoords: {
-          startX: this.state.cursorCoords.startX,
-          startY: this.state.cursorCoords.startY,
-          x: e.clientX,
-          y: e.clientY,
-        }
-      });
-    }
-  }
-
   public ElementOnDrop(e) {
     this.addElement(e.clientX, e.clientY);
   };
@@ -467,7 +496,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
   render() {
-    const { source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel } = this.state;
+    const { source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow } = this.state;
 
     let unitsTitles: Array<JSX.Element> = [];
     let layersTitles: Array<JSX.Element> = [];
@@ -476,6 +505,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     let signatures: Array<JSX.Element> = [];
     let layers: Array<JSX.Element> = [];
     let walls: Array<JSX.Element> = [];
+
 
 
     let height = window.innerHeight;
@@ -528,10 +558,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       );
     }
 
-    console.log('------------------------SHAPES RENDERING------------------------')
-    // инициализация фигур сервисов
-    let wS = new WallService();
-    let sS = new StillageService();
+    console.log('------------------------SHAPES RENDERING------------------------');
     if (selectedLayer === -1) {
       let layerNum = 0;
       source[selectedUnit].layers.forEach(element => {
@@ -717,7 +744,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       {elementsPanel}
 
       <div className={"right-bars-wrapper"}>
-
         {blocks}
         {filters}
       </div>
@@ -726,6 +752,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       </div>
       {defectBrowsePanel}
     </div>);
-    return main;
+    return [main];
   }
 }

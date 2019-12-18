@@ -36,6 +36,8 @@ interface IMapState {
     },
 
     // resizing
+    isIncreaseResizingLength: boolean,
+    resizingWallIndex: number,
     isStart: boolean,
     isWallResizingNow: boolean,
     selectedWallToResize: WallItem | undefined,

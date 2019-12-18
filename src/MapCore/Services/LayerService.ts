@@ -4,6 +4,7 @@ import MapIconsType from "../Models/Enums/MapIconsType";
 import MapSourceUnit from "../Models/MapSourceUnit";
 import LayerIndexByType from "../Models/LayerIndexByType";
 import bs from 'js-binary-search';
+import WallItem from "../Models/ArrayItems/WallIem";
 
 
 export default class LayerService {
@@ -102,5 +103,25 @@ export default class LayerService {
             }
         }
         return returnState;
+    }
+
+    public deleteBadWalls(list: Array<WallItem>): Array<WallItem> {
+        let count = 0;
+        let badEls: WallItem[] = [];
+
+        for (let k = 0; k < list.length; k++) {
+            if (list[k].key.includes('wall_for_move')) {
+                badEls.push(list[k]);
+                count++;
+            }
+        }
+
+        if (badEls.length !== 0) {
+            for (let k = 0; k < badEls.length; k++) {
+                let index = list.indexOf(badEls[k]);
+                list.splice(index, 1);
+            }
+        }
+        return list;
     }
 }
