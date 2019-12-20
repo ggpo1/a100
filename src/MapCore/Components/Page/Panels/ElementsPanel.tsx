@@ -16,8 +16,10 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
             source: this.props.source,
             selectedCategory: -1,
             isToggled: true,
+            selectedElementIndex: -1,
         };
 
+        Emit.Emitter.addListener('borderCleanAction', () => { this.setState({selectedElementIndex: -1}) });
         this.categoryTitleClickHandler = this.categoryTitleClickHandler.bind(this);
 
     }
@@ -31,16 +33,19 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
 
     // обработчик события mouseDown по элементу в панеле
     public elementMouseDownHandler(el: ElementItem) {
-        // console.log(el.stillageType!);
         AppState.State.selectedEl = el;
     }
 
-    public elementMouseClickHandler(el: ElementItem) {
+    public elementMouseClickHandler(index: number, el: ElementItem) {
+        AppState.State.selectedEl = el;
         if (el.type === LayerType.WALLS) {
             Emit.Emitter.emit('checkWallLayer');
         }
-        AppState.State.selectedEl = el;
-        Emit.Emitter.emit('cncFlagChange');
+        let check = index === this.state.selectedElementIndex;
+        this.setState({selectedElementIndex: index});
+        // if (check) {
+            Emit.Emitter.emit('cncFlagChange');
+        // }
     }
 
     render() {
@@ -76,7 +81,7 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                         <img
                             key={"el_img_" + selectedCategory + "_" + i}
                             onClick={() => {
-                                this.elementMouseClickHandler(el);
+                                this.elementMouseClickHandler(i, el);
                             }}
                             onMouseDown={() => {
                                 this.elementMouseDownHandler(el)
@@ -84,7 +89,14 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                             title={el.title!}
                             alt={el.title!}
                             draggable={true}
-                            style={{width: 'auto', height: '40px', cursor: 'pointer', padding: 2}}
+                            style={{
+                                width: 'auto',
+                                height: '40px',
+                                cursor: 'pointer',
+                                padding: 2,
+                                border: this.state.selectedElementIndex === i ? '2px solid #ffa500' : '',
+                                borderRadius: 5
+                            }}
                             src={el.photo}
                         />
                     );
@@ -96,7 +108,7 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                             <img
                                 key={"el_img_" + i + "_" + j}
                                 onClick={() => {
-                                    this.elementMouseClickHandler(el);
+                                    this.elementMouseClickHandler(j, el);
                                 }}
                                 onMouseDown={() => {
                                     this.elementMouseDownHandler(el)
@@ -104,7 +116,14 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                                 title={el.title!}
                                 alt={el.title!}
                                 draggable={true}
-                                style={{width: 'auto', height: '40px', cursor: 'pointer', padding: 2}}
+                                style={{
+                                    width: 'auto',
+                                    height: '40px',
+                                    cursor: 'pointer',
+                                    padding: 2,
+                                    border: this.state.selectedElementIndex === j ? '2px solid #ffa500' : '',
+                                    borderRadius: 5
+                                }}
                                 src={el.photo}
                             />
                         );

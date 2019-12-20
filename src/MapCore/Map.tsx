@@ -324,7 +324,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     }
     if (this.state.cncFlag) {
       this.setState({
-          cncFlag: false,
+          // cncFlag: false,
           isDrawing: false,
           cursorCoords: {
             startX: this.state.cursorCoords.startX,
@@ -366,11 +366,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   // need
   public deleteWall() {
-    alert('DELETING')
+    alert('DELETING');
   }
 
   // cnc flag changing (need)
   public cncFlagChange() {
+    if (this.state.cncFlag) {
+      Emit.Emitter.emit('borderCleanAction');
+    }
     this.setState({
       cncFlag: !this.state.cncFlag
     });
@@ -439,7 +442,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       let selected: ElementItem = AppState.State.selectedEl;
       if (selected !== undefined) {
         this.addElement(e.clientX, e.clientY);
-        this.setState({cncFlag: false});
+        // Emit.Emitter.emit('borderCleanAction');
+        // this.setState({cncFlag: false});
       }
     }
   }
