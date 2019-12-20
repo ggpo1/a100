@@ -41,7 +41,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
     }
 
     public WallOnMouseDownHandler(e) {
-        this.setState({ cursorCoords: { x: e.evt.clientX, y: e.evt.clientY } });
+        this.setState({ cursorCoords: { x: e.evt.clientX, y: e.evt.clientY }, isAddLabelButton: false });
     }
 
     render() {
@@ -74,6 +74,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 onDblClick={() => { this.OnMouseHandler() }}
                 onDblTap={() => { this.OnMouseHandler() }}
                 draggable={false}
+                // onDragEnd={ () => this.forceUpdate() }
                 onMouseDown={this.WallOnMouseDownHandler}
                 x={source.startX}
                 y={source.startY}

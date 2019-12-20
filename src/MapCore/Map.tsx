@@ -44,6 +44,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      wallLayerIndex: -1,
       wallIndex: -1,
       selectedUnit: 0,
       selectedLayer: -1,
@@ -224,26 +225,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   private checkWallLayer() {
     const { source, selectedUnit, layersSelected } = this.state;
 
-    let index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
-    let _source = source[selectedUnit];
 
-    if (index === -1) {
-      _source.layers.push(
-          this.layerService.getLayerSourceItem(source[selectedUnit], LayerType.WALLS)
-      );
-    }
-
-    index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
-    layersSelected.push(index);
-    this.setState({layersSelected, selectedLayer: index});
   }
 
   private StageOnMouseMoveHandler(e) {
-    const { source, selectedUnit, selectedLayer, isDrawing, wallIndex, moveStageParams, cursorCoords } = this.state;
+    const { source, selectedUnit, selectedLayer, isDrawing, wallIndex, moveStageParams, cursorCoords, wallLayerIndex } = this.state;
 
     if (this.state.cncFlag) {
       if (isDrawing) {
-        let _wall = source[selectedUnit].layers[selectedLayer].walls![wallIndex];
+        let _wall = source[selectedUnit].layers[wallLayerIndex].walls![wallIndex];
         if (_wall.orientation === Orientation.HORIZONTAL) {
           if (_wall.startX < (e.evt.clientX - moveStageParams.x)) {
             let _length = Math.abs(_wall.startX - (e.evt.clientX - moveStageParams.x));
@@ -263,43 +253,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         }
       }
     }
-
-    /*
-    const { source, selectedUnit, selectedLayer, isDrawing } = this.state;
-    const clearLength = 25;
-
-    if (this.state.cncFlag) {
-      if (isDrawing) {
-        if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
-          if (AppState.State.selectedEl.orientation === Orientation.HORIZONTAL) {
-            source[selectedUnit].layers[selectedLayer].walls!.push(
-                this.wallService.getWallSourceItem(
-                    source[selectedUnit].layers[selectedLayer],
-                    (e.evt.clientX - this.state.moveStageParams.x),
-                    (this.state.cursorCoords.startY - this.state.moveStageParams.y),
-                    clearLength,
-                    AppState.State.selectedEl.orientation
-                )
-            );
-          } else {
-            source[selectedUnit].layers[selectedLayer].walls!.push(
-                this.wallService.getWallSourceItem(
-                    source[selectedUnit].layers[selectedLayer],
-                    (this.state.cursorCoords.startX - this.state.moveStageParams.x),
-                    (e.evt.clientY - this.state.moveStageParams.y),
-                    clearLength,
-                    AppState.State.selectedEl.orientation
-                )
-            );
-          }
-        }
-      }
-    }
-     */
   }
 
   private StageOnMouseDownHandler(e) {
-    const { source, selectedUnit, selectedLayer } = this.state;
+    const { source, selectedUnit, selectedLayer, layersSelected } = this.state;
     if (this.state.cncFlag) {
       let selected: ElementItem = AppState.State.selectedEl;
       if (selected !== undefined) {
@@ -319,13 +276,32 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             },
           }
         });
+        // wall layer checking
+        let index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
+        let _source = source[selectedUnit];
+
+        if (index === -1) {
+          _source.layers.push(
+              this.layerService.getLayerSourceItem(source[selectedUnit], LayerType.WALLS)
+          );
+        }
+
+        index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
+        if (selectedLayer === -1) {
+          this.setState({ wallLayerIndex: index, selectedLayer: -1 });
+        } else {
+          layersSelected.push(index);
+          this.setState({layersSelected, selectedLayer: index, wallLayerIndex: index});
+        }
+
+
 
         // adding new wall for resizing in the future moving
-        if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
+        if (source[selectedUnit].layers[index].type === LayerType.WALLS) {
 
-            source[selectedUnit].layers[selectedLayer].walls!.push(
+            source[selectedUnit].layers[index].walls!.push(
                 this.wallService.getWallSourceItem(
-                    source[selectedUnit].layers[selectedLayer],
+                    source[selectedUnit].layers[index],
                     (e.evt.clientX - this.state.moveStageParams.x),
                     (e.evt.clientY - this.state.moveStageParams.y),
                     25,
@@ -333,9 +309,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 )
             );
 
-          let walls = source[selectedUnit].layers[selectedLayer].walls!;
+          let walls = source[selectedUnit].layers[index].walls!;
           let wallIndex = this.wallService.getWallIndexByID(walls, walls[walls.length - 1].id).index;
-          source[selectedUnit].layers[selectedLayer].walls = walls;
+          source[selectedUnit].layers[index].walls = walls;
           this.setState({wallIndex, source});
         }
       }
@@ -364,56 +340,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             down: this.state.upDownCoords.down,
           }
       });
-      /*
-      const { source, selectedUnit, selectedLayer } = this.state;
-      if (selectedLayer !== -1 && source[selectedUnit].layers[selectedLayer].type === LayerType.WALLS) {
-          let count = 0;
-          let badEls: WallItem[] = [];
-          let wall;
-          if (source[selectedUnit].layers[selectedLayer].walls !== undefined) {
-            const _length = source[selectedUnit].layers[selectedLayer].walls!.length;
-            wall = source[selectedUnit].layers[selectedLayer].walls![_length - 1];
-            wall = this.wallService.getWallSourceItem(
-                source[selectedUnit].layers[selectedLayer],
-                wall.startX,
-                wall.startY,
-                wall.length,
-                wall.orientation,
-            );
-            wall.key = source[selectedUnit].layers[selectedLayer].key + '_wall_' + wall.id;
-          }
-
-
-          wall.id = this.wallService.getMaxID(source[selectedUnit].layers[selectedLayer].walls!);
-          wall.key = source[selectedUnit].layers[selectedLayer].key + '_wall_' + wall.id;
-          source[selectedUnit].layers[selectedLayer].walls![source[selectedUnit].layers[selectedLayer].walls!.length - 1] = wall;
-          source[selectedUnit].layers[selectedLayer].walls = this.layerService.deleteBadWalls(
-              source[selectedUnit].layers[selectedLayer].walls!
-          );
-          // простановка новой длины отрисовывающейся стены, потому что маленькие стены равны по 25
-
-          let _walls = source[selectedUnit].layers[selectedLayer].walls;
-          _walls![_walls!.length - 1] = this.wallService.setSourceWallParams(
-              _walls![_walls!.length - 1],
-              this.state.cursorCoords,
-              this.state.upDownCoords,
-              this.state.moveStageParams
-          );
-
-          // костыльное обновление state
-          // Без этого не работает
-          const _layers = this.state.layersSelected;
-          this.setState({
-            layersSelected: []
-          });
-          this.setState({
-            layersSelected: _layers
-          });
-          // _____________________
-          console.log(this.state.source);
-
-      }
-       */
     }
   }
 
@@ -493,19 +419,27 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           );
         }
       }
-      source[selectedUnit].layers[_layerIndex] = layer;
-      layersSelected.push(_layerIndex);
-      this.forceUpdate(() => this.setState({ source, selectedLayer: _layerIndex }));
+      if (selectedLayer !== -1) {
+        layersSelected.push(_layerIndex);
+        source[selectedUnit].layers[_layerIndex] = layer;
+        this.forceUpdate(() => this.setState({ source, selectedLayer: _layerIndex }));
+      } else {
+        source[selectedUnit].layers[_layerIndex] = layer;
+        this.forceUpdate(() => this.setState({ source, selectedLayer: -1 }));
+      }
+
+
+
     }
   }
 
   public stageOnClickHandler(e) {
+    // cnc element adding
     if (this.state.cncFlag) {
       let selected: ElementItem = AppState.State.selectedEl;
-      if (selected != undefined) {
-
-      } else {
+      if (selected !== undefined) {
         this.addElement(e.clientX, e.clientY);
+        this.setState({cncFlag: false});
       }
     }
   }
