@@ -16,10 +16,10 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
             source: this.props.source,
             selectedCategory: -1,
             isToggled: true,
-            selectedElementIndex: -1,
+            selectedElementIndex: '',
         };
 
-        Emit.Emitter.addListener('borderCleanAction', () => { this.setState({selectedElementIndex: -1}) });
+        Emit.Emitter.addListener('borderCleanAction', () => { this.setState({selectedElementIndex: ''}) });
         this.categoryTitleClickHandler = this.categoryTitleClickHandler.bind(this);
 
     }
@@ -36,12 +36,12 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
         AppState.State.selectedEl = el;
     }
 
-    public elementMouseClickHandler(index: number, el: ElementItem) {
+    public elementMouseClickHandler(index: string, el: ElementItem) {
         AppState.State.selectedEl = el;
         if (el.type === LayerType.WALLS) {
             Emit.Emitter.emit('checkWallLayer');
         }
-        let check = index === this.state.selectedElementIndex;
+        // let check = index === this.state.selectedElementIndex;
         this.setState({selectedElementIndex: index});
         // if (check) {
             Emit.Emitter.emit('cncFlagChange');
@@ -81,7 +81,7 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                         <img
                             key={"el_img_" + selectedCategory + "_" + i}
                             onClick={() => {
-                                this.elementMouseClickHandler(i, el);
+                                this.elementMouseClickHandler(("el_img_" + selectedCategory + "_" + i), el);
                             }}
                             onMouseDown={() => {
                                 this.elementMouseDownHandler(el)
@@ -94,7 +94,7 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                                 height: '40px',
                                 cursor: 'pointer',
                                 padding: 2,
-                                border: this.state.selectedElementIndex === i ? '2px solid #ffa500' : '',
+                                border: this.state.selectedElementIndex === ("el_img_" + selectedCategory + "_" + i) ? '2px solid #ffa500' : '',
                                 borderRadius: 5
                             }}
                             src={el.photo}
@@ -102,13 +102,20 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                     );
                 });
             } else {
+                // let _elements: Array<ElementItem> = [];
+                // for (let sourceEl of source) {
+                //     for (let el of sourceEl.elements) {
+                //         _elements.push(el);
+                //     }
+                // }
+
                 for (let i = 0; i < source.length; i++) {
                     source[i].elements.forEach((el, j) => {
                         elements.push(
                             <img
                                 key={"el_img_" + i + "_" + j}
                                 onClick={() => {
-                                    this.elementMouseClickHandler(j, el);
+                                    this.elementMouseClickHandler(("el_img_" + i + "_" + j), el);
                                 }}
                                 onMouseDown={() => {
                                     this.elementMouseDownHandler(el)
@@ -121,7 +128,7 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
                                     height: '40px',
                                     cursor: 'pointer',
                                     padding: 2,
-                                    border: this.state.selectedElementIndex === j ? '2px solid #ffa500' : '',
+                                    border: this.state.selectedElementIndex === ("el_img_" + i + "_" + j) ? '2px solid #ffa500' : '',
                                     borderRadius: 5
                                 }}
                                 src={el.photo}

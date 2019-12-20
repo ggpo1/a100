@@ -132,7 +132,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     let { selectedLayer } = this.state;
     // move_resizing
     if (this.state.isWallResizingNow) {
-      const clearLength = 25;
 
       Emit.Emitter.emit('wallMouseDbl', false);
 

@@ -4,5 +4,5 @@ export default interface IElementsPanelState {
     source: Array<CategoryItem>,
     selectedCategory: number,
     isToggled: boolean,
-    selectedElementIndex: number,
+    selectedElementIndex: string,
 }
