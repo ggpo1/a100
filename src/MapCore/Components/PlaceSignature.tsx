@@ -21,7 +21,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
     }
 
     public openModal() {
-        Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
+        // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     render() {

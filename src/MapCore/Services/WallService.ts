@@ -5,6 +5,7 @@ import AppState from "../Data/AppState";
 import MapSourceLayer from "../Models/MapSourceLayer";
 import {NodeWorker} from "inspector";
 import bs from 'js-binary-search';
+import sort from 'fast-sort';
 
 export default class WallService {
     public getWallSourceItem(selectedLayer: MapSourceLayer,
@@ -14,9 +15,11 @@ export default class WallService {
                               orientation: Orientation
     ): WallItem {
         let newWall;
-        let _id; let _key = '';
-
-        _id = this.getMaxID(selectedLayer.walls!);
+        let _id = 0; let _key = '';
+        sort(selectedLayer.walls!).asc(e => e.id);
+        if (selectedLayer.walls!.length !== 0) {
+            _id = selectedLayer.walls![selectedLayer.walls!.length - 1].id;
+        }
         _id++;
         _key = selectedLayer.key + '_wall_' + _id.toString();
 
@@ -63,30 +66,6 @@ export default class WallService {
 
         }
         return wall;
-    }
-
-    public getMaxID(list: Array<WallItem>) {
-        let startI = 0; let endI = list.length - 1;
-
-        let _max = list[0].id;
-        while (true) {
-            if (list[startI].id > _max && list[startI].id >= list[endI].id) {
-                _max = list[startI].id;
-            } else if (list[endI].id > _max && list[endI].id >= list[startI].id) {
-                _max = list[endI].id;
-            }
-            if (list.length % 2 !== 0) {
-                if (startI === endI) {
-                    return _max;
-                }
-            } else {
-                if ((list.length / 2) === startI) {
-                    return _max;
-                }
-            }
-            startI++;
-            endI--;
-        }
     }
 
     public getWallIndexByID(list: Array<WallItem>, id) {

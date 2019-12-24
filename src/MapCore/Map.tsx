@@ -384,6 +384,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     const { source, selectedUnit, selectedLayer, layersSelected, cncFlag } = this.state;
     let selected: ElementItem = AppState.State.selectedEl;
 
+    if (this.layerService.hasUnderChild(source[selectedUnit].layers!, selected.type!, (clientX - this.state.moveStageParams.x), (clientY - this.state.moveStageParams.y), selected)) return;
 
     if (selected !== undefined) {
       let _layerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, selected.type!);

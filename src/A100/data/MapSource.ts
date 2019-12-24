@@ -8,55 +8,6 @@ import Images from "../../MapCore/Data/Images";
 import MapIconsType from "../../MapCore/Models/Enums/MapIconsType";
 
 const MapSource: Array<MapSourceUnit> = [
-
-    {
-        id: 1,
-        key: 'unit_1',
-        title: 'Склад',
-        layers: [
-            {
-                id: 0,
-                key: 'unit_1_layer_0',
-                title: 'Стеллажи',
-                type: LayerType.STILLAGES,
-                mapIconsType: MapIconsType.DRAWING,
-                stillages: [],
-            },
-            {
-                id: 1,
-                key: 'unit_1_layer_0',
-                title: 'Стены',
-                type: LayerType.WALLS,
-                mapIconsType: MapIconsType.DRAWING,
-                walls: [
-                    {
-                        id: 0,
-                        key: 'unit_1_layer_0_wall_0',
-                        startX: 500,
-                        startY: 300,
-                        length: 400,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        id: 1,
-                        key: 'unit_1_layer_0_wall_1',
-                        startX: 500,
-                        startY: 400,
-                        length: 400,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        id: 2,
-                        key: 'unit_1_layer_0_wall_2',
-                        startX: 300,
-                        startY: 400,
-                        length: 200,
-                        orientation: Orientation.VERTICAL,
-                    },
-                ],
-            }
-        ]
-    },
     {
         id: 0,
         key: 'unit_0',
@@ -149,6 +100,55 @@ const MapSource: Array<MapSourceUnit> = [
             },
         ]
     },
+    {
+        id: 1,
+        key: 'unit_1',
+        title: 'Склад',
+        layers: [
+            {
+                id: 0,
+                key: 'unit_1_layer_0',
+                title: 'Стеллажи',
+                type: LayerType.STILLAGES,
+                mapIconsType: MapIconsType.DRAWING,
+                stillages: [],
+            },
+            {
+                id: 1,
+                key: 'unit_1_layer_0',
+                title: 'Стены',
+                type: LayerType.WALLS,
+                mapIconsType: MapIconsType.DRAWING,
+                walls: [
+                    {
+                        id: 0,
+                        key: 'unit_1_layer_0_wall_0',
+                        startX: 500,
+                        startY: 300,
+                        length: 400,
+                        orientation: Orientation.HORIZONTAL,
+                    },
+                    {
+                        id: 1,
+                        key: 'unit_1_layer_0_wall_1',
+                        startX: 500,
+                        startY: 400,
+                        length: 400,
+                        orientation: Orientation.HORIZONTAL,
+                    },
+                    {
+                        id: 2,
+                        key: 'unit_1_layer_0_wall_2',
+                        startX: 300,
+                        startY: 400,
+                        length: 200,
+                        orientation: Orientation.VERTICAL,
+                    },
+                ],
+            }
+        ]
+    },
+
 
 
 ];

@@ -1,6 +1,6 @@
 import React from 'react';
 import Konva from 'konva';
-import { Rect, Text } from 'react-konva';
+import {Rect} from 'react-konva';
 import IStillageProps from './../Models/Components/Stillage/IStillageProps';
 import IStillageState from './../Models/Components/Stillage/IStillageState';
 import Orientation from './../Models/Enums/Orientation';
@@ -10,13 +10,38 @@ import Defect from './Defect';
 import PlaceSignature from './PlaceSignature';
 import Signature from './SIgnature';
 import DefectService from "../Services/DefectService";
+import StillageSize from "../Models/Enums/StillageSize/StillageSize";
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
     constructor(props) {
         super(props);
+        let width, height = 0;
+        if (this.props.source.orientation === Orientation.HORIZONTAL) {
+            if (this.props.source.size === StillageSize.NORMAL) {
+                width = 76;
+                height = 49.5;
+            } else {
+                width = 50;
+                height = 49.5;
+            }
+        } else {
+            if (this.props.source.size === StillageSize.NORMAL) {
+                width = 49.5;
+                height = 76;
+            } else {
+                width = 49.5;
+                height = 50;
+            }
+        }
+        this.props.source.width = width;
+        this.props.source.height = height;
         this.state = {
             source: this.props.source,
-        }
+        };
+    }
+
+    public componentWillMount(): void {
+
     }
 
     handleDragStart = e => {
@@ -49,6 +74,11 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let viks: Array<JSX.Element> = [];
         let placeSignatures: Array<JSX.Element> = [];
         let signature;
+        let stillageSR = new StillageSizeReducer();
+
+        // let sides = stillageSR.GetSize(this.state.source.size);
+
+
         console.log('\n\n---------------------------------------------');
         console.log('\tSTILLAGE ' + source.id);
         console.log('---------------------------------------------');

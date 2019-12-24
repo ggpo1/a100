@@ -10,6 +10,8 @@ interface StillageItem {
     key: string,
     x: number,
     y: number,
+    width?: number,
+    height?: number,
     size: StillageSize,
     orientation: Orientation,
     viks?: Array<VikItem>,

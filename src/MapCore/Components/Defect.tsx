@@ -23,7 +23,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
     }
 
     public openModal() {
-        Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
+        // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     render() {

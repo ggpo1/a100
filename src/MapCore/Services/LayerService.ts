@@ -1,19 +1,35 @@
+import sort from 'fast-sort';
+import bs from 'js-binary-search';
+
+import StillageSizeReducer from "../Models/Enums/StillageSize/StillageSizeReducer";
 import MapSourceLayer from "../Models/MapSourceLayer";
 import LayerType from "../Models/Enums/LayerType";
 import MapIconsType from "../Models/Enums/MapIconsType";
 import MapSourceUnit from "../Models/MapSourceUnit";
 import LayerIndexByType from "../Models/LayerIndexByType";
-import bs from 'js-binary-search';
 import WallItem from "../Models/ArrayItems/WallIem";
-
+import StillageSize from "../Models/Enums/StillageSize/StillageSize";
+import Orientation from "../Models/Enums/Orientation";
+import SignaturePosition from "../Models/Enums/SignaturePosition";
+import ElementItem from "../Models/ArrayItems/ElementItem";
+import StillageItem from "../Models/ArrayItems/StillageItem";
+import StillageService from "./StillageService";
 
 export default class LayerService {
+
+    private stillageSizeReducer!: StillageSizeReducer;
+    private stillageService!: StillageService;
+
+    constructor() {
+        this.stillageSizeReducer = new StillageSizeReducer();
+        this.stillageService = new StillageService();
+    }
+
     public getLayerSourceItem(selectedUnit: MapSourceUnit, type: LayerType) {
-        let _id = -50; let _key = '';
-        for (const el of selectedUnit.layers!) {
-            if (el.id > _id) {
-                _id = el.id;
-            }
+        let _id = 0; let _key = '';
+        sort(selectedUnit.layers).asc(e => e.id);
+        if (selectedUnit.layers.length !== 0) {
+            _id = selectedUnit.layers[selectedUnit.layers.length - 1].id;
         }
         _id++;
         _key = selectedUnit.key + '_layer_' + _id.toString();
@@ -124,4 +140,62 @@ export default class LayerService {
         }
         return list;
     }
+
+    public hasUnderChild(layersList: Array<MapSourceLayer>, type: LayerType, x: number, y: number, selected: ElementItem): boolean {
+        let object = bs.search_in_associative(layersList, 'type', LayerType.STILLAGES);
+        let layer = layersList[object.index];
+        if (type === LayerType.STILLAGES) {
+            let selectedStillageToAdd = this.stillageService.getStillageSourceItem(layer, { x, y }, selected.stillageType!);
+            let newWidth = selectedStillageToAdd.width;
+            let newHeight = selectedStillageToAdd.height;
+
+            // stillages search
+            let stillagesList = layer.stillages!;
+            for (let i = 0; i < stillagesList.length; i++) {
+                const el = stillagesList[i];
+                    if (el.orientation === Orientation.HORIZONTAL) {
+                        if (el.signature!.position === SignaturePosition.TOP) {
+                            if (((x >= (el.x - newWidth)) && (x <= (el.x + el.width!))) && ((y >= (el.y - newHeight! - 24.5)) && (y <= (el.y + el.height!)))) {
+                                return true;
+                            }
+                        } else if (el.signature!.position === SignaturePosition.BOTTOM) {
+                            if (((x >= (el.x - newWidth!)) && (x <= (el.x + el.width!))) && ((y >= (el.y - newHeight!)) && (y <= (el.y + el.height!)))) {
+                                return true;
+                            }
+                        }
+                    } else {
+                        if (el.signature!.position === SignaturePosition.LEFT) {
+                            if (((x >= (el.x - 24.5)) && (x <= (el.x + el.width!))) && ((y >= el.y) && (y <= (el.y + el.height!)))) {
+                                return true;
+                            }
+                        } else if (el.signature!.position === SignaturePosition.RIGHT) {
+                            if (((x >= el.x) && (x <= (el.x + el.width!))) && ((y >= el.y) && (y <= (el.y + el.height!)))) {
+                                return true;
+                            }
+                        }
+                    }
+            }
+            // walls search
+            object = bs.search_in_associative(layersList, 'type', LayerType.WALLS);
+            let walls = layersList[object.index].walls!;
+            for (let i = 0; i < walls.length; i++) {
+                const el = walls[i];
+                // console.error(el);
+            }
+        } else if (type === LayerType.WALLS) {
+            return true;
+        } else if (type === LayerType.ABSTRACTS) {
+            return true;
+        }
+
+        // sort(stillagesList).asc([
+        //     e => e.x,
+        //     e => e.y
+        // ]);
+
+
+
+        return false;
+    }
+
 }

@@ -1,12 +1,17 @@
+import sort from 'fast-sort';
+import bs from 'js-binary-search';
+
+import StillageSizeReducer from "../Models/Enums/StillageSize/StillageSizeReducer";
 import MapStillageType from "../Models/Enums/MapStillageType";
 import Orientation from "../Models/Enums/Orientation";
 import SignaturePosition from "../Models/Enums/SignaturePosition";
 import StillageSize from "../Models/Enums/StillageSize/StillageSize";
 import StillageItem from "../Models/ArrayItems/StillageItem";
-import MapSourceUnit from "../Models/MapSourceUnit";
 import MapSourceLayer from "../Models/MapSourceLayer";
 
 export default class StillageService {
+
+    public stillageSizeReducer!: StillageSizeReducer;
 
     public smallPlaceSignatures = [
         {
@@ -34,16 +39,18 @@ export default class StillageService {
         },
     ];
 
+    constructor() {
+        this.stillageSizeReducer = new StillageSizeReducer();
+    }
+
     public getStillageSourceItem(selectedLayer: MapSourceLayer, coords: { x: number, y: number }, type: MapStillageType) {
-        let _id = -50; let _key = '';
-        for (const el of selectedLayer.stillages!) {
-            if (el.id > _id) {
-                _id = el.id;
-            }
+        let _id = 0; let _key = '';
+        sort(selectedLayer.stillages!).asc(e => e.id);
+        if (selectedLayer.stillages!.length !== 0) {
+            _id = selectedLayer.stillages![selectedLayer.stillages!.length - 1].id;
         }
         _id++;
         _key = selectedLayer.key + '_stillage_' + _id.toString();
-        this.maxBinarySearch(selectedLayer.stillages!);
         switch (type) {
             case MapStillageType.NORMAL_BOTTOM: {
                 return {
@@ -51,6 +58,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 76,
+                    height: 49.5,
                     orientation: Orientation.HORIZONTAL,
                     signature: {
                         title: '1',
@@ -67,6 +76,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 76,
+                    height: 49.5,
                     orientation: Orientation.HORIZONTAL,
                     signature: {
                         title: '1',
@@ -83,6 +94,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 49.5,
+                    height: 76,
                     orientation: Orientation.VERTICAL,
                     signature: {
                         title: '1',
@@ -99,6 +112,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 49.5,
+                    height: 76,
                     orientation: Orientation.VERTICAL,
                     signature: {
                         title: '1',
@@ -115,6 +130,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 50,
+                    height: 49.5,
                     orientation: Orientation.HORIZONTAL,
                     signature: {
                         title: '1',
@@ -131,6 +148,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 50,
+                    height: 49.5,
                     orientation: Orientation.HORIZONTAL,
                     signature: {
                         title: '1',
@@ -147,6 +166,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 49.5,
+                    height: 50,
                     orientation: Orientation.VERTICAL,
                     signature: {
                         title: '1',
@@ -163,6 +184,8 @@ export default class StillageService {
                     key: _key,
                     x: coords.x,
                     y: coords.y,
+                    width: 49.5,
+                    height: 50,
                     orientation: Orientation.VERTICAL,
                     signature: {
                         title: '1',
@@ -176,22 +199,25 @@ export default class StillageService {
         }
     }
 
-    public maxBinarySearch(list: Array<StillageItem>) {
-        let start = 0;
-        let end = list.length - 1;
-        let max = -50;
-
-        while (start <= end ) {
-            let mid = Math.floor((start + end) / 2);
-            if (list[mid].id > max) {
-                end = mid - 1;
-                max = list[mid].id;
-            } else {
-                start = mid + 1;
-            }
-        }
-        console.error('BINARY MAX: ' + max);
-        return max;
-    }
+    // public getStillageSize() {
+    //     let width, height = 0;
+    //     if (this.props.source.orientation === Orientation.HORIZONTAL) {
+    //         if (this.props.source.size === StillageSize.NORMAL) {
+    //             width = 76;
+    //             height = 49.5;
+    //         } else {
+    //             width = 50;
+    //             height = 49.5;
+    //         }
+    //     } else {
+    //         if (this.props.source.size === StillageSize.NORMAL) {
+    //             width = 49.5;
+    //             height = 76;
+    //         } else {
+    //             width = 49.5;
+    //             height = 50;
+    //         }
+    //     }
+    // }
 
 }
