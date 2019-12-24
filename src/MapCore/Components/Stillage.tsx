@@ -40,10 +40,6 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         };
     }
 
-    public componentWillMount(): void {
-
-    }
-
     handleDragStart = e => {
         e.target.setAttrs({
             shadowOffset: {

@@ -8,11 +8,9 @@ import MapIconsType from "../Models/Enums/MapIconsType";
 import MapSourceUnit from "../Models/MapSourceUnit";
 import LayerIndexByType from "../Models/LayerIndexByType";
 import WallItem from "../Models/ArrayItems/WallIem";
-import StillageSize from "../Models/Enums/StillageSize/StillageSize";
 import Orientation from "../Models/Enums/Orientation";
 import SignaturePosition from "../Models/Enums/SignaturePosition";
 import ElementItem from "../Models/ArrayItems/ElementItem";
-import StillageItem from "../Models/ArrayItems/StillageItem";
 import StillageService from "./StillageService";
 
 export default class LayerService {
@@ -146,8 +144,13 @@ export default class LayerService {
         let layer = layersList[object.index];
         if (type === LayerType.STILLAGES) {
             let selectedStillageToAdd = this.stillageService.getStillageSourceItem(layer, { x, y }, selected.stillageType!);
-            let newWidth = selectedStillageToAdd.width;
-            let newHeight = selectedStillageToAdd.height;
+            const newSWidth = selectedStillageToAdd.width;
+            const newSHeight = selectedStillageToAdd.height;
+            const newSStartX = selectedStillageToAdd.x;
+            const newSStartY = selectedStillageToAdd.y;
+            const newSEndX = newSStartX + selectedStillageToAdd.width;
+            const newSEndY = newSStartY + selectedStillageToAdd.height;
+
 
             // stillages search
             let stillagesList = layer.stillages!;
@@ -155,11 +158,11 @@ export default class LayerService {
                 const el = stillagesList[i];
                     if (el.orientation === Orientation.HORIZONTAL) {
                         if (el.signature!.position === SignaturePosition.TOP) {
-                            if (((x >= (el.x - newWidth)) && (x <= (el.x + el.width!))) && ((y >= (el.y - newHeight! - 24.5)) && (y <= (el.y + el.height!)))) {
+                            if (((x >= (el.x - newSWidth)) && (x <= (el.x + el.width!))) && ((y >= (el.y - newSHeight! - 24.5)) && (y <= (el.y + el.height!)))) {
                                 return true;
                             }
                         } else if (el.signature!.position === SignaturePosition.BOTTOM) {
-                            if (((x >= (el.x - newWidth!)) && (x <= (el.x + el.width!))) && ((y >= (el.y - newHeight!)) && (y <= (el.y + el.height!)))) {
+                            if (((x >= (el.x - newSWidth!)) && (x <= (el.x + el.width!))) && ((y >= (el.y - newSHeight!)) && (y <= (el.y + el.height!)))) {
                                 return true;
                             }
                         }
@@ -178,11 +181,26 @@ export default class LayerService {
             // walls search
             object = bs.search_in_associative(layersList, 'type', LayerType.WALLS);
             let walls = layersList[object.index].walls!;
+            let elStartX, elStartY, elEndX, elEndY = 0;
             for (let i = 0; i < walls.length; i++) {
                 const el = walls[i];
+                    elStartX = el.startX;
+                    elStartY = el.startY;
+                    if (el.orientation === Orientation.HORIZONTAL) {
+                        elEndX = elStartX + el.length;
+                        elEndY = elStartY + 10;
+                    } else {
+                        elEndX = elStartX + 10;
+                        elEndY = elStartY + el.length;
+                    }
+
+                    if ((newSStartX > (elStartX - newSWidth) && newSStartX < elEndX) && (newSStartY > (elStartY - newSHeight) && newSStartY < elEndY)) {
+                        return true;
+                    }
                 // console.error(el);
             }
         } else if (type === LayerType.WALLS) {
+            console.error('WALL!');
             return true;
         } else if (type === LayerType.ABSTRACTS) {
             return true;

@@ -104,7 +104,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.StageOnMouseMoveHandler = this.StageOnMouseMoveHandler.bind(this);
     this.defectBrowsePanelWorker = this.defectBrowsePanelWorker.bind(this);
     this.addLayerModalWorker = this.addLayerModalWorker.bind(this);
-    this.checkWallLayer = this.checkWallLayer.bind(this);
     this.stageDragEnd = this.stageDragEnd.bind(this);
     this.wallLabelButtonInteractionWayUp = this.wallLabelButtonInteractionWayUp.bind(this);
     this.wallLabelButtonInteractionWayDown = this.wallLabelButtonInteractionWayDown.bind(this);
@@ -115,8 +114,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('defectBrowsePanelWorkerHandle', this.defectBrowsePanelWorker);
     // Событие для изменения cncFlag
     Emit.Emitter.addListener('cncFlagChange', this.cncFlagChange);
-    // Событие для проверки слоя для отрисовки при нажтии на элемент в панели элемента
-    Emit.Emitter.addListener('checkWallLayer', this.checkWallLayer);
     // Событие зажатия левой кноки или пальца для дорисовки стены с помощью ползунка
     Emit.Emitter.addListener('wallLabelButtonInteractionWayUp', this.wallLabelButtonInteractionWayUp);
     // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
@@ -128,18 +125,18 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   public MapWrapperOnMouseMove(e) {
 
 
-    const { source, selectedUnit, layersSelected, selectedWallToResize, resizingWallIndex, isStart } = this.state;
+    const { source, selectedUnit, layersSelected, selectedWallToResize, wallLayerIndex, resizingWallIndex, isStart } = this.state;
     let { selectedLayer } = this.state;
     // move_resizing
     if (this.state.isWallResizingNow) {
 
       Emit.Emitter.emit('wallMouseDbl', false);
 
-      let _wall = source[selectedUnit].layers[selectedLayer].walls![resizingWallIndex];
+      let _wall = source[selectedUnit].layers[wallLayerIndex].walls![resizingWallIndex];
 
       _wall = this.wallService.resizeWall(e, _wall, isStart, this.state.moveStageParams);
 
-      source[selectedUnit].layers[selectedLayer].walls![resizingWallIndex] = _wall;
+      source[selectedUnit].layers[wallLayerIndex].walls![resizingWallIndex] = _wall;
 
       this.setState({source});
 
@@ -158,26 +155,19 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
   private wallLabelButtonInteractionWayUp(e) {
-    const { source, isStart, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize } = this.state;
+    const { source, isStart, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize, wallLayerIndex } = this.state;
     let { selectedLayer } = this.state;
-    let count = 0;
-    let badEls: WallItem[] = [];
     if (isWallResizingNow && selectedWallToResize) {
-      let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
-      if (!layerFlag.selected.is) {
-        layersSelected.push(layerFlag.created.index);
-        selectedLayer = layerFlag.created.index;
-      }
-      let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, selectedWallToResize.id);
+      let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[wallLayerIndex].walls!, selectedWallToResize.id);
       let _wall: WallItem = found.item;
       _wall = this.wallService.resizeWall(e, _wall, isStart, this.state.moveStageParams);
-      source[selectedUnit].layers[selectedLayer].walls![found.index] = _wall;
+      source[selectedUnit].layers[wallLayerIndex].walls![found.index] = _wall;
 
-      source[selectedUnit].layers[selectedLayer].walls = this.layerService.deleteBadWalls(
-          source[selectedUnit].layers[selectedLayer].walls!
+      source[selectedUnit].layers[wallLayerIndex].walls = this.layerService.deleteBadWalls(
+          source[selectedUnit].layers[wallLayerIndex].walls!
       );
 
-      this.setState({resizingWallIndex: found.index, source, isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected, selectedLayer: selectedLayer});
+      this.setState({resizingWallIndex: found.index, source, isWallResizingNow: false, isDrawing: false, layersSelected: layersSelected});
       Emit.Emitter.emit('wallMouseDbl', false);
     }
   }
@@ -187,13 +177,32 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.emit('wallMouseDbl', false);
     const { source, layersSelected, selectedUnit } = this.state; let selectedLayer = -1;
     let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
-    if (!layerFlag.selected.is) {
-      layersSelected.push(layerFlag.created.index);
+
+
+    let index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
+    let _source = source[selectedUnit];
+
+    if (index === -1) {
+      _source.layers.push(
+          this.layerService.getLayerSourceItem(source[selectedUnit], LayerType.WALLS)
+      );
     }
-    selectedLayer = layerFlag.created.index;
-    this.setState({layersSelected, selectedLayer});
-    console.error(selectedLayer);
-    let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[selectedLayer].walls!, wallSource.id);
+
+    index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
+    if (selectedLayer === -1) {
+      this.setState({ wallLayerIndex: index, selectedLayer: -1 });
+    } else {
+      layersSelected.push(index);
+      this.setState({layersSelected, selectedLayer: index, wallLayerIndex: index});
+    }
+
+    // if (!layerFlag.selected.is) {
+    //   layersSelected.push(layerFlag.created.index);
+    // }
+    // selectedLayer = layerFlag.created.index;
+    // this.setState({layersSelected, selectedLayer});
+    // console.error(selectedLayer);
+    let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[index].walls!, wallSource.id);
     this.setState({resizingWallIndex: found.index, isStart, selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
   }
 
@@ -221,11 +230,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     });
   }
 
-  private checkWallLayer() {
-    const { source, selectedUnit, layersSelected } = this.state;
-
-
-  }
 
   private StageOnMouseMoveHandler(e) {
     const { source, selectedUnit, selectedLayer, isDrawing, wallIndex, moveStageParams, cursorCoords, wallLayerIndex } = this.state;
@@ -294,7 +298,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         }
 
 
-
+        // addWall
         // adding new wall for resizing in the future moving
         if (source[selectedUnit].layers[index].type === LayerType.WALLS) {
 
