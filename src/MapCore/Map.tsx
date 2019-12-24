@@ -44,6 +44,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      isWallUnderChild: false,
       wallLayerIndex: -1,
       wallIndex: -1,
       selectedUnit: 0,
@@ -179,21 +180,21 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
 
 
-    let index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
+    let _index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
     let _source = source[selectedUnit];
 
-    if (index === -1) {
+    if (_index === -1) {
       _source.layers.push(
           this.layerService.getLayerSourceItem(source[selectedUnit], LayerType.WALLS)
       );
     }
 
-    index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
+    _index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
     if (selectedLayer === -1) {
-      this.setState({ wallLayerIndex: index, selectedLayer: -1 });
+      this.setState({ wallLayerIndex: _index, selectedLayer: -1 });
     } else {
-      layersSelected.push(index);
-      this.setState({layersSelected, selectedLayer: index, wallLayerIndex: index});
+      layersSelected.push(_index);
+      this.setState({layersSelected, selectedLayer: _index, wallLayerIndex: _index});
     }
 
     // if (!layerFlag.selected.is) {
@@ -202,14 +203,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     // selectedLayer = layerFlag.created.index;
     // this.setState({layersSelected, selectedLayer});
     // console.error(selectedLayer);
-    let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[index].walls!, wallSource.id);
+    let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[_index].walls!, wallSource.id);
     this.setState({resizingWallIndex: found.index, isStart, selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
   }
 
 
 
   private stageDragEnd(x: number, y: number) {
-    console.log(this.state.source);
     this.setState({
       moveStageParams: {
         x: x,
@@ -219,12 +219,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   private addLayerModalWorker(modalMode: boolean) {
-    console.log(modalMode);
     this.setState({ isAddLayerModal: modalMode });
   }
 
   public defectBrowsePanelWorker(value: boolean) {
-    console.log(value);
     this.setState({
         isDefectBrowsePanel: value
     });
@@ -297,16 +295,20 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           this.setState({layersSelected, selectedLayer: index, wallLayerIndex: index});
         }
 
+        let clientX = e.evt.clientX - this.state.moveStageParams.x;
+        let clientY = e.evt.clientY - this.state.moveStageParams.y;
 
+        if (this.layerService.hasUnderChild(source[selectedUnit].layers!, selected.type!, clientX, clientY, selected)) return;
         // addWall
         // adding new wall for resizing in the future moving
+
         if (source[selectedUnit].layers[index].type === LayerType.WALLS) {
 
             source[selectedUnit].layers[index].walls!.push(
                 this.wallService.getWallSourceItem(
                     source[selectedUnit].layers[index],
-                    (e.evt.clientX - this.state.moveStageParams.x),
-                    (e.evt.clientY - this.state.moveStageParams.y),
+                    clientX,
+                    clientY,
                     25,
                     AppState.State.selectedEl.orientation
                 )
@@ -388,7 +390,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     const { source, selectedUnit, selectedLayer, layersSelected, cncFlag } = this.state;
     let selected: ElementItem = AppState.State.selectedEl;
 
-    if (this.layerService.hasUnderChild(source[selectedUnit].layers!, selected.type!, (clientX - this.state.moveStageParams.x), (clientY - this.state.moveStageParams.y), selected)) return;
 
     if (selected !== undefined) {
       let _layerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, selected.type!);
@@ -404,6 +405,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
       if (layer.mapIconsType === MapIconsType.DRAWING) {
         if (layer.type === LayerType.STILLAGES) {
+          if (this.layerService.hasUnderChild(source[selectedUnit].layers!, selected.type!, (clientX - this.state.moveStageParams.x), (clientY - this.state.moveStageParams.y), selected)) return;
           if (layer.stillages === undefined) {
             source[selectedUnit].layers[selectedLayer].stillages = [];
           }

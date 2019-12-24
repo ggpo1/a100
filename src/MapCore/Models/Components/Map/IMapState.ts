@@ -1,17 +1,18 @@
 import MapSourceUnit from '../../MapSourceUnit';
 import WallItem from "../../ArrayItems/WallIem";
 interface IMapState {
-    wallLayerIndex: number,
-    wallIndex: number,
+    isWallUnderChild: boolean, // флаг для отражения нахождения стены на другие объекты
+    wallLayerIndex: number, // индекс слоя со стенами
+    wallIndex: number, // индекс выбранной стены
     selectedUnit: number, // индекс выбранного блока
     selectedLayer: number, // индекс выбранного слоя deprecated
     stageScale: number, // оэф зума сцены
-    moveStageParams: { // параметры сдвига сцены
-      x: number,
-      y: number,
+    moveStageParams: { // параметры сдвига сцены при stageDragAction
+      x: number, // сдвиг по X
+      y: number, // сдвиг по Y
     },
-    stageX: number,
-    stageY: number,
+    stageX: number, //
+    stageY: number, //
     isMouseDown: boolean, // зажата ли левая кнопка мыши
     source: Array<MapSourceUnit>, // данные для отрисовки
     isOnlyRed: boolean, // флаг для фильтра, переделать в объект
@@ -39,15 +40,15 @@ interface IMapState {
 
     // resizing
     isIncreaseResizingLength: boolean,
-    resizingWallIndex: number,
-    isStart: boolean,
-    isWallResizingNow: boolean,
-    selectedWallToResize: WallItem | undefined,
-    resizeCursorCoordinates: {
-        startX: number,
-        startY: number,
-        actionEndX: number,
-        actionEndY: number,
+    resizingWallIndex: number, // индекс стены, которую редактируют
+    isStart: boolean, // какой из двух ползунков был задействован в resizing (deprecated)
+    isWallResizingNow: boolean, // флаг для обозначения, что карта находится в режиме изменения длины стены
+    selectedWallToResize: WallItem | undefined, // элемент выбранной стены для изменения длины стены
+    resizeCursorCoordinates: { // отдельный объект для сохранения данных о позиции курсора приизменении длины стены
+        startX: number, // начальное положение курсора при mouseDown по иксу
+        startY: number, // начальное положение курсора при mouseUp по игрику
+        actionEndX: number, // положение курсора при mouseMove и mouseUp по иксу
+        actionEndY: number, // положение курсора при mouseMove и mouseUp по игрику
     }
 }
 
