@@ -3,6 +3,7 @@ import PlaceSignatureItem from './../../ArrayItems/PlaceSignatureItem';
 import VikItem from './../../ArrayItems/VikItem';
 
 interface IPlaceSignatureState {
+    parentKey: string,
     parentX: number,
     parentY: number,
     parentOrientation: Orientation,

@@ -24,6 +24,7 @@ import './Css/LayerPanel.css';
 import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
+import Vectors from "./Models/Enums/Vectors";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -44,6 +45,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      isShapeMoveEnable: false,
+      isShapeMovingNow: false,
       isWallUnderChild: false,
       wallLayerIndex: -1,
       wallIndex: -1,
@@ -108,6 +111,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.stageDragEnd = this.stageDragEnd.bind(this);
     this.wallLabelButtonInteractionWayUp = this.wallLabelButtonInteractionWayUp.bind(this);
     this.wallLabelButtonInteractionWayDown = this.wallLabelButtonInteractionWayDown.bind(this);
+    this.setIsShapeMoveEnable = this.setIsShapeMoveEnable.bind(this);
+    this.moveShapeByStep = this.moveShapeByStep.bind(this);
 
     // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -119,12 +124,51 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('wallLabelButtonInteractionWayUp', this.wallLabelButtonInteractionWayUp);
     // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
     Emit.Emitter.addListener('wallLabelButtonInteractionWayDown', this.wallLabelButtonInteractionWayDown);
+    //
+    Emit.Emitter.addListener('setIsShapeMoving', this.setIsShapeMoveEnable);
+    //
+    Emit.Emitter.addListener('moveShapeByStep', this.moveShapeByStep);
+  }
 
+  // перемещение фигур с помощью стрелочек
+  public moveShapeByStep(shapeSource, type: LayerType, vector: Vectors) {
+    const { source, selectedUnit, selectedLayer } = this.state;
+    const step = 1;
+    if (type === LayerType.STILLAGES) {
+      let stillageLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
+      let searchedObj = this.stillageService.stillageSearchByID(source[selectedUnit].layers[stillageLayerIndex].stillages!, shapeSource.id);
+      let stillage = source[selectedUnit].layers[stillageLayerIndex].stillages![searchedObj.index];
+      if (vector === Vectors.TOP) {
+        stillage.y -= step;
+      } else if (vector === Vectors.BOTTOM) {
+        stillage.y += step;
+      } else if (vector === Vectors.LEFT) {
+        stillage.x -= step;
+      } else if (vector === Vectors.RIGHT) {
+        stillage.x += step;
+      }
+      source[selectedUnit].layers[stillageLayerIndex].stillages![searchedObj.index] = stillage;
+
+      Emit.Emitter.emit('stillageSignatureForceUpdate', stillage.key, stillage.x, stillage.y);
+      Emit.Emitter.emit('placeSignaturesForceUpdate', stillage.key, stillage.x, stillage.y);
+      Emit.Emitter.emit('defectsForceUpdate', stillage.key, stillage.x, stillage.y);
+
+      this.forceUpdate(() => this.setState({source}));
+    }
+
+  }
+
+  public setIsShapeMoveEnable(value) {
+    this.setState({isShapeMoveEnable: value});
   }
 
   // saving cur pos and wall resizing move rendering
   public MapWrapperOnMouseMove(e) {
 
+    // перемещение фигуры
+    if (this.state.isShapeMovingNow && this.state.isShapeMoveEnable) {
+
+    }
 
     const { source, selectedUnit, layersSelected, selectedWallToResize, wallLayerIndex, resizingWallIndex, isStart } = this.state;
     let { selectedLayer } = this.state;

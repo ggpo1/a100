@@ -3,6 +3,7 @@ import StillageSize from './../../Enums/StillageSize/StillageSize';
 import SignatureItem from './../../ArrayItems/SignatureItem';
 
 interface ISignatureProps {
+    parentKey: string,
     parentX: number, 
     parentY: number,
     parentOrientation: Orientation,

@@ -13,6 +13,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
     constructor(props) {
         super(props);
         this.state = {
+            parentKey: this.props.parentKey,
             parentX: this.props.parentX,
             parentY: this.props.parentY,
             parentOrientation: this.props.parentOrientation,
@@ -20,11 +21,20 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
         };
 
         this.openModal = this.openModal.bind(this);
+        this.thisForceUpdate = this.thisForceUpdate.bind(this);
+
+        Emit.Emitter.addListener('defectsForceUpdate', this.thisForceUpdate);
     }
 
     public openModal() {
         // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
+
+    public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {
+        if (parentKey === this.state.parentKey) {
+            this.setState({parentX: newParentX, parentY: newParentY})
+        }
+    };
 
     render() {
         const { parentX, parentY, parentOrientation, source } = this.state;

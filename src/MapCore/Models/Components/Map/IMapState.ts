@@ -1,6 +1,8 @@
 import MapSourceUnit from '../../MapSourceUnit';
 import WallItem from "../../ArrayItems/WallIem";
 interface IMapState {
+    isShapeMoveEnable: boolean,
+    isShapeMovingNow: boolean,
     isWallUnderChild: boolean, // флаг для отражения нахождения стены на другие объекты
     wallLayerIndex: number, // индекс слоя со стенами
     wallIndex: number, // индекс выбранной стены

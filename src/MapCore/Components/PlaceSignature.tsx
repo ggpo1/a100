@@ -10,6 +10,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
         super(props);
 
         this.state = {
+            parentKey: this.props.parentKey,
             parentX: this.props.parentX,
             parentY: this.props.parentY,
             parentOrientation: this.props.parentOrientation,
@@ -18,11 +19,20 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
         };
 
         this.openModal = this.openModal.bind(this);
+        this.thisForceUpdate = this.thisForceUpdate.bind(this);
+
+        Emit.Emitter.addListener('placeSignaturesForceUpdate', this.thisForceUpdate);
     }
 
     public openModal() {
         // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
+
+    public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {
+        if (parentKey === this.state.parentKey) {
+            this.setState({parentX: newParentX, parentY: newParentY})
+        }
+    };
 
     render() {
         const { parentX, parentY, parentOrientation, source } = this.state;

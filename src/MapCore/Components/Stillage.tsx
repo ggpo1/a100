@@ -1,6 +1,6 @@
 import React from 'react';
 import Konva from 'konva';
-import {Rect} from 'react-konva';
+import {Rect, Arrow} from 'react-konva';
 import IStillageProps from './../Models/Components/Stillage/IStillageProps';
 import IStillageState from './../Models/Components/Stillage/IStillageState';
 import Orientation from './../Models/Enums/Orientation';
@@ -11,10 +11,14 @@ import PlaceSignature from './PlaceSignature';
 import Signature from './SIgnature';
 import DefectService from "../Services/DefectService";
 import StillageSize from "../Models/Enums/StillageSize/StillageSize";
+import Emit from "../Data/Emit";
+import StillageService from "../Services/StillageService";
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
+    public stillageService!: StillageService;
     constructor(props) {
         super(props);
+        this.stillageService = new StillageService();
         let width, height = 0;
         if (this.props.source.orientation === Orientation.HORIZONTAL) {
             if (this.props.source.size === StillageSize.NORMAL) {
@@ -37,7 +41,19 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         this.props.source.height = height;
         this.state = {
             source: this.props.source,
+            isMoveEnabled: false,
         };
+        this.setStillageMoveEnabled = this.setStillageMoveEnabled.bind(this);
+        this.setStillageMoveNow = this.setStillageMoveNow.bind(this);
+    }
+
+    public setStillageMoveEnabled(e) {
+        Emit.Emitter.emit('setIsShapeMoving', !this.state.isMoveEnabled);
+        this.setState({isMoveEnabled: !this.state.isMoveEnabled})
+    }
+
+    public setStillageMoveNow(e, value: boolean) {
+
     }
 
     handleDragStart = e => {
@@ -71,17 +87,21 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let placeSignatures: Array<JSX.Element> = [];
         let signature;
         let stillageSR = new StillageSizeReducer();
-
-        // let sides = stillageSR.GetSize(this.state.source.size);
-
+        let stillageMoveArrows: Array<JSX.Element> = [];
 
         console.log('\n\n---------------------------------------------');
         console.log('\tSTILLAGE ' + source.id);
         console.log('---------------------------------------------');
         console.log('\tstillageID: ' + source.id + ', stillageKey: ' + source.key);
+
+        if (this.state.isMoveEnabled) {
+            stillageMoveArrows = this.stillageService.getStillageArrows(this.state.source);
+        }
+
         if (source.signature !== undefined) {
             signature =
                 <Signature
+                    parentKey={source.key}
                     key={source.key + '_signature'}
                     parentX={source.x}
                     parentY={source.y}
@@ -98,6 +118,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             source.placeSignatures.forEach(element => {
                 placeSignatures.push(
                     <PlaceSignature
+                        parentKey={source.key}
                         key={source.key + '_placeSignature_' + (i++)}
                         parentX={source.x}
                         parentY={source.y}
@@ -112,10 +133,10 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
 
         if (source.viks !== undefined) {
             let i = 0;
-            let dS = new DefectService();
             source.viks!.forEach(element => {
                 viks.push(
                     <Defect
+                        parentKey={source.key}
                         key={source.key + '_defect_' + (i++)}
                         parentX={source.x}
                         parentY={source.y}
@@ -131,9 +152,16 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             stillage = (
                 <Rect
                     key={source.key + '_rect'}
+                    // move actions
+                    onDblTap={(e) => this.setStillageMoveEnabled(e)}
+                    onDblClick={(e) => this.setStillageMoveEnabled(e)}
+                    onMouseDown={(e) => this.setStillageMoveNow(e, true)}
+                    onTouchStart={(e) => this.setStillageMoveNow(e, true)}
+                    onMouseUp={(e) => this.setStillageMoveNow(e, false)}
+                    onTouchEnd={(e) => this.setStillageMoveNow(e, false)}
+                    // ____
                     x={source.x}
                     y={source.y}
-                    onDblClick={() => {  }}
                     width={stillageSizeReducer.GetSize(source.size).firstSide}
                     height={stillageSizeReducer.GetSize(source.size).secondSide}
                     fill={StillageColors.STILLAGE_NORMAL}
@@ -147,6 +175,14 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             stillage = (
                 <Rect
                     key={source.key + '_rect'}
+                    // move actions
+                    onDblTap={(e) => this.setStillageMoveEnabled(e)}
+                    onDblClick={(e) => this.setStillageMoveEnabled(e)}
+                    onMouseDown={(e) => this.setStillageMoveNow(e, true)}
+                    onTouchStart={(e) => this.setStillageMoveNow(e, true)}
+                    onMouseUp={(e) => this.setStillageMoveNow(e, false)}
+                    onTouchEnd={(e) => this.setStillageMoveNow(e, false)}
+                    // ____
                     x={source.x}
                     y={source.y}
                     width={stillageSizeReducer.GetSize(source.size).secondSide}
@@ -162,7 +198,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         console.log('\t' + stillage.key);
         console.log('---------------------------------------------');
 
-        let returns: Array<JSX.Element> = [signature, stillage, viks, placeSignatures];
+        let returns: Array<JSX.Element> = [signature, stillage, viks, placeSignatures, stillageMoveArrows];
 
         // console.log('stillage stop');
 

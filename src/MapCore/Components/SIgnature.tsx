@@ -5,6 +5,7 @@ import ISignatureState from './../Models/Components/Signature/ISignatureState';
 import Orientation from './../Models/Enums/Orientation';
 import SignaturePosition from './../Models/Enums/SignaturePosition';
 import StillageSize from './../Models/Enums/StillageSize/StillageSize';
+import Emit from "../Data/Emit";
 
 export default class Signature extends Component<ISignatureProps, ISignatureState> {
 
@@ -12,13 +13,29 @@ export default class Signature extends Component<ISignatureProps, ISignatureStat
         super(props);
 
         this.state = {
+            parentKey: this.props.parentKey,
             parentX: this.props.parentX,
             parentY: this.props.parentY,
             parentOrientation: this.props.parentOrientation,
             parentSize: this.props.parentSize,
             source: this.props.source,
-        }
+        };
+
+        this.thisForceUpdate = this.thisForceUpdate.bind(this);
+
+        Emit.Emitter.addListener('stillageSignatureForceUpdate', this.thisForceUpdate);
     }
+
+    public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {
+        if (parentKey === this.state.parentKey) {
+            this.setState({parentX: newParentX, parentY: newParentY})
+        }
+    };
+
+    // public setStillageMoveEnabled(e) {
+    //     Emit.Emitter.emit('setIsShapeMoving', !this.state.isMoveEnabled);
+    //     this.setState({isMoveEnabled: !this.state.isMoveEnabled})
+    // }
 
     render() {
         const { parentX, parentY, parentOrientation, parentSize, source } = this.state;
@@ -79,6 +96,7 @@ export default class Signature extends Component<ISignatureProps, ISignatureStat
                 width={_width}
                 height={_height}
                 fill={'#dcdcdc'}
+                // onDblTap={}
             />
         );
 

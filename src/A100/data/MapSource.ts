@@ -40,7 +40,7 @@ const MapSource: Array<MapSourceUnit> = [
                         id: 0,
                         key: 'unit_0_layer_0_stillage_0',
                         x: 250,
-                        y: 456,
+                        y: 600,
                         orientation: Orientation.HORIZONTAL,
                         signature: {
                             title: '12',
@@ -79,6 +79,93 @@ const MapSource: Array<MapSourceUnit> = [
                             }
                         ]
                     },
+                    {
+                        id: 1,
+                        key: 'unit_0_layer_0_stillage_1',
+                        x: 600,
+                        y: 456,
+                        orientation: Orientation.VERTICAL,
+                        signature: {
+                            title: '15',
+                            position: SignaturePosition.LEFT,
+                        },
+                        size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '12',
+                            },
+                            {
+                                place: 2,
+                                title: '112',
+                            },
+                            {
+                                place: 3,
+                                title: '6',
+                            },
+                        ],
+                        viks: [
+
+                        ]
+                    },
+                    {
+                        id: 2,
+                        key: 'unit_0_layer_0_stillage_2',
+                        x: 250,
+                        y: 456,
+                        orientation: Orientation.HORIZONTAL,
+                        signature: {
+                            title: '15',
+                            position: SignaturePosition.BOTTOM,
+                        },
+                        size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '12',
+                            },
+                            {
+                                place: 2,
+                                title: '112',
+                            },
+                            {
+                                place: 3,
+                                title: '6',
+                            },
+                        ],
+                        viks: [
+
+                        ]
+                    },
+                    {
+                        id: 3,
+                        key: 'unit_0_layer_0_stillage_3',
+                        x: 600,
+                        y: 600,
+                        orientation: Orientation.VERTICAL,
+                        signature: {
+                            title: '15',
+                            position: SignaturePosition.RIGHT,
+                        },
+                        size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '12',
+                            },
+                            {
+                                place: 2,
+                                title: '112',
+                            },
+                            {
+                                place: 3,
+                                title: '6',
+                            },
+                        ],
+                        viks: [
+
+                        ]
+                    },
                 ]
             },
             {
@@ -111,7 +198,9 @@ const MapSource: Array<MapSourceUnit> = [
                 title: 'Стеллажи',
                 type: LayerType.STILLAGES,
                 mapIconsType: MapIconsType.DRAWING,
-                stillages: [],
+                stillages: [
+
+                ],
             },
             {
                 id: 1,
