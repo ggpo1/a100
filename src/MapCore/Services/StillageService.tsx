@@ -95,7 +95,7 @@ export default class StillageService {
                             stroke={'#2f00ff'}
                             strokeWidth={0.5}
                             // onMouseDown={() => Emit.Emitter.emit('moveShapeByStep', source, LayerType.STILLAGES, Vectors.TOP)}
-                            onClick={() => Emit.Emitter.emit('moveShapeByStep', source, LayerType.STILLAGES, Vectors.TOP)}
+                            onClick={() => Emit.Emitter.emit('moveShapeByStep', source, LayerType.STILLAGES, Vectors.TOP)}ё
                         />
                     ),
                     (

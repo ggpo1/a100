@@ -25,7 +25,6 @@ import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
 import Vectors from "./Models/Enums/Vectors";
-import StillageItem from "./Models/ArrayItems/StillageItem";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -182,8 +181,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     let { selectedLayer } = this.state;
     // перемещение фигуры
     if (this.state.isShapeMovingNow) {
+      console.error(this.state.selectedShapeForMove!.type!.toString().toUpperCase());
       if (this.state.selectedShapeForMove !== undefined) {
-        console.error(this.state.selectedShapeForMove);
+        // console.error(this.state.selectedShapeForMove);
         if (this.state.selectedShapeForMove!.type === LayerType.STILLAGES) {
           let stillageLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
           let searchedObj = this.stillageService.stillageSearchByID(source[selectedUnit].layers[stillageLayerIndex].stillages!, this.state.selectedShapeForMove.shape.id);
@@ -199,6 +199,16 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           Emit.Emitter.emit('defectsForceUpdate', stillage.key, stillage.x, stillage.y);
 
           this.forceUpdate(() => this.setState({source}));
+        } else if (this.state.selectedShapeForMove!.type === LayerType.LIGHTING) {
+          let lightingLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.LIGHTING);
+          console.error(this.state.selectedShapeForMove.shape);
+          let searchedObj = this.objectService.searchByID(source[selectedUnit].layers[lightingLayerIndex].objects!, this.state.selectedShapeForMove.shape.id);
+          let light = source[selectedUnit].layers[lightingLayerIndex].objects![searchedObj.index];
+          // ADD SCALING
+          light.x = e.clientX - this.state.moveStageParams.x;
+          light.y = e.clientY - this.state.moveStageParams.y;
+          source[selectedUnit].layers[lightingLayerIndex].objects![searchedObj.index] = light;
+          this.forceUpdate(() => this.setState({source}))
         }
       }
     }

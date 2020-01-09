@@ -2,6 +2,8 @@ import sort from 'fast-sort';
 import bs from 'js-binary-search';
 
 import MapSourceLayer from "../Models/MapSourceLayer";
+import StillageItem from "../Models/ArrayItems/StillageItem";
+import ObjectItem from "../Models/ArrayItems/ObjectItem";
 
 export default class ObjectService {
     public getObjectSourceItem(selectedLayer: MapSourceLayer, coords: { x: number, y: number }, photo: any) {
@@ -19,5 +21,9 @@ export default class ObjectService {
             y: coords.y,
             photo: photo,
         }
+    }
+
+    public searchByID(shapesList: Array<ObjectItem>, id: number) {
+        return bs.search_in_associative(shapesList, 'id', id);
     }
 }
