@@ -181,34 +181,37 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     let { selectedLayer } = this.state;
     // перемещение фигуры
     if (this.state.isShapeMovingNow) {
-      console.error(this.state.selectedShapeForMove!.type!.toString().toUpperCase());
       if (this.state.selectedShapeForMove !== undefined) {
-        // console.error(this.state.selectedShapeForMove);
         if (this.state.selectedShapeForMove!.type === LayerType.STILLAGES) {
           let stillageLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
           let searchedObj = this.stillageService.stillageSearchByID(source[selectedUnit].layers[stillageLayerIndex].stillages!, this.state.selectedShapeForMove.shape.id);
-
           let stillage = source[selectedUnit].layers[stillageLayerIndex].stillages![searchedObj.index];
+          // TODO: add scaling
           stillage.x = e.clientX - this.state.moveStageParams.x;
           stillage.y = e.clientY - this.state.moveStageParams.y;
-
           source[selectedUnit].layers[stillageLayerIndex].stillages![searchedObj.index] = stillage;
-
           Emit.Emitter.emit('stillageSignatureForceUpdate', stillage.key, stillage.x, stillage.y);
           Emit.Emitter.emit('placeSignaturesForceUpdate', stillage.key, stillage.x, stillage.y);
           Emit.Emitter.emit('defectsForceUpdate', stillage.key, stillage.x, stillage.y);
-
           this.forceUpdate(() => this.setState({source}));
         } else if (this.state.selectedShapeForMove!.type === LayerType.LIGHTING) {
           let lightingLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.LIGHTING);
-          console.error(this.state.selectedShapeForMove.shape);
           let searchedObj = this.objectService.searchByID(source[selectedUnit].layers[lightingLayerIndex].objects!, this.state.selectedShapeForMove.shape.id);
           let light = source[selectedUnit].layers[lightingLayerIndex].objects![searchedObj.index];
-          // ADD SCALING
+          // TODO: add scaling
           light.x = e.clientX - this.state.moveStageParams.x;
           light.y = e.clientY - this.state.moveStageParams.y;
           source[selectedUnit].layers[lightingLayerIndex].objects![searchedObj.index] = light;
           this.forceUpdate(() => this.setState({source}))
+        } else if (this.state.selectedShapeForMove!.type === LayerType.WALLS) {
+          let wallsLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
+          let searchedObj = this.wallService.getWallIndexByID(source[selectedUnit].layers[wallsLayerIndex].walls!, this.state.selectedShapeForMove.shape.id);
+          let wall = source[selectedUnit].layers[wallsLayerIndex].walls![searchedObj.index];
+          // TODO: add scaling
+          wall.startX = e.clientX - this.state.moveStageParams.x;
+          wall.startY = e.clientY - this.state.moveStageParams.y;
+          source[selectedUnit].layers[wallsLayerIndex].walls![searchedObj.index] = wall;
+          this.forceUpdate(() => this.setState({source}));
         }
       }
     }

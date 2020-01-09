@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Line, Rect} from 'react-konva';
+import {Image, Line, Rect} from 'react-konva';
 import IWallProps from './../Models/Components/Wall/IWallProps';
 import IWallState from './../Models/Components/Wall/IWallState';
 import Orientation from './../Models/Enums/Orientation';
@@ -7,6 +7,7 @@ import LabelButton from "./Stage/LabelButton";
 import LabelButtonMode from "../Models/Enums/LabelButtonMode";
 import AppState from "../Data/AppState";
 import Emit from "../Data/Emit";
+import LayerType from "../Models/Enums/LayerType";
 
 export default class Wall extends Component<IWallProps, IWallState> {
     
@@ -22,9 +23,10 @@ export default class Wall extends Component<IWallProps, IWallState> {
             isAddLabelButton: false,
         };
         this.WallOnClickHandler = this.WallOnClickHandler.bind(this);
-        this.WallOnMouseDownHandler = this.WallOnMouseDownHandler.bind(this);
+        // this.WallOnMouseDownHandler = this.WallOnMouseDownHandler.bind(this);
         this.OnMouseHandler = this.OnMouseHandler.bind(this);
         this.OnMouseHandlerValue = this.OnMouseHandlerValue.bind(this);
+        this.setShapeMoveNow = this.setShapeMoveNow.bind(this);
         Emit.Emitter.addListener('wallMouseDbl', this.OnMouseHandlerValue);
     }
 
@@ -40,9 +42,17 @@ export default class Wall extends Component<IWallProps, IWallState> {
         this.setState({isDeleteModal: true});
     }
 
-    public WallOnMouseDownHandler(e) {
-        this.setState({ cursorCoords: { x: e.evt.clientX, y: e.evt.clientY }, isAddLabelButton: false });
+    public setShapeMoveNow(e, value: boolean) {
+        Emit.Emitter.emit('setIsShapeMovingNow', value, {
+            type: LayerType.WALLS,
+            shape: this.state.source
+        });
     }
+
+    // OLD MOVE
+    // public WallOnMouseDownHandler(e) {
+    //     this.setState({ cursorCoords: { x: e.evt.clientX, y: e.evt.clientY }, isAddLabelButton: false });
+    // }
 
     render() {
         const { source, isAddLabelButton } = this.state;
@@ -75,7 +85,10 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 onDblTap={() => { this.OnMouseHandler() }}
                 draggable={false}
                 // onDragEnd={ () => this.forceUpdate() }
-                onMouseDown={this.WallOnMouseDownHandler}
+                onMouseDown={(e) => this.setShapeMoveNow(e, true)}
+                onTouchStart={(e) => this.setShapeMoveNow(e, true)}
+                onMouseUp={(e) => this.setShapeMoveNow(e, false)}
+                onTouchEnd={(e) => this.setShapeMoveNow(e, false)}
                 x={source.startX}
                 y={source.startY}
                 cornerRadius={10}
