@@ -1,8 +1,17 @@
 import MapSourceUnit from '../../MapSourceUnit';
 import WallItem from "../../ArrayItems/WallIem";
+import LayerType from "../../Enums/LayerType";
+import StillageItem from "../../ArrayItems/StillageItem";
+import ObjectItem from "../../ArrayItems/ObjectItem";
 interface IMapState {
+    // shape moving
     isShapeMoveEnable: boolean,
     isShapeMovingNow: boolean,
+    selectedShapeForMove?: {
+        type?: LayerType,
+        shape?: any
+    }
+
     isWallUnderChild: boolean, // флаг для отражения нахождения стены на другие объекты
     wallLayerIndex: number, // индекс слоя со стенами
     wallIndex: number, // индекс выбранной стены

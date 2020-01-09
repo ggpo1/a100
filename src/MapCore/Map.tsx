@@ -25,6 +25,7 @@ import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
 import Vectors from "./Models/Enums/Vectors";
+import StillageItem from "./Models/ArrayItems/StillageItem";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -47,6 +48,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.state = {
       isShapeMoveEnable: false,
       isShapeMovingNow: false,
+      selectedShapeForMove: {},
+
       isWallUnderChild: false,
       wallLayerIndex: -1,
       wallIndex: -1,
@@ -113,6 +116,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.wallLabelButtonInteractionWayDown = this.wallLabelButtonInteractionWayDown.bind(this);
     this.setIsShapeMoveEnable = this.setIsShapeMoveEnable.bind(this);
     this.moveShapeByStep = this.moveShapeByStep.bind(this);
+    this.setIsShapeMovingNow = this.setIsShapeMovingNow.bind(this);
 
     // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -128,6 +132,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('setIsShapeMoving', this.setIsShapeMoveEnable);
     //
     Emit.Emitter.addListener('moveShapeByStep', this.moveShapeByStep);
+    //
+    Emit.Emitter.addListener('setIsShapeMovingNow', this.setIsShapeMovingNow);
   }
 
   // перемещение фигур с помощью стрелочек
@@ -162,16 +168,42 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.setState({isShapeMoveEnable: value});
   }
 
+  public setIsShapeMovingNow(value, shape) {
+    if (shape !== undefined) {
+      this.setState({isShapeMovingNow: value, selectedShapeForMove: shape});
+    } else {
+      this.setState({isShapeMovingNow: value});
+    }
+  }
+
   // saving cur pos and wall resizing move rendering
   public MapWrapperOnMouseMove(e) {
-
-    // перемещение фигуры
-    if (this.state.isShapeMovingNow && this.state.isShapeMoveEnable) {
-
-    }
-
     const { source, selectedUnit, layersSelected, selectedWallToResize, wallLayerIndex, resizingWallIndex, isStart } = this.state;
     let { selectedLayer } = this.state;
+    // перемещение фигуры
+    if (this.state.isShapeMovingNow) {
+      if (this.state.selectedShapeForMove !== undefined) {
+        console.error(this.state.selectedShapeForMove);
+        if (this.state.selectedShapeForMove!.type === LayerType.STILLAGES) {
+          let stillageLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
+          let searchedObj = this.stillageService.stillageSearchByID(source[selectedUnit].layers[stillageLayerIndex].stillages!, this.state.selectedShapeForMove.shape.id);
+
+          let stillage = source[selectedUnit].layers[stillageLayerIndex].stillages![searchedObj.index];
+          stillage.x = e.clientX - this.state.moveStageParams.x;
+          stillage.y = e.clientY - this.state.moveStageParams.y;
+
+          source[selectedUnit].layers[stillageLayerIndex].stillages![searchedObj.index] = stillage;
+
+          Emit.Emitter.emit('stillageSignatureForceUpdate', stillage.key, stillage.x, stillage.y);
+          Emit.Emitter.emit('placeSignaturesForceUpdate', stillage.key, stillage.x, stillage.y);
+          Emit.Emitter.emit('defectsForceUpdate', stillage.key, stillage.x, stillage.y);
+
+          this.forceUpdate(() => this.setState({source}));
+        }
+      }
+    }
+
+
     // move_resizing
     if (this.state.isWallResizingNow) {
 
@@ -199,9 +231,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
+  // PAGE MOUSE UP
   private wallLabelButtonInteractionWayUp(e) {
     const { source, isStart, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize, wallLayerIndex } = this.state;
     let { selectedLayer } = this.state;
+    this.setState({isShapeMovingNow: false});
     if (isWallResizingNow && selectedWallToResize) {
       let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[wallLayerIndex].walls!, selectedWallToResize.id);
       let _wall: WallItem = found.item;
@@ -752,7 +786,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         id={"stageWrapper"}
       >
         <Stage
-          draggable={!this.state.isDrawing}
+          draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
 
           onTouchMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => {  } }
           onTouchStart={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => {  } }

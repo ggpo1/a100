@@ -13,6 +13,7 @@ import DefectService from "../Services/DefectService";
 import StillageSize from "../Models/Enums/StillageSize/StillageSize";
 import Emit from "../Data/Emit";
 import StillageService from "../Services/StillageService";
+import LayerType from "../Models/Enums/LayerType";
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
     public stillageService!: StillageService;
@@ -53,7 +54,10 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
     }
 
     public setStillageMoveNow(e, value: boolean) {
-
+        Emit.Emitter.emit('setIsShapeMovingNow', value, {
+            type: LayerType.STILLAGES,
+            shape: this.state.source
+        });
     }
 
     handleDragStart = e => {
