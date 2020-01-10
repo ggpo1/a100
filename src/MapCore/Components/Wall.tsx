@@ -31,7 +31,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
     }
 
     public OnMouseHandlerValue(value) {
-        this.setState({isAddLabelButton: value});
+        this.setState({isAddLabelButton: value, isDelete: value});
     }
 
     public OnMouseHandler() {
