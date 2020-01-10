@@ -43,7 +43,7 @@ export default class MapObject extends React.Component<IObjectProps, IObjectStat
                 <DeleteCircle
                     key={source.key + '_deleteCircle'}
                     source={source}
-                    parentType={LayerType.ABSTRACTS}
+                    parentType={LayerType.LIGHTING}
                 />
             );
         }
