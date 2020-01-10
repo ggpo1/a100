@@ -25,6 +25,7 @@ import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
 import Vectors from "./Models/Enums/Vectors";
+import {prependListener} from "cluster";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -116,6 +117,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.setIsShapeMoveEnable = this.setIsShapeMoveEnable.bind(this);
     this.moveShapeByStep = this.moveShapeByStep.bind(this);
     this.setIsShapeMovingNow = this.setIsShapeMovingNow.bind(this);
+    this.mapShapeClick = this.mapShapeClick.bind(this);
 
     // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -133,6 +135,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('moveShapeByStep', this.moveShapeByStep);
     //
     Emit.Emitter.addListener('setIsShapeMovingNow', this.setIsShapeMovingNow);
+    //
+    Emit.Emitter.addListener('mapShapeClickEmit', this.mapShapeClick)
+  }
+
+  public mapShapeClick(which: number, e: any, id: number, shapeType: LayerType) {
+
+    console.error(which, e, id, shapeType);
   }
 
   // перемещение фигур с помощью стрелочек

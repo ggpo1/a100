@@ -43,10 +43,12 @@ export default class Wall extends Component<IWallProps, IWallState> {
     }
 
     public setShapeMoveNow(e, value: boolean) {
-        Emit.Emitter.emit('setIsShapeMovingNow', value, {
-            type: LayerType.WALLS,
-            shape: this.state.source
-        });
+        if (e.evt.which === 1) {
+            Emit.Emitter.emit('setIsShapeMovingNow', value, {
+                type: LayerType.WALLS,
+                shape: this.state.source
+            });
+        }
     }
 
     // OLD MOVE

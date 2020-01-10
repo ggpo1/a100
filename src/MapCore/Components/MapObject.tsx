@@ -17,10 +17,12 @@ export default class MapObject extends React.Component<IObjectProps, IObjectStat
     }
 
     public setShapeMoveNow(e, value: boolean) {
-        Emit.Emitter.emit('setIsShapeMovingNow', value, {
-            type: LayerType.LIGHTING,
-            shape: this.state.source
-        });
+        if (e.evt.which === 1) {
+            Emit.Emitter.emit('setIsShapeMovingNow', value, {
+                type: LayerType.LIGHTING,
+                shape: this.state.source
+            });
+        }
     }
 
     componentDidMount() {

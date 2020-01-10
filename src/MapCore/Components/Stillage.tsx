@@ -1,6 +1,6 @@
 import React from 'react';
 import Konva from 'konva';
-import {Rect, Arrow} from 'react-konva';
+import {Rect} from 'react-konva';
 import IStillageProps from './../Models/Components/Stillage/IStillageProps';
 import IStillageState from './../Models/Components/Stillage/IStillageState';
 import Orientation from './../Models/Enums/Orientation';
@@ -9,11 +9,12 @@ import StillageColors from '../Models/Enums/Colors/StillageColors';
 import Defect from './Defect';
 import PlaceSignature from './PlaceSignature';
 import Signature from './SIgnature';
-import DefectService from "../Services/DefectService";
 import StillageSize from "../Models/Enums/StillageSize/StillageSize";
 import Emit from "../Data/Emit";
 import StillageService from "../Services/StillageService";
 import LayerType from "../Models/Enums/LayerType";
+import DeleteCircle from "./Stage/DeleteCircle";
+
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
     public stillageService!: StillageService;
@@ -54,10 +55,12 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
     }
 
     public setStillageMoveNow(e, value: boolean) {
-        Emit.Emitter.emit('setIsShapeMovingNow', value, {
-            type: LayerType.STILLAGES,
-            shape: this.state.source
-        });
+        if (e.evt.which === 1) {
+            Emit.Emitter.emit('setIsShapeMovingNow', value, {
+                type: LayerType.STILLAGES,
+                shape: this.state.source
+            });
+        }
     }
 
     handleDragStart = e => {
@@ -87,6 +90,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         const { source } = this.state;
         const stillageSizeReducer = new StillageSizeReducer();
         let stillage;
+        let deleteCircle;
         let viks: Array<JSX.Element> = [];
         let placeSignatures: Array<JSX.Element> = [];
         let signature;
@@ -100,6 +104,13 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
 
         if (this.state.isMoveEnabled) {
             stillageMoveArrows = this.stillageService.getStillageArrows(this.state.source);
+            deleteCircle = (
+                <DeleteCircle
+                    key={source.key + '_deleteCircle'}
+                    source={source}
+                    parentType={LayerType.STILLAGES}
+                />
+            );
         }
 
         if (source.signature !== undefined) {
@@ -163,6 +174,10 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     onTouchStart={(e) => this.setStillageMoveNow(e, true)}
                     onMouseUp={(e) => this.setStillageMoveNow(e, false)}
                     onTouchEnd={(e) => this.setStillageMoveNow(e, false)}
+                    onClick={(e) => {
+                        Emit.Emitter.emit('mapShapeClickEmit', e.evt.which, e.evt, source.id, LayerType.STILLAGES);
+                        // console.error(e.evt.which);
+                    }}
                     // ____
                     x={source.x}
                     y={source.y}
@@ -202,7 +217,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         console.log('\t' + stillage.key);
         console.log('---------------------------------------------');
 
-        let returns: Array<JSX.Element> = [signature, stillage, viks, placeSignatures, stillageMoveArrows];
+        let returns: Array<JSX.Element> = [signature, stillage, viks, placeSignatures, stillageMoveArrows, deleteCircle];
 
         // console.log('stillage stop');
 
