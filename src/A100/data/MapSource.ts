@@ -141,7 +141,7 @@ const MapSource: Array<MapSourceUnit> = [
                         id: 3,
                         key: 'unit_0_layer_0_stillage_3',
                         x: 600,
-                        y: 600,
+                        y: 700,
                         orientation: Orientation.VERTICAL,
                         signature: {
                             title: '15',

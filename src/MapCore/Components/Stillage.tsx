@@ -14,6 +14,7 @@ import Emit from "../Data/Emit";
 import StillageService from "../Services/StillageService";
 import LayerType from "../Models/Enums/LayerType";
 import DeleteCircle from "./Stage/DeleteCircle";
+import AddCircle from "./Stage/AddCircle";
 
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
@@ -97,7 +98,9 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let stillageSR = new StillageSizeReducer();
         let stillageMoveArrows: Array<JSX.Element> = [];
 
-
+        let addCircles = (
+            <AddCircle source={source} parentType={LayerType.STILLAGES} />
+        );
 
         if (this.state.isMoveEnabled) {
             stillageMoveArrows = this.stillageService.getStillageArrows(this.state.source);
@@ -209,10 +212,14 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             );
         }
 
-        let returns: Array<JSX.Element> = [signature, stillage, viks, placeSignatures, stillageMoveArrows, deleteCircle];
-
-        // console.log('stillage stop');
-
-        return returns;
+        return [
+            signature,
+            stillage,
+            viks,
+            placeSignatures,
+            stillageMoveArrows,
+            deleteCircle,
+            addCircles
+        ];
     }
 }

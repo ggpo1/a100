@@ -163,7 +163,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   // перемещение фигур с помощью стрелочек
   public moveShapeByStep(shapeSource, type: LayerType, vector: Vectors) {
-    const { source, selectedUnit, selectedLayer } = this.state;
+    const { source, selectedUnit } = this.state;
     const step = 1;
     if (type === LayerType.STILLAGES) {
       let stillageLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
@@ -313,13 +313,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       layersSelected.push(_index);
       this.setState({layersSelected, selectedLayer: _index, wallLayerIndex: _index});
     }
-
-    // if (!layerFlag.selected.is) {
-    //   layersSelected.push(layerFlag.created.index);
-    // }
-    // selectedLayer = layerFlag.created.index;
-    // this.setState({layersSelected, selectedLayer});
-    // console.error(selectedLayer);
     let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[_index].walls!, wallSource.id);
     this.setState({resizingWallIndex: found.index, isStart, selectedWallToResize: wallSource, isWallResizingNow: true, isDrawing: true});
   }

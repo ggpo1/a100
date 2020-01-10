@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import {Switch, Route, Redirect, Link} from 'react-router-dom';
 import IRouterState from '../model/Components/Router/IRouterState';
 import IRouterProps from '../model/Components/Router/IRouterProps';
 import Introducing from '../view/Introducing';
@@ -18,7 +18,7 @@ export default class Router extends React.Component<IRouterProps, IRouterState> 
                 <Route exact path='/' component={Introducing}>
                     <Redirect to="/map" />
                 </Route>
-                <Route path='/map' component={MapView} />
+                <Route path='/map/:id?' component={MapView} />
             </Switch>
         );
     }
