@@ -25,7 +25,6 @@ import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
 import Vectors from "./Models/Enums/Vectors";
-import {prependListener} from "cluster";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -118,6 +117,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.moveShapeByStep = this.moveShapeByStep.bind(this);
     this.setIsShapeMovingNow = this.setIsShapeMovingNow.bind(this);
     this.mapShapeClick = this.mapShapeClick.bind(this);
+    this.deleteShape = this.deleteShape.bind(this);
 
     // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -136,12 +136,23 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     //
     Emit.Emitter.addListener('setIsShapeMovingNow', this.setIsShapeMovingNow);
     //
-    Emit.Emitter.addListener('mapShapeClickEmit', this.mapShapeClick)
+    Emit.Emitter.addListener('mapShapeClickEmit', this.mapShapeClick);
+    //
+    Emit.Emitter.addListener('deleteShapeFromLayer', this.deleteShape);
+  }
+
+  public deleteShape(type: LayerType, id) {
+    const {source, selectedUnit} = this.state;
+    let layerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, type);
+    if (type === LayerType.STILLAGES) {
+      let obj = this.stillageService.stillageSearchByID(source[selectedUnit].layers[layerIndex].stillages!, id);
+      source[selectedUnit].layers[layerIndex].stillages!.splice(obj.index, 1);
+      this.forceUpdate(() => this.setState({source}));
+    }
   }
 
   public mapShapeClick(which: number, e: any, id: number, shapeType: LayerType) {
 
-    console.error(which, e, id, shapeType);
   }
 
   // перемещение фигур с помощью стрелочек
@@ -653,7 +664,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       );
     }
 
-    console.log('------------------------SHAPES RENDERING------------------------');
+
     if (selectedLayer === -1) {
       let layerNum = 0;
       source[selectedUnit].layers.forEach(element => {

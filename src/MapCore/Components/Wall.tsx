@@ -63,10 +63,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
 
         let triangle;
 
-        console.log('\n\n---------------------------------------------');
-        console.log('\tWALL ' + source.id);
-        console.log('---------------------------------------------');
-        console.log('\twallKey: ' + source.key);
+
         if (isAddLabelButton) {
             labelButton = (
                 <LabelButton
@@ -78,7 +75,6 @@ export default class Wall extends Component<IWallProps, IWallState> {
                     labelMode={LabelButtonMode.ADD}
                 />
             );
-            console.log('\t' + labelButton.key);
         }
         let wall = (
             <Rect
@@ -99,8 +95,6 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 fill={'#dcdcdc'}
             />
         );
-        console.log('\t' + wall.key);
-        console.log('---------------------------------------------');
         return [wall, labelButton];
     }
 }

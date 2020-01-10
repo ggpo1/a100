@@ -36,10 +36,7 @@ export default class MapObject extends React.Component<IObjectProps, IObjectStat
     render() {
         const { source } = this.state;
         let mapObject;
-        console.log('\n\n---------------------------------------------');
-        console.log('\tOBJECT ' + source.id);
-        console.log('---------------------------------------------');
-        console.log('\tobjectKey: ' + source.key);
+
         mapObject = (
             <Image
                 key={source.key + '_image'}
@@ -54,8 +51,6 @@ export default class MapObject extends React.Component<IObjectProps, IObjectStat
                 image={ this.state.image }
             />
         );
-        console.log('\t' + mapObject.key);
-        console.log('---------------------------------------------');
         return mapObject;
     }
 

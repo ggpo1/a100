@@ -97,10 +97,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let stillageSR = new StillageSizeReducer();
         let stillageMoveArrows: Array<JSX.Element> = [];
 
-        console.log('\n\n---------------------------------------------');
-        console.log('\tSTILLAGE ' + source.id);
-        console.log('---------------------------------------------');
-        console.log('\tstillageID: ' + source.id + ', stillageKey: ' + source.key);
+
 
         if (this.state.isMoveEnabled) {
             stillageMoveArrows = this.stillageService.getStillageArrows(this.state.source);
@@ -125,7 +122,6 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     source={source.signature}
                 />
             ;
-            console.log('\t' + signature.key)
         }
 
         if (source.placeSignatures !== undefined) {
@@ -142,7 +138,6 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                         source={element}
                     />
                 );
-                console.log('\t' + placeSignatures[placeSignatures.length - 1].key);
             });
         }
 
@@ -159,7 +154,6 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                         source={element}
                     />
                 );
-                console.log('\t' + viks[viks.length -1].key)
             });
         }
 
@@ -214,8 +208,6 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                 />
             );
         }
-        console.log('\t' + stillage.key);
-        console.log('---------------------------------------------');
 
         let returns: Array<JSX.Element> = [signature, stillage, viks, placeSignatures, stillageMoveArrows, deleteCircle];
 

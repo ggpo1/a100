@@ -5,6 +5,7 @@ import {Circle, Text} from "react-konva";
 import LayerType from "../../Models/Enums/LayerType";
 import Orientation from "../../Models/Enums/Orientation";
 import SignaturePosition from "../../Models/Enums/SignaturePosition";
+import Emit from "../../Data/Emit";
 
 export default class DeleteCircle extends React.Component<IDeleteCircleProps, IDeleteCircleState> {
     constructor(props) {
@@ -12,7 +13,12 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
         this.state = {
             source: this.props.source,
             parentType: this.props.parentType,
-        }
+        };
+        this.deleteShape = this.deleteShape.bind(this);
+    }
+
+    public deleteShape(type: LayerType) {
+        Emit.Emitter.emit('deleteShapeFromLayer', type, this.state.source.id);
     }
 
     render() {
@@ -25,8 +31,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                 deleteCircle = (
                     <Circle
                         key={source.key + '_deleteCircle_circle'}
-                        // onTap={() => { this.openModal() }}
-                        // onClick={() => { this.openModal() }}
+                        onTap={() => { this.deleteShape(LayerType.STILLAGES) }}
+                        onClick={() => { this.deleteShape(LayerType.STILLAGES) }}
                         radius={10}
                         x={source.x - 10}
                         y={source.y - 20}
@@ -36,6 +42,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                 deleteCross = (
                     <Text
                         key={source.key + '_deleteCircle_deleteCross'}
+                        onTap={() => { this.deleteShape(LayerType.STILLAGES) }}
+                        onClick={() => { this.deleteShape(LayerType.STILLAGES) }}
                         text={'x'}
                         x={source.x - 15}
                         y={source.y - 27}
@@ -49,8 +57,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                 deleteCircle = (
                     <Circle
                         key={source.key + '_deleteCircle_circle'}
-                        // onTap={() => { this.openModal() }}
-                        // onClick={() => { this.openModal() }}
+                        onTap={() => { this.deleteShape(LayerType.STILLAGES) }}
+                        onClick={() => { this.deleteShape(LayerType.STILLAGES) }}
                         radius={10}
                         x={source.x - 10}
                         y={source.y - 35}
@@ -60,6 +68,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                 deleteCross = (
                     <Text
                         key={source.key + '_deleteCircle_deleteCross'}
+                        onTap={() => { this.deleteShape(LayerType.STILLAGES) }}
+                        onClick={() => { this.deleteShape(LayerType.STILLAGES) }}
                         text={'x'}
                         x={source.x - 15}
                         y={source.y - 42}
@@ -73,8 +83,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                 deleteCircle = (
                     <Circle
                         key={source.key + '_deleteCircle_circle'}
-                        // onTap={() => { this.openModal() }}
-                        // onClick={() => { this.openModal() }}
+                        onTap={() => { this.deleteShape(LayerType.STILLAGES) }}
+                        onClick={() => { this.deleteShape(LayerType.STILLAGES) }}
                         radius={10}
                         x={source.x - 35}
                         y={source.y - 10}
@@ -84,6 +94,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                 deleteCross = (
                     <Text
                         key={source.key + '_deleteCircle_deleteCross'}
+                        onTap={() => { this.deleteShape(LayerType.STILLAGES) }}
+                        onClick={() => { this.deleteShape(LayerType.STILLAGES) }}
                         text={'x'}
                         x={source.x - 40}
                         y={source.y - 17}
