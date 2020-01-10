@@ -106,6 +106,32 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                     />
                 );
             }
+        } else if (parentType === LayerType.ABSTRACTS) {
+            deleteCircle = (
+                <Circle
+                    key={source.key + '_deleteCircle_circle'}
+                    onTap={() => { this.deleteShape(LayerType.ABSTRACTS) }}
+                    onClick={() => { this.deleteShape(LayerType.ABSTRACTS) }}
+                    radius={10}
+                    x={source.x - 10}
+                    y={source.y - 20}
+                    fill={'#E0E0E0'}
+                />
+            );
+            deleteCross = (
+                <Text
+                    key={source.key + '_deleteCircle_deleteCross'}
+                    onTap={() => { this.deleteShape(LayerType.ABSTRACTS) }}
+                    onClick={() => { this.deleteShape(LayerType.ABSTRACTS) }}
+                    text={'x'}
+                    x={source.x - 15}
+                    y={source.y - 27}
+                    fontSize={16}
+                    height={100}
+                    fontStyle={'bold'}
+                    fill={'red'}
+                />
+            );
         }
         return [deleteCircle, deleteCross];
     }

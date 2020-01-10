@@ -129,15 +129,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('wallLabelButtonInteractionWayUp', this.wallLabelButtonInteractionWayUp);
     // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
     Emit.Emitter.addListener('wallLabelButtonInteractionWayDown', this.wallLabelButtonInteractionWayDown);
-    //
+    // События для переключения флага
     Emit.Emitter.addListener('setIsShapeMoving', this.setIsShapeMoveEnable);
-    //
+    // Событие передвижения фигуры с шагом
     Emit.Emitter.addListener('moveShapeByStep', this.moveShapeByStep);
     //
     Emit.Emitter.addListener('setIsShapeMovingNow', this.setIsShapeMovingNow);
-    //
+    // Событие для проверки, что было кликнуто
     Emit.Emitter.addListener('mapShapeClickEmit', this.mapShapeClick);
-    //
+    // Событие удаления фигуры из state
     Emit.Emitter.addListener('deleteShapeFromLayer', this.deleteShape);
   }
 
@@ -147,8 +147,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     if (type === LayerType.STILLAGES) {
       let obj = this.stillageService.stillageSearchByID(source[selectedUnit].layers[layerIndex].stillages!, id);
       source[selectedUnit].layers[layerIndex].stillages!.splice(obj.index, 1);
-      this.forceUpdate(() => this.setState({source}));
     }
+    this.forceUpdate(() => this.setState({source}));
   }
 
   public mapShapeClick(which: number, e: any, id: number, shapeType: LayerType) {
