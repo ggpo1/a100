@@ -150,6 +150,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     } else if (type === LayerType.LIGHTING) {
       let obj = this.objectService.searchByID(source[selectedUnit].layers[layerIndex].objects!, id);
       source[selectedUnit].layers[layerIndex].objects!.splice(obj.index, 1);
+    } else if (type === LayerType.WALLS) {
+      let obj = this.wallService.getWallIndexByID(source[selectedUnit].layers[layerIndex].walls!, id);
+      source[selectedUnit].layers[layerIndex].walls!.splice(obj.index, 1);
     }
     this.forceUpdate(() => this.setState({source}));
   }

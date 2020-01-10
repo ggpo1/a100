@@ -178,8 +178,8 @@ const MapSource: Array<MapSourceUnit> = [
                     {
                         id: 0,
                         key: 'unit_0_layer_2_wall_0',
-                        startX: 10,
-                        startY: 100,
+                        startX: 100,
+                        startY: 250,
                         length: 950,
                         orientation: Orientation.HORIZONTAL,
                     },

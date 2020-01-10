@@ -8,6 +8,7 @@ import LabelButtonMode from "../Models/Enums/LabelButtonMode";
 import AppState from "../Data/AppState";
 import Emit from "../Data/Emit";
 import LayerType from "../Models/Enums/LayerType";
+import DeleteCircle from "./Stage/DeleteCircle";
 
 export default class Wall extends Component<IWallProps, IWallState> {
     
@@ -19,11 +20,10 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 x: 0,
                 y: 0,
             },
-            isDeleteModal: false,
+            isDelete: false,
             isAddLabelButton: false,
         };
         this.WallOnClickHandler = this.WallOnClickHandler.bind(this);
-        // this.WallOnMouseDownHandler = this.WallOnMouseDownHandler.bind(this);
         this.OnMouseHandler = this.OnMouseHandler.bind(this);
         this.OnMouseHandlerValue = this.OnMouseHandlerValue.bind(this);
         this.setShapeMoveNow = this.setShapeMoveNow.bind(this);
@@ -35,11 +35,11 @@ export default class Wall extends Component<IWallProps, IWallState> {
     }
 
     public OnMouseHandler() {
-        this.setState({isAddLabelButton: !this.state.isAddLabelButton});
+        this.setState({isAddLabelButton: !this.state.isAddLabelButton, isDelete: !this.state.isDelete});
     }
 
     public WallOnClickHandler() {
-        this.setState({isDeleteModal: true});
+        this.setState({isDelete: true});
     }
 
     public setShapeMoveNow(e, value: boolean) {
@@ -51,18 +51,21 @@ export default class Wall extends Component<IWallProps, IWallState> {
         }
     }
 
-    // OLD MOVE
-    // public WallOnMouseDownHandler(e) {
-    //     this.setState({ cursorCoords: { x: e.evt.clientX, y: e.evt.clientY }, isAddLabelButton: false });
-    // }
-
     render() {
-        const { source, isAddLabelButton } = this.state;
-        let dModal;
+        const { source, isAddLabelButton, isDelete } = this.state;
         let labelButton;
-
+        let deleteCircle;
         let triangle;
 
+        if (isDelete) {
+            deleteCircle = (
+                <DeleteCircle
+                    key={source.key + '_deleteCircle'}
+                    source={source}
+                    parentType={LayerType.WALLS}
+                />
+            );
+        }
 
         if (isAddLabelButton) {
             labelButton = (
@@ -95,6 +98,6 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 fill={'#dcdcdc'}
             />
         );
-        return [wall, labelButton];
+        return [wall, labelButton, deleteCircle];
     }
 }
