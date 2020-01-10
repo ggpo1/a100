@@ -139,8 +139,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                     onTap={() => { this.deleteShape(LayerType.WALLS) }}
                     onClick={() => { this.deleteShape(LayerType.WALLS) }}
                     radius={10}
-                    x={source.startX - 10}
-                    y={source.startY - 20}
+                    x={source.startX - 15}
+                    y={source.startY - 25}
                     fill={'#E0E0E0'}
                 />
             );
@@ -150,8 +150,8 @@ export default class DeleteCircle extends React.Component<IDeleteCircleProps, ID
                     onTap={() => { this.deleteShape(LayerType.WALLS) }}
                     onClick={() => { this.deleteShape(LayerType.WALLS) }}
                     text={'x'}
-                    x={source.startX - 15}
-                    y={source.startY - 27}
+                    x={source.startX - 20}
+                    y={source.startY - 32}
                     fontSize={16}
                     height={100}
                     fontStyle={'bold'}
