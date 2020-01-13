@@ -45,6 +45,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      isToggledToAdd: false,
+      lastAddedItemType: undefined,
+      lastAddedItem: undefined,
       isShapeMoveEnable: false,
       isShapeMovingNow: false,
       selectedShapeForMove: {},
@@ -118,6 +121,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.setIsShapeMovingNow = this.setIsShapeMovingNow.bind(this);
     this.mapShapeClick = this.mapShapeClick.bind(this);
     this.deleteShape = this.deleteShape.bind(this);
+    this.setAddCirclesVisibility = this.setAddCirclesVisibility.bind(this);
 
     // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -139,6 +143,19 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('mapShapeClickEmit', this.mapShapeClick);
     // Событие удаления фигуры из state
     Emit.Emitter.addListener('deleteShapeFromLayer', this.deleteShape);
+    // Событие управления кнопками добавления иден тичных фигур
+    Emit.Emitter.addListener('setAddCirclesVisibility', this.setAddCirclesVisibility);
+    // Событие для добаления идентичной фигуры при нажатии на кнопку плюса
+    Emit.Emitter.addListener('addSameShape', this.addSameShape);
+  }
+
+  public addSameShape(type: LayerType, prevShape: any) {
+    console.log(type);
+    console.log(prevShape);
+  }
+
+  public setAddCirclesVisibility() {
+    Emit.Emitter.emit('stillageIsAddingChange');
   }
 
   public deleteShape(type: LayerType, id) {
@@ -546,9 +563,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         source[selectedUnit].layers[_layerIndex] = layer;
         this.forceUpdate(() => this.setState({ source, selectedLayer: -1 }));
       }
-
-
-
     }
   }
 

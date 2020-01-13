@@ -41,6 +41,9 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
         if (el.type === LayerType.WALLS) {
             Emit.Emitter.emit('checkWallLayer');
         }
+        if (el.type !== LayerType.WALLS) {
+            Emit.Emitter.emit('setAddCirclesVisibility');
+        }
         // let check = index === this.state.selectedElementIndex;
         this.setState({selectedElementIndex: index});
         // if (check) {

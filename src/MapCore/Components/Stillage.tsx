@@ -45,9 +45,17 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         this.state = {
             source: this.props.source,
             isMoveEnabled: false,
+            isAdding: false,
         };
         this.setStillageMoveEnabled = this.setStillageMoveEnabled.bind(this);
         this.setStillageMoveNow = this.setStillageMoveNow.bind(this);
+        this.isAddingChange = this.isAddingChange.bind(this);
+
+        Emit.Emitter.addListener('stillageIsAddingChange', this.isAddingChange);
+    }
+
+    public isAddingChange() {
+        this.setState({isAdding: !this.state.isAdding});
     }
 
     public setStillageMoveEnabled(e) {
@@ -92,15 +100,22 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         const stillageSizeReducer = new StillageSizeReducer();
         let stillage;
         let deleteCircle;
+        let addCircles;
         let viks: Array<JSX.Element> = [];
         let placeSignatures: Array<JSX.Element> = [];
         let signature;
         let stillageSR = new StillageSizeReducer();
         let stillageMoveArrows: Array<JSX.Element> = [];
 
-        let addCircles = (
-            <AddCircle source={source} parentType={LayerType.STILLAGES} />
-        );
+        if (this.state.isAdding) {
+              addCircles = (
+                <AddCircle
+                    key={source.key + '_addCircle'}
+                    source={source}
+                    parentType={LayerType.STILLAGES}
+                />
+            );
+        }
 
         if (this.state.isMoveEnabled) {
             stillageMoveArrows = this.stillageService.getStillageArrows(this.state.source);
