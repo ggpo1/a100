@@ -44,6 +44,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         this.props.source.height = height;
         this.state = {
             source: this.props.source,
+            mapStillages: this.props.mapStillages,
             isMoveEnabled: false,
             isAdding: false,
         };
@@ -118,6 +119,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                 <AddCircle
                     key={source.key + '_addCircle'}
                     source={source}
+                    mapStillages={this.state.mapStillages}
                     parentType={LayerType.STILLAGES}
                 />
             );

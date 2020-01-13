@@ -122,15 +122,15 @@ const MapSource: Array<MapSourceUnit> = [
                         placeSignatures: [
                             {
                                 place: 1,
-                                title: '12',
+                                title: '10',
                             },
                             {
                                 place: 2,
-                                title: '112',
+                                title: '11',
                             },
                             {
                                 place: 3,
-                                title: '6',
+                                title: '12',
                             },
                         ],
                         viks: [
@@ -140,6 +140,35 @@ const MapSource: Array<MapSourceUnit> = [
                     {
                         id: 3,
                         key: 'unit_0_layer_0_stillage_3',
+                        x: 330,
+                        y: 456,
+                        orientation: Orientation.HORIZONTAL,
+                        signature: {
+                            title: '15',
+                            position: SignaturePosition.BOTTOM,
+                        },
+                        size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '13',
+                            },
+                            {
+                                place: 2,
+                                title: '14',
+                            },
+                            {
+                                place: 3,
+                                title: '15',
+                            },
+                        ],
+                        viks: [
+
+                        ]
+                    },
+                    {
+                        id: 4,
+                        key: 'unit_0_layer_0_stillage_4',
                         x: 600,
                         y: 700,
                         orientation: Orientation.VERTICAL,

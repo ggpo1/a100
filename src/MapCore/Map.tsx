@@ -28,6 +28,7 @@ import LayerService from "./Services/LayerService";
 import Vectors from "./Models/Enums/Vectors";
 import StillageItem from "./Models/ArrayItems/StillageItem";
 import Position from "./Models/Enums/Position";
+import StillageSize from "./Models/Enums/StillageSize/StillageSize";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -157,7 +158,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   public addSameShape(type: LayerType, prevShape: any, position: Position) {
     this.setState({isAddCircleAdding: true});
     const {source, selectedUnit} = this.state;
-    console.log(position);
+    let toMin = position === Position.TOP || position === Position.LEFT;
     let layerIndex;
     if (type !== undefined && prevShape !== undefined) {
       if (type === LayerType.STILLAGES) {
@@ -172,6 +173,45 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         }
         _id++;
         _key = _layer.key + '_stillage_' + _id.toString();
+
+        let places = prevStillage.placeSignatures;
+        if (prevStillage.size === StillageSize.NORMAL) {
+          if (!toMin) {
+            places = [
+              {
+                place: 1,
+                title: (parseInt(places![2].title) + 1).toString()
+              },
+              {
+                place: 2,
+                title: (parseInt(places![2].title) + 2).toString()
+              },
+              {
+                place: 3,
+                title: (parseInt(places![2].title) + 3).toString()
+              }
+            ];
+          } else {
+            if (parseInt(places![0].title) > 3) {
+              places = [
+                {
+                  place: 1,
+                  title: (parseInt(places![0].title) - 3).toString()
+                },
+                {
+                  place: 2,
+                  title: (parseInt(places![0].title) - 2).toString()
+                },
+                {
+                  place: 3,
+                  title: (parseInt(places![0].title) - 1).toString()
+                }
+              ];
+            } else {
+              places = prevStillage.placeSignatures;
+            }
+          }
+        }
         nextStillage = {
           id: _id,
           key: _key,
@@ -180,10 +220,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           orientation: prevStillage.orientation,
           signature: prevStillage.signature,
           size: prevStillage.size,
-          placeSignatures: prevStillage.placeSignatures,
+          placeSignatures: places,
           viks: [],
         };
-        
+
         // TODO: Add small stillage checks
         if (position === Position.RIGHT)
           nextStillage!.x = prevStillage.x + 80;
@@ -196,7 +236,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
         source[selectedUnit].layers[layerIndex].stillages!.push(nextStillage);
         // this.setAddCirclesVisibility();
-
+        console.log(nextStillage);
         this.forceUpdate(() => this.setState({source}));
         // Изменение видимости кнопок плюс у добавленного стеллажа
         Emit.Emitter.emit('forceSetIsAddingChange', true);
@@ -746,11 +786,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           }
         }
         if (element.stillages !== undefined) {
+          let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
           for (let i = 0; i < element.stillages!.length; i++) {
             stillages.push(
               <Stillage
                   key={element.stillages[i].key}
                   source={element.stillages![i]}
+                  mapStillages={_mapStillages!}
               />
             );
           }
@@ -777,6 +819,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                         <Stillage
                             key={source[selectedUnit].layers[el].stillages![i].key}
                             source={source[selectedUnit].layers[el].stillages![i]}
+                            mapStillages={source[selectedUnit].layers[el].stillages!}
                         />
                       );
                     }
