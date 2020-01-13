@@ -6,6 +6,7 @@ import {Circle, Text} from "react-konva";
 import Orientation from "../../Models/Enums/Orientation";
 import SignaturePosition from "../../Models/Enums/SignaturePosition";
 import Emit from "../../Data/Emit";
+import Position from "../../Models/Enums/Position";
 
 export default class AddCircle extends React.Component<IAddCircleProps, IAddCircleState> {
     constructor(props) {
@@ -17,8 +18,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
         this.addCircleClickAction = this.addCircleClickAction.bind(this);
     }
 
-    public addCircleClickAction(type: LayerType) {
-        Emit.Emitter.emit('addSameShape', type, this.state.source);
+    public addCircleClickAction(type: LayerType, position: Position) {
+        Emit.Emitter.emit('addSameShape', type, this.state.source, position);
     }
 
     render() {
@@ -31,8 +32,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
                             radius={10}
                             x={source.x - 20}
                             y={source.y + 7}
@@ -42,8 +43,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
                             text={'+'}
                             x={source.x - 24.5}
                             y={source.y + 1}
@@ -57,8 +58,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
                             radius={10}
                             x={source.x + 95}
                             y={source.y + 7}
@@ -68,8 +69,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
                             text={'+'}
                             x={source.x + 90.5}
                             y={source.y + 1}
@@ -83,8 +84,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
                             radius={10}
                             x={source.x - 20}
                             y={source.y + 15}
@@ -94,8 +95,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.LEFT) }}
                             text={'+'}
                             x={source.x - 24.5}
                             y={source.y + 9}
@@ -109,8 +110,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
                             radius={10}
                             x={source.x + 95}
                             y={source.y + 15}
@@ -120,8 +121,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.RIGHT) }}
                             text={'+'}
                             x={source.x + 90.5}
                             y={source.y + 9}
@@ -137,8 +138,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
                             radius={10}
                             x={source.x + 6}
                             y={source.y - 20}
@@ -148,8 +149,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
                             text={'+'}
                             x={source.x + 1.05}
                             y={source.y - 26}
@@ -163,8 +164,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
                             radius={10}
                             x={source.x + 6}
                             y={source.y + 95}
@@ -174,8 +175,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
                             text={'+'}
                             x={source.x + 1.05}
                             y={source.y + 89}
@@ -189,8 +190,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
                             radius={10}
                             x={source.x + 15}
                             y={source.y - 20}
@@ -200,8 +201,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     fAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_first'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.TOP) }}
                             text={'+'}
                             x={source.x + 10.05}
                             y={source.y - 26}
@@ -215,8 +216,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircle = (
                         <Circle
                             key={source.key + '_addCircle_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
                             radius={10}
                             x={source.x + 15}
                             y={source.y + 95}
@@ -226,8 +227,8 @@ export default class AddCircle extends React.Component<IAddCircleProps, IAddCirc
                     sAddCircleText = (
                         <Text
                             key={source.key + '_addCircle_plus_second'}
-                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
-                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES) }}
+                            onTap={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
+                            onClick={() => { this.addCircleClickAction(LayerType.STILLAGES, Position.BOTTOM) }}
                             text={'+'}
                             x={source.x + 10.05}
                             y={source.y + 89}

@@ -208,8 +208,6 @@ export default class LayerService {
             }
         } else if (type === LayerType.WALLS) {
             // проверка наложения стен на что-либо
-
-
         } else if (type === LayerType.ABSTRACTS) {
             // проверка наложения абстракных фигур на что-либо
             return true;

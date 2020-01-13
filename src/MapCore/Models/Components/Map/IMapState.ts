@@ -4,6 +4,7 @@ import LayerType from "../../Enums/LayerType";
 import StillageItem from "../../ArrayItems/StillageItem";
 import ObjectItem from "../../ArrayItems/ObjectItem";
 interface IMapState {
+    isAddCircleAdding: boolean,
     isToggledToAdd: boolean,
     lastAddedItemType?: LayerType,
     lastAddedItem?: any,

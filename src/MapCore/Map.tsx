@@ -18,6 +18,7 @@ import WallItem from "./Models/ArrayItems/WallIem";
 import DefectBrowsePanel from "./Components/Page/Panels/DefectBrowsePanel";
 import MapSourceLayer from "./Models/MapSourceLayer";
 import MapIconsType from "./Models/Enums/MapIconsType";
+import sort from 'fast-sort';
 
 import './Css/Map.css';
 import './Css/LayerPanel.css';
@@ -25,6 +26,8 @@ import WallService from "./Services/WallService";
 import ObjectService from "./Services/ObjectService";
 import LayerService from "./Services/LayerService";
 import Vectors from "./Models/Enums/Vectors";
+import StillageItem from "./Models/ArrayItems/StillageItem";
+import Position from "./Models/Enums/Position";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -45,6 +48,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      isAddCircleAdding: false,
       isToggledToAdd: false,
       lastAddedItemType: undefined,
       lastAddedItem: undefined,
@@ -122,6 +126,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.mapShapeClick = this.mapShapeClick.bind(this);
     this.deleteShape = this.deleteShape.bind(this);
     this.setAddCirclesVisibility = this.setAddCirclesVisibility.bind(this);
+    this.addSameShape = this.addSameShape.bind(this);
 
     // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -149,9 +154,53 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('addSameShape', this.addSameShape);
   }
 
-  public addSameShape(type: LayerType, prevShape: any) {
-    console.log(type);
-    console.log(prevShape);
+  public addSameShape(type: LayerType, prevShape: any, position: Position) {
+    this.setState({isAddCircleAdding: true});
+    const {source, selectedUnit} = this.state;
+    console.log(position);
+    let layerIndex;
+    if (type !== undefined && prevShape !== undefined) {
+      if (type === LayerType.STILLAGES) {
+        layerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, type);
+        let prevStillage: StillageItem = prevShape;
+        let nextStillage: StillageItem;
+        let _layer = source[selectedUnit].layers[layerIndex];
+        let _id = 0; let _key = '';
+        sort(_layer.stillages!).asc(e => e.id);
+        if (_layer.stillages!.length !== 0) {
+          _id = _layer.stillages![_layer.stillages!.length - 1].id;
+        }
+        _id++;
+        _key = _layer.key + '_stillage_' + _id.toString();
+        nextStillage = {
+          id: _id,
+          key: _key,
+          x: prevStillage.orientation === Orientation.HORIZONTAL ? 0 : prevStillage.x,
+          y: prevStillage.orientation === Orientation.VERTICAL ? 0 : prevStillage.y,
+          orientation: prevStillage.orientation,
+          signature: prevStillage.signature,
+          size: prevStillage.size,
+          placeSignatures: prevStillage.placeSignatures,
+          viks: [],
+        };
+        // TODO: Add small stillage checks
+        if (position === Position.RIGHT)
+          nextStillage!.x = prevStillage.x + 80;
+        else if (position === Position.LEFT)
+          nextStillage!.x = prevStillage.x - 80;
+        else if (position === Position.BOTTOM)
+          nextStillage!.y = prevStillage.y + 80;
+        else if (position === Position.TOP)
+          nextStillage!.y = prevStillage.y - 80;
+
+        console.log(_id);
+        console.log(_key);
+        console.log(nextStillage);
+        source[selectedUnit].layers[layerIndex].stillages!.push(nextStillage);
+        this.setAddCirclesVisibility();
+        this.forceUpdate(() => this.setState({source}));
+      }
+    }
   }
 
   public setAddCirclesVisibility() {
@@ -567,6 +616,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   public stageOnClickHandler(e) {
+    if (this.state.isAddCircleAdding) {
+      this.setState({isAddCircleAdding: false});
+      return;
+    }
     // cnc element adding
     if (this.state.cncFlag) {
       let selected: ElementItem = AppState.State.selectedEl;
