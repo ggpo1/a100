@@ -183,6 +183,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           placeSignatures: prevStillage.placeSignatures,
           viks: [],
         };
+        
         // TODO: Add small stillage checks
         if (position === Position.RIGHT)
           nextStillage!.x = prevStillage.x + 80;
@@ -193,12 +194,12 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         else if (position === Position.TOP)
           nextStillage!.y = prevStillage.y - 80;
 
-        console.log(_id);
-        console.log(_key);
-        console.log(nextStillage);
         source[selectedUnit].layers[layerIndex].stillages!.push(nextStillage);
-        this.setAddCirclesVisibility();
+        // this.setAddCirclesVisibility();
+
         this.forceUpdate(() => this.setState({source}));
+        // Изменение видимости кнопок плюс у добавленного стеллажа
+        Emit.Emitter.emit('forceSetIsAddingChange', true);
       }
     }
   }

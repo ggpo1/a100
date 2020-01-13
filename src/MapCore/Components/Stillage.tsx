@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {isValidElement} from 'react';
 import Konva from 'konva';
 import {Rect} from 'react-konva';
 import IStillageProps from './../Models/Components/Stillage/IStillageProps';
@@ -50,8 +50,14 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         this.setStillageMoveEnabled = this.setStillageMoveEnabled.bind(this);
         this.setStillageMoveNow = this.setStillageMoveNow.bind(this);
         this.isAddingChange = this.isAddingChange.bind(this);
+        this.setIsAddingChange = this.setIsAddingChange.bind(this);
 
         Emit.Emitter.addListener('stillageIsAddingChange', this.isAddingChange);
+        Emit.Emitter.addListener('forceSetIsAddingChange', this.setIsAddingChange);
+    }
+
+    public setIsAddingChange(value: boolean) {
+        this.forceUpdate(() => this.setState({isAdding: value}));
     }
 
     public isAddingChange() {
@@ -228,13 +234,14 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         }
 
         return [
+            addCircles,
             signature,
             stillage,
             viks,
             placeSignatures,
             stillageMoveArrows,
             deleteCircle,
-            addCircles
+
         ];
     }
 }
