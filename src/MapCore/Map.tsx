@@ -339,7 +339,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 if (stillage.orientation === Orientation.HORIZONTAL) {
                   if (x > x0) {
                     if (x > x0 && (x <= (x0 + 80 + 75)) && (y > (y0 - 10) && y <= y0 + 35)) {
-                      console.log('> 0');
                       stillage.signature = el.signature;
 
                       stillage.placeSignatures = [
@@ -356,13 +355,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                           title: (parseInt(el.placeSignatures![2].title) + 3).toString(),
                         }
                       ];
-
                       Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
-
                     }
                   } else if (x < x0) {
                     if ((x > (x0 - 100) && x < x0) && (y > (y0 - 10) && y <= (y0 + 35))) {
-                      console.log('< 0');
                       stillage.signature = el.signature;
                       stillage.placeSignatures = [
                         {
@@ -378,13 +374,52 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                           title: (parseInt(el.placeSignatures![0].title) - 1).toString(),
                         }
                       ];
-
                       Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
                     }
                   }
                   Emit.Emitter.emit('signaturesForceUpdate', stillage.key, stillage.signature);
                 } else if (stillage.orientation === Orientation.VERTICAL) {
+                  if (y > y0) {
+                    if (y > y0 && (y <= (y0 + 80 + 75)) && (x > (x0 - 10) && x <= x0 + 35)) {
+                      stillage.signature = el.signature;
 
+                      stillage.placeSignatures = [
+                        {
+                          place: 1,
+                          title: (parseInt(el.placeSignatures![2].title) + 1).toString(),
+                        },
+                        {
+                          place: 2,
+                          title: (parseInt(el.placeSignatures![2].title) + 2).toString(),
+                        },
+                        {
+                          place: 3,
+                          title: (parseInt(el.placeSignatures![2].title) + 3).toString(),
+                        }
+                      ];
+                      Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
+                    }
+                  } else if (y < y0) {
+                    if ((y > (y0 - 100) && y < y0) && (x > (x0 - 10) && x <= (x0 + 35))) {
+                      stillage.signature = el.signature;
+                      stillage.placeSignatures = [
+                        {
+                          place: 1,
+                          title: (parseInt(el.placeSignatures![0].title) - 3).toString(),
+                        },
+                        {
+                          place: 2,
+                          title: (parseInt(el.placeSignatures![0].title) - 2).toString(),
+                        },
+                        {
+                          place: 3,
+                          title: (parseInt(el.placeSignatures![0].title) - 1).toString(),
+                        }
+                      ];
+                      Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
+                    }
+                  }
+                  Emit.Emitter.emit('signaturesForceUpdate', stillage.key, stillage.signature);
                 }
               }
             }
