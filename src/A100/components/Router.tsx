@@ -18,7 +18,7 @@ export default class Router extends React.Component<IRouterProps, IRouterState> 
                 <Route exact path='/' component={Introducing}>
                     <Redirect to="/map" />
                 </Route>
-                <Route path='/map/:id?' component={MapView} />
+                <Route path='/map/:employeeID?/:controlID?/:resoultID?/:warhouseID?' component={MapView} />
             </Switch>
         );
     }
