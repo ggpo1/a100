@@ -4,6 +4,7 @@ import IPlaceSignatureProps from './../Models/Components/IPlaceSignature/IPlaceS
 import IPlaceSignatureState from './../Models/Components/IPlaceSignature/IPlaceSignatureState';
 import Orientation from './../Models/Enums/Orientation';
 import Emit from "../Data/Emit";
+import PlaceSignatureItem from "../Models/ArrayItems/PlaceSignatureItem";
 
 export default class PlaceSignature extends Component<IPlaceSignatureProps, IPlaceSignatureState> {
     constructor(props) {
@@ -20,8 +21,16 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
 
         this.openModal = this.openModal.bind(this);
         this.thisForceUpdate = this.thisForceUpdate.bind(this);
+        this.forceSource = this.forceSource.bind(this);
 
         Emit.Emitter.addListener('placeSignaturesForceUpdate', this.thisForceUpdate);
+        Emit.Emitter.addListener('placeSignaturesForceSource', this.forceSource);
+    }
+
+    public forceSource(parenKey: string, place: number, newSource: PlaceSignatureItem) {
+        if (parenKey === this.state.parentKey && place === this.state.source.place) {
+            this.setState({source: newSource});
+        }
     }
 
     public openModal() {

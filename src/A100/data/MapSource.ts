@@ -62,21 +62,21 @@ const MapSource: Array<MapSourceUnit> = [
                             },
                         ],
                         viks: [
-                            {
-                                place: 1,
-                                level: 2,
-                                color: DefectColors.YELLOW
-                            },
-                            {
-                                place: 2,
-                                level: 3,
-                                color: DefectColors.GREEN,
-                            },
-                            {
-                                place: 3,
-                                level: 3,
-                                color: DefectColors.RED
-                            }
+                            // {
+                            //     place: 1,
+                            //     level: 2,
+                            //     color: DefectColors.YELLOW
+                            // },
+                            // {
+                            //     place: 2,
+                            //     level: 3,
+                            //     color: DefectColors.GREEN,
+                            // },
+                            // {
+                            //     place: 3,
+                            //     level: 3,
+                            //     color: DefectColors.RED
+                            // }
                         ]
                     },
                     {
@@ -169,6 +169,35 @@ const MapSource: Array<MapSourceUnit> = [
                     {
                         id: 4,
                         key: 'unit_0_layer_0_stillage_4',
+                        x: 1000,
+                        y: 200,
+                        orientation: Orientation.HORIZONTAL,
+                        signature: {
+                            title: '25',
+                            position: SignaturePosition.BOTTOM,
+                        },
+                        size: StillageSize.NORMAL,
+                        placeSignatures: [
+                            {
+                                place: 1,
+                                title: '24',
+                            },
+                            {
+                                place: 2,
+                                title: '25',
+                            },
+                            {
+                                place: 3,
+                                title: '26',
+                            },
+                        ],
+                        viks: [
+
+                        ]
+                    },
+                    {
+                        id: 5,
+                        key: 'unit_0_layer_0_stillage_5',
                         x: 600,
                         y: 700,
                         orientation: Orientation.VERTICAL,

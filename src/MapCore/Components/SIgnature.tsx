@@ -6,6 +6,7 @@ import Orientation from './../Models/Enums/Orientation';
 import SignaturePosition from './../Models/Enums/SignaturePosition';
 import StillageSize from './../Models/Enums/StillageSize/StillageSize';
 import Emit from "../Data/Emit";
+import SignatureItem from "../Models/ArrayItems/SignatureItem";
 
 export default class Signature extends Component<ISignatureProps, ISignatureState> {
 
@@ -22,8 +23,16 @@ export default class Signature extends Component<ISignatureProps, ISignatureStat
         };
 
         this.thisForceUpdate = this.thisForceUpdate.bind(this);
+        this.signatureForceUpdate = this.signatureForceUpdate.bind(this);
 
         Emit.Emitter.addListener('stillageSignatureForceUpdate', this.thisForceUpdate);
+        Emit.Emitter.addListener('signatureForceUpdate', this.signatureForceUpdate);
+    }
+
+    public signatureForceUpdate(parentKey: string, newSource: SignatureItem) {
+        if (parentKey === this.state.parentKey) {
+            this.setState({source: newSource});
+        }
     }
 
     public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {

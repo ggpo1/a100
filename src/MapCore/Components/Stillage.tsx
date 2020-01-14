@@ -15,6 +15,8 @@ import StillageService from "../Services/StillageService";
 import LayerType from "../Models/Enums/LayerType";
 import DeleteCircle from "./Stage/DeleteCircle";
 import AddCircle from "./Stage/AddCircle";
+import PlaceSignatureItem from "../Models/ArrayItems/PlaceSignatureItem";
+import SignatureItem from "../Models/ArrayItems/SignatureItem";
 
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
@@ -52,9 +54,34 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         this.setStillageMoveNow = this.setStillageMoveNow.bind(this);
         this.isAddingChange = this.isAddingChange.bind(this);
         this.setIsAddingChange = this.setIsAddingChange.bind(this);
+        this.placeSignaturesForceUpdate = this.placeSignaturesForceUpdate.bind(this);
+        this.signaturesForceUpdate = this.signaturesForceUpdate.bind(this);
 
         Emit.Emitter.addListener('stillageIsAddingChange', this.isAddingChange);
         Emit.Emitter.addListener('forceSetIsAddingChange', this.setIsAddingChange);
+        Emit.Emitter.addListener('placeSignatureForceUpdate', this.placeSignaturesForceUpdate);
+        Emit.Emitter.addListener('signaturesForceUpdate', this.signaturesForceUpdate);
+    }
+
+    public placeSignaturesForceUpdate(key: string, newPlaces: Array<PlaceSignatureItem>) {
+        // автоматическое подставление номеров мест при передвижении стеллажа
+        const {source} = this.state;
+        if (key === this.state.source.key) {
+            source.placeSignatures = newPlaces;
+            for (let i = 0; i < newPlaces.length; i++) {
+                Emit.Emitter.emit('placeSignaturesForceSource', source.key, newPlaces[i].place, newPlaces[i]);
+            }
+            this.forceUpdate(() => this.setState({source}));
+        }
+    }
+
+    public signaturesForceUpdate(key: string, newSignature: SignatureItem) {
+        const {source} = this.state;
+        if (key === this.state.source.key) {
+            source.signature = newSignature;
+            Emit.Emitter.emit('signatureForceUpdate', source.key, newSignature);
+            this.setState({source});
+        }
     }
 
     public setIsAddingChange(value: boolean) {
