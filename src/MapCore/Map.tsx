@@ -707,6 +707,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         source[selectedUnit].layers[_layerIndex] = layer;
         this.forceUpdate(() => this.setState({ source, selectedLayer: -1 }));
       }
+      // Изменение видимости кнопок плюс у добавленного стеллажа
+      this.forceUpdate(() => Emit.Emitter.emit('forceSetIsAddingChange', true));
     }
   }
 
