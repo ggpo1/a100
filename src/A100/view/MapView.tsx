@@ -16,7 +16,11 @@ export default class MapView extends React.Component<IMapViewProps, IMapViewStat
         // let {id} = useParams();
         // console.log(id);
         return (
-            <Map source={MapSource} />
+            <Map
+                key={'MapView_component'}
+                parentKey={'MapView_component'}
+                source={MapSource}
+            />
         );
     }
 

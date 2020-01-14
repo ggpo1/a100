@@ -13,6 +13,7 @@ import React from "react";
 import Emit from "../Data/Emit";
 import Vectors from "../Models/Enums/Vectors";
 import LayerType from "../Models/Enums/LayerType";
+import PlaceSignatureItem from "../Models/ArrayItems/PlaceSignatureItem";
 
 export default class StillageService {
 
@@ -464,6 +465,50 @@ export default class StillageService {
                 };
             }
         }
+    }
+
+    public getStillagePlaceSignatures(stillageSize: StillageSize, parentExtremePSTitle: string, toMin: boolean): Array<PlaceSignatureItem> {
+        let parsedTitle = parseInt(parentExtremePSTitle);
+        if (stillageSize === StillageSize.NORMAL) {
+            if (toMin) {
+                return [
+                    {
+                        place: 1,
+                        title: (parsedTitle - 3).toString()
+                    },
+                    {
+                        place: 2,
+                        title: (parsedTitle - 2).toString()
+                    },
+                    {
+                        place: 3,
+                        title: (parsedTitle - 1).toString()
+                    }
+                ];
+            } else {
+                return [
+                    {
+                        place: 1,
+                        title: (parsedTitle + 1).toString()
+                    },
+                    {
+                        place: 2,
+                        title: (parsedTitle + 2).toString()
+                    },
+                    {
+                        place: 3,
+                        title: (parsedTitle + 3).toString()
+                    }
+                ];
+            }
+        } else if (stillageSize === StillageSize.SMALL) {
+            if (toMin) {
+
+            } else {
+
+            }
+        }
+        return [];
     }
 
     public stillageSearchByID(stillagesList: Array<StillageItem>, id: number) {

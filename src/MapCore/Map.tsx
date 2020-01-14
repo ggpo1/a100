@@ -50,6 +50,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      parentKey: this.props.parentKey,
+
       isAddCircleAdding: false,
       isToggledToAdd: false,
       lastAddedItemType: undefined,
@@ -334,46 +336,19 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               let y = e.clientY - this.state.moveStageParams.y;
               let fSide = 75;
               let sSide = 25;
-
+              // stillages auto rows and cols titles by row
               if (el.orientation === stillage.orientation) {
                 if (stillage.orientation === Orientation.HORIZONTAL) {
                   if (x > x0) {
                     if (x > x0 && (x <= (x0 + 80 + 75)) && (y > (y0 - 10) && y <= y0 + 35)) {
                       stillage.signature = el.signature;
-
-                      stillage.placeSignatures = [
-                        {
-                          place: 1,
-                          title: (parseInt(el.placeSignatures![2].title) + 1).toString(),
-                        },
-                        {
-                          place: 2,
-                          title: (parseInt(el.placeSignatures![2].title) + 2).toString(),
-                        },
-                        {
-                          place: 3,
-                          title: (parseInt(el.placeSignatures![2].title) + 3).toString(),
-                        }
-                      ];
+                      stillage.placeSignatures = this.stillageService.getStillagePlaceSignatures(stillage.size, el.placeSignatures![2].title, false);
                       Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
                     }
                   } else if (x < x0) {
                     if ((x > (x0 - 100) && x < x0) && (y > (y0 - 10) && y <= (y0 + 35))) {
                       stillage.signature = el.signature;
-                      stillage.placeSignatures = [
-                        {
-                          place: 1,
-                          title: (parseInt(el.placeSignatures![0].title) - 3).toString(),
-                        },
-                        {
-                          place: 2,
-                          title: (parseInt(el.placeSignatures![0].title) - 2).toString(),
-                        },
-                        {
-                          place: 3,
-                          title: (parseInt(el.placeSignatures![0].title) - 1).toString(),
-                        }
-                      ];
+                      stillage.placeSignatures = this.stillageService.getStillagePlaceSignatures(stillage.size, el.placeSignatures![0].title, true);
                       Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
                     }
                   }
@@ -382,40 +357,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   if (y > y0) {
                     if (y > y0 && (y <= (y0 + 80 + 75)) && (x > (x0 - 10) && x <= x0 + 35)) {
                       stillage.signature = el.signature;
-
-                      stillage.placeSignatures = [
-                        {
-                          place: 1,
-                          title: (parseInt(el.placeSignatures![2].title) + 1).toString(),
-                        },
-                        {
-                          place: 2,
-                          title: (parseInt(el.placeSignatures![2].title) + 2).toString(),
-                        },
-                        {
-                          place: 3,
-                          title: (parseInt(el.placeSignatures![2].title) + 3).toString(),
-                        }
-                      ];
+                      stillage.placeSignatures = this.stillageService.getStillagePlaceSignatures(stillage.size, el.placeSignatures![2].title, false);
                       Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
                     }
                   } else if (y < y0) {
                     if ((y > (y0 - 100) && y < y0) && (x > (x0 - 10) && x <= (x0 + 35))) {
                       stillage.signature = el.signature;
-                      stillage.placeSignatures = [
-                        {
-                          place: 1,
-                          title: (parseInt(el.placeSignatures![0].title) - 3).toString(),
-                        },
-                        {
-                          place: 2,
-                          title: (parseInt(el.placeSignatures![0].title) - 2).toString(),
-                        },
-                        {
-                          place: 3,
-                          title: (parseInt(el.placeSignatures![0].title) - 1).toString(),
-                        }
-                      ];
+                      stillage.placeSignatures = this.stillageService.getStillagePlaceSignatures(stillage.size, el.placeSignatures![0].title, true);
                       Emit.Emitter.emit('placeSignatureForceUpdate', stillage.key, stillage.placeSignatures);
                     }
                   }
@@ -1018,62 +966,67 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     });
 
 
-    main = (<div className="map-wrapper"
-      onDragOver={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
+    main = (
+      <div
+        key={this.state.parentKey + '_mapWrapper_div'}
+        className="map-wrapper"
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
 
-    >
-
-      <div className="stage-wrapper"
-        onDrop={(e) => { this.ElementOnDrop(e) }}
-        onClick={(e) => { this.stageOnClickHandler(e) }}
-        onMouseMove={(e) => { this.MapWrapperOnMouseMove(e) }}
-        onTouchMove={(e) => { this.MapWrapperOnMouseMove(e) }}
-        onMouseUp={(e) => { this.wallLabelButtonInteractionWayUp(e) }}
-        id={"stageWrapper"}
       >
-        <Stage
-          draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
 
-          onTouchMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => { }}
-          onTouchStart={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => { }}
-          onTouchEnd={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => { }}
+        <div className="stage-wrapper"
+          key={this.state.parentKey + '_stageWrapper_div'}
+          onDrop={(e) => { this.ElementOnDrop(e) }}
+          onClick={(e) => { this.stageOnClickHandler(e) }}
+          onMouseMove={(e) => { this.MapWrapperOnMouseMove(e) }}
+          onTouchMove={(e) => { this.MapWrapperOnMouseMove(e) }}
+          onMouseUp={(e) => { this.wallLabelButtonInteractionWayUp(e) }}
+          id={"stageWrapper"}
+        >
+          <Stage
+            key={this.state.parentKey + '_mapStage_stage'}
+            draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
 
-          onDragEnd={e => { this.stageDragEnd(e.target.x(), e.target.y()) }}
+            onTouchMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => { }}
+            onTouchStart={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => { }}
+            onTouchEnd={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => { }}
 
-          onMouseMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => { }}
-          onMouseDown={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => { }}
-          onMouseUp={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => { }}
+            onDragEnd={e => { this.stageDragEnd(e.target.x(), e.target.y()) }}
 
-          style={{ cursor: 'pointer' }}
-          width={window.innerWidth}
-          height={height}
-          onWheel={this.handleWheel}
+            onMouseMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => { }}
+            onMouseDown={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => { }}
+            onMouseUp={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => { }}
 
-          scaleX={this.state.stageScale}
-          scaleY={this.state.stageScale}
-          x={this.state.stageX}
-          y={this.state.stageY}>
-          <Layer>
-            {walls}
-            {stillages}
-            {objects}
-          </Layer>
-        </Stage>
-      </div>
-      {elementsPanel}
+            style={{ cursor: 'pointer' }}
+            width={window.innerWidth}
+            height={height}
+            onWheel={this.handleWheel}
 
-      <div className={"right-bars-wrapper"}>
-        {blocks}
-        {filters}
-      </div>
-      <div style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
-        {layersTitles}
-      </div>
-      {defectBrowsePanel}
-    </div>);
+            scaleX={this.state.stageScale}
+            scaleY={this.state.stageScale}
+            x={this.state.stageX}
+            y={this.state.stageY}>
+            <Layer>
+              {walls}
+              {stillages}
+              {objects}
+            </Layer>
+          </Stage>
+        </div>
+        {elementsPanel}
+
+        <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
+          {blocks}
+          {filters}
+        </div>
+        <div key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
+          {layersTitles}
+        </div>
+        {defectBrowsePanel}
+      </div>);
     return [main];
   }
 }
