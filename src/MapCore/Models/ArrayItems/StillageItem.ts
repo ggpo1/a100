@@ -18,6 +18,11 @@ interface StillageItem {
     deviations?: Array<DeviationItem>,
     placeSignatures?: Array<PlaceSignatureItem>,
     signature?: SignatureItem,
+    pmCount?: number,
+    scale?: number,
+    isBlockScaling?: boolean,
+    iteration?: number,
+    frame?: number
 }
 
 export default StillageItem;

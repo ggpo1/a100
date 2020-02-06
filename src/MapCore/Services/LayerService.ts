@@ -91,6 +91,7 @@ export default class LayerService {
             case LayerType.LIGHTING: return MapIconsType.IMAGE;
             case LayerType.SIGNATURES: return MapIconsType.DRAWING;
             case LayerType.ABSTRACTS: return MapIconsType.IMAGE;
+            case LayerType.TEXT: return MapIconsType.DRAWING;
         }
     }
 

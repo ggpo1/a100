@@ -1,16 +1,22 @@
-import React, { Component } from 'react';
-import { Text } from 'react-konva';
+import React, {Component} from 'react';
+import {Text} from 'react-konva';
 import IPlaceSignatureProps from './../Models/Components/IPlaceSignature/IPlaceSignatureProps';
 import IPlaceSignatureState from './../Models/Components/IPlaceSignature/IPlaceSignatureState';
 import Orientation from './../Models/Enums/Orientation';
 import Emit from "../Data/Emit";
 import PlaceSignatureItem from "../Models/ArrayItems/PlaceSignatureItem";
 
+const A100CellSize = 30;
+
 export default class PlaceSignature extends Component<IPlaceSignatureProps, IPlaceSignatureState> {
     constructor(props) {
         super(props);
 
         this.state = {
+            parentPlaceSignatures: this.props.parentPlaceSignatures,
+            isBlockScaling: this.props.isBlockScaling,
+            parentScale: this.props.parentScale,
+            pmCount: this.props.pmCount,
             parentKey: this.props.parentKey,
             parentX: this.props.parentX,
             parentY: this.props.parentY,
@@ -27,238 +33,89 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
         Emit.Emitter.addListener('placeSignaturesForceSource', this.forceSource);
     }
 
+    public get getScaleK(): number {
+        const { parentScale, parentOrientation, isBlockScaling, source } = this.state;
+
+        const VERTICAL_PARENT_SCALE_K_BIG = 20 * parentScale;
+        const HORIZONTAL_PARENT_SCALE_K_BIG = 20 * parentScale;
+        const VERTICAL_PARENT_SCALE_K_SMALL = 13 * parentScale;
+        const HORIZONTAL_PARENT_SCALE_K_SMALL = 13 * parentScale;
+
+        if (parentScale > 1 && isBlockScaling) {
+            if (parentOrientation === Orientation.VERTICAL) return VERTICAL_PARENT_SCALE_K_BIG;
+            if (parentOrientation === Orientation.HORIZONTAL) return HORIZONTAL_PARENT_SCALE_K_BIG;
+        } else if (parentScale === 1 && isBlockScaling) {
+            if (parentOrientation === Orientation.VERTICAL) {
+                if (source.title.length === 1) return VERTICAL_PARENT_SCALE_K_SMALL;
+                if (source.title.length === 2) return VERTICAL_PARENT_SCALE_K_SMALL - 5;
+            }
+            if (parentOrientation === Orientation.HORIZONTAL) return HORIZONTAL_PARENT_SCALE_K_SMALL;
+        }
+        return 0;
+    }
+
+    public get fontSize(): number {
+        const {parentScale, parentOrientation, isBlockScaling} = this.state;
+        const NORMAL_FONT_SIZE = 14;
+        const SCALED_FONT_SIZE_NORMAL = 25;
+        const SCALED_FONT_SIZE_BIG = 35;
+
+        if (parentScale > 1) {
+            return SCALED_FONT_SIZE_BIG;
+        } else if (parentScale === 1 && isBlockScaling) {
+            return SCALED_FONT_SIZE_NORMAL;
+        } else if (!isBlockScaling) {
+            return NORMAL_FONT_SIZE;
+            // return SCALED_FONT_SIZE_NORMAL;
+        }
+
+        return 0;
+    }
+
     public forceSource(parenKey: string, place: number, newSource: PlaceSignatureItem) {
         if (parenKey === this.state.parentKey && place === this.state.source.place) {
-            this.setState({source: newSource});
+            this.setState({ source: newSource });
         }
     }
 
     public openModal() {
+        console.log(this.state);
         // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {
         if (parentKey === this.state.parentKey) {
-            this.setState({parentX: newParentX, parentY: newParentY})
+            this.setState({ parentX: newParentX, parentY: newParentY })
         }
     };
 
     render() {
-        const { parentX, parentY, parentOrientation, source } = this.state;
+        const { parentX, parentY, parentOrientation, source, parentPlaceSignatures, pmCount, isBlockScaling, parentScale } = this.state;
+
         let ps;
+        let delta  = (A100CellSize * source.place - (A100CellSize/2 + 4 * source.title.length)) * parentScale * (isBlockScaling ? 2 : 1);
         if (parentOrientation === Orientation.HORIZONTAL) {
-            if (source.place === 1) {
-                if (source.title.length === 1) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 9.5}
-                            y={parentY + 8}
-                            fontSize={11} fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length === 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 6}
-                            y={parentY + 8}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length > 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 5}
-                            y={parentY + 9}
-                            fontSize={9}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                }
-            } else if (source.place === 2) {
-                if (source.title.length === 1) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 34.5}
-                            y={parentY + 8}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length === 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 31.5}
-                            y={parentY + 8}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length > 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 30}
-                            y={parentY + 9}
-                            fontSize={9}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                }
-            } else {
-                if (source.title.length === 1) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 59}
-                            y={parentY + 8}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length === 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 56.25}
-                            y={parentY + 8}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 55}
-                            y={parentY + 9}
-                            fontSize={9}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                }
-            }
+            ps = <Text
+                key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
+                onTap={() => { this.openModal() }}
+                onClick={() => { this.openModal() }}
+                x={parentX + delta}
+                y={parentY + 9 + this.getScaleK}
+                fontSize={this.fontSize}
+                fill={'white'}
+                text={source.title}
+            />;
         } else {
-            if (source.place === 1) {
-                if (source.title.length === 1) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 9}
-                            y={parentY + 8}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length === 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 6.25}
-                            y={parentY + 8}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length > 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 5}
-                            y={parentY + 8}
-                            fontSize={9}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                }
-            } else if (source.place === 2) {
-                if (source.title.length === 1) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 9}
-                            y={parentY + 33}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length === 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 6}
-                            y={parentY + 32.5}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length > 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 5}
-                            y={parentY + 33}
-                            fontSize={9}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                }
-            } else {
-                if (source.title.length === 1) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 9.5}
-                            y={parentY + 57.55}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else if (source.title.length === 2) {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 6.5}
-                            y={parentY + 57.55}
-                            fontSize={11}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                } else {
-                    ps = <Text
-                            key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                            onTap={() => { this.openModal() }}
-                            onClick={() => { this.openModal() }}
-                            x={parentX + 5}
-                            y={parentY + 59}
-                            fontSize={9}
-                            fill={'white'}
-                            text={source.title}
-                    />;
-                }
-            }
+            ps = <Text
+                key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
+                onTap={() => { this.openModal() }}
+                onClick={() => { this.openModal() }}
+                x={parentX + 10.5 + this.getScaleK}
+                y={parentY + delta}
+                fontSize={this.fontSize}
+                fill={'white'}
+                text={source.title}
+            />;
         }
 
 

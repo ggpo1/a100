@@ -26,21 +26,11 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         this.stillageService = new StillageService();
         let width, height = 0;
         if (this.props.source.orientation === Orientation.HORIZONTAL) {
-            if (this.props.source.size === StillageSize.NORMAL) {
-                width = 76;
-                height = 49.5;
-            } else {
-                width = 50;
-                height = 49.5;
-            }
+            width = this.props.source.pmCount! * 30;
+            height = 30;
         } else {
-            if (this.props.source.size === StillageSize.NORMAL) {
-                width = 49.5;
-                height = 76;
-            } else {
-                width = 49.5;
-                height = 50;
-            }
+            width = 30;
+            height = this.props.source.pmCount! * 30;
         }
         this.props.source.width = width;
         this.props.source.height = height;
@@ -98,6 +88,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
     }
 
     public setStillageMoveNow(e, value: boolean) {
+        console.log(this.state.source);
         if (e.evt.which === 1) {
             Emit.Emitter.emit('setIsShapeMovingNow', value, {
                 type: LayerType.STILLAGES,
@@ -166,6 +157,9 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         if (source.signature !== undefined) {
             signature =
                 <Signature
+                    parentScale={source.scale!}
+                    isBlockScaling={source.isBlockScaling!}
+                    pmCount={source.pmCount!}
                     parentKey={source.key}
                     key={source.key + '_signature'}
                     parentX={source.x}
@@ -182,6 +176,10 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             source.placeSignatures.forEach(element => {
                 placeSignatures.push(
                     <PlaceSignature
+                        parentPlaceSignatures={source.placeSignatures!}
+                        isBlockScaling={source.isBlockScaling!}
+                        parentScale={source.scale!}
+                        pmCount={source.pmCount!}
                         parentKey={source.key}
                         key={source.key + '_placeSignature_' + (i++)}
                         parentX={source.x}
@@ -209,7 +207,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                 );
             });
         }
-
+        // if (source.pmCount === 1) alert('1!');
         if (source.orientation === Orientation.HORIZONTAL) {
             stillage = (
                 <Rect
@@ -228,8 +226,10 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     // ____
                     x={source.x}
                     y={source.y}
-                    width={stillageSizeReducer.GetSize(source.size).firstSide}
-                    height={stillageSizeReducer.GetSize(source.size).secondSide}
+                    // width={stillageSizeReducer.GetSize(source.size).firstSide}
+                    // height={stillageSizeReducer.GetSize(source.size).secondSide}
+                    width={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).firstSide}
+                    height={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).secondSide}
                     fill={StillageColors.STILLAGE_NORMAL}
                     strokeWidth={1} // border width
                     stroke={StillageColors.STILLAGE_NORMAL_STROKE}
@@ -251,8 +251,10 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     // ____
                     x={source.x}
                     y={source.y}
-                    width={stillageSizeReducer.GetSize(source.size).secondSide}
-                    height={stillageSizeReducer.GetSize(source.size).firstSide}
+                    // width={stillageSizeReducer.GetSize(source.size).secondSide}
+                    // height={stillageSizeReducer.GetSize(source.size).firstSide}
+                    width={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).firstSide}
+                    height={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).secondSide}
                     fill={StillageColors.STILLAGE_NORMAL}
                     strokeWidth={1} // border width
                     stroke={StillageColors.STILLAGE_NORMAL_STROKE}

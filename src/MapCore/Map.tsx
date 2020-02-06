@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layer, Stage } from 'react-konva';
+import {Layer, Stage} from 'react-konva';
 
 import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
@@ -14,6 +14,7 @@ import ElementSource from "./Data/ElementsSource";
 import StillageService from "./Services/StillageService";
 import ElementItem from "./Models/ArrayItems/ElementItem";
 import MapObject from "./Components/MapObject";
+import Text from "./Components/Text";
 import WallItem from "./Models/ArrayItems/WallIem";
 import DefectBrowsePanel from "./Components/Page/Panels/DefectBrowsePanel";
 import MapSourceLayer from "./Models/MapSourceLayer";
@@ -29,7 +30,7 @@ import Vectors from "./Models/Enums/Vectors";
 import StillageItem from "./Models/ArrayItems/StillageItem";
 import Position from "./Models/Enums/Position";
 import StillageSize from "./Models/Enums/StillageSize/StillageSize";
-import { findRenderedComponentWithType } from "react-dom/test-utils";
+import MapSource from "../A100/data/MapSource";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -38,6 +39,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   public objectService!: ObjectService;
   public layerService!: LayerService;
   public wallService!: WallService;
+
+  public animates: Array<any> = [];
 
   constructor(props: IMapProps) {
     super(props);
@@ -50,6 +53,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      lazyLoading: true,
       parentKey: this.props.parentKey,
 
       isAddCircleAdding: false,
@@ -131,6 +135,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.deleteShape = this.deleteShape.bind(this);
     this.setAddCirclesVisibility = this.setAddCirclesVisibility.bind(this);
     this.addSameShape = this.addSameShape.bind(this);
+    this.mapSetState = this.mapSetState.bind(this);
 
     // Событие для удаления стены
     Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -156,6 +161,29 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('setAddCirclesVisibility', this.setAddCirclesVisibility);
     // Событие для добаления идентичной фигуры при нажатии на кнопку плюса
     Emit.Emitter.addListener('addSameShape', this.addSameShape);
+    //
+    Emit.Emitter.addListener('mapSetState', this.mapSetState);
+  }
+
+  public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
+  componentDidMount(): void {
+    const {lazyLoading} = this.state;
+    if (lazyLoading) {
+      this.animationIDs.forEach(el => {
+        this.animates.push(document.getElementById(el)!.animate([
+          { opacity: '0.8' },
+          { opacity: '0.4' },
+          { opacity: '0.8' }
+        ], {
+          duration: 2000,
+          iterations: Infinity
+        }));
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<IMapProps>, prevState: Readonly<IMapState>, snapshot?: any): void {
+    document.getElementById('units-block')!.style.opacity = '0.8';
   }
 
   public addSameShape(type: LayerType, prevShape: any, position: Position) {
@@ -225,6 +253,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           size: prevStillage.size,
           placeSignatures: places,
           viks: [],
+          pmCount: -1
         };
 
         // TODO: Add small stillage checks
@@ -337,6 +366,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               let fSide = 75;
               let sSide = 25;
               // stillages auto rows and cols titles by row
+              // TODO: turn on
+              /*
               if (el.orientation === stillage.orientation) {
                 if (stillage.orientation === Orientation.HORIZONTAL) {
                   if (x > x0) {
@@ -370,6 +401,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   Emit.Emitter.emit('signaturesForceUpdate', stillage.key, stillage.signature);
                 }
               }
+              */
             }
           }
 
@@ -739,8 +771,17 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   handleWheel = e => {
     e.evt.preventDefault();
+    let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(this.state.source[this.state.selectedUnit].layers, LayerType.STILLAGES);
+    let scaleBy = 1.025;
+    // console.log(this.state.source[this.state.selectedUnit].layers[stillagesLayer].stillages!.length);
+    // let stillagesCount = this.state.source[this.state.selectedUnit].layers[stillagesLayer].stillages!.length;
+    // if (stillagesCount >= 100) scaleBy = 0.90;
+    // if (stillagesCount >= 200 && stillagesCount < 300) scaleBy = 1.1;
+    // if (stillagesCount >= 300) scaleBy = 1.1;
 
-    const scaleBy = 1.025;
+
+
+
     const stage = e.target.getStage();
     const oldScale = stage.scaleX();
     const mousePointTo = {
@@ -762,273 +803,330 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   };
 
 
-
+  public mapSetState() {
+    try {
+      // this.animate.finish();
+      this.animates.map(el => el.cancel());
+      console.log(MapSource.data);
+      this.setState({source: MapSource.data, lazyLoading: false});
+    } catch (e) {
+      console.error('[Component: Map] - invalid data!');
+      this.setState({lazyLoading: false});
+    }
+  }
 
   render() {
-    const { source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow } = this.state;
+    if (this.state.source === undefined || this.state.source.length === 0) {
 
-    let unitsTitles: Array<JSX.Element> = [];
-    let layersTitles: Array<JSX.Element> = [];
-    let objects: Array<JSX.Element> = [];
-    let stillages: Array<JSX.Element> = [];
-    let signatures: Array<JSX.Element> = [];
-    let layers: Array<JSX.Element> = [];
-    let walls: Array<JSX.Element> = [];
-
-
-
-    let height = window.innerHeight;
-
-    // вывод списка блоков
-    for (let i = 0; i < source.length; i++) {
-      unitsTitles.push(
-        <div
-          key={source[i].key + '_unitNameDiv_' + i}
-          onClick={() => {
-            this.setState({ ...this.state, ...{ selectedUnit: i, selectedLayer: -1, layersSelected: [] } });
-          }} className="unit-title">
-          <span
-            key={source[i].key + '_unitNameDivSpan_' + i}
-            style={{
-              fontWeight: selectedUnit === i ? 'bold' : 'normal',
-              color: selectedUnit === i ? '#2f00ff' : 'black'
-            }}>{source[i].title}</span>
-        </div>
-      );
-    }
-    layersTitles = [];
-    /* добавления слоя для отображения всех слоев */
-    layersTitles.push(
-      <div key={source[selectedUnit].key + '_layerNameDiv_-1'} style={{
-        fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
-        color: selectedLayer === -1 ? '#2f00ff' : 'black'
-      }} className="layer-title" onClick={() => {
-        this.setState({ layersSelected, selectedLayer: -1 })
-      }}>
-        все слои
-      </div>
-    );
-    /* добавление заголовков слоев */
-    for (let i = 0; i < source[selectedUnit].layers.length; i++) {
-      layersTitles.push(
-        <div key={source[selectedUnit].layers[i].key + '_layerNameDiv_' + i} style={{
-          fontWeight: layersSelected.includes(i, 0) ? 'bold' : 'normal',
-          color: layersSelected.includes(i, 0) ? '#2f00ff' : 'black'
-        }} onClick={() => {
-          this.selectLayerToList(i);
-        }} className="layer-title">
-          <input
-            key={source[selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
-            onChange={() => { console.log(i) }}
-            style={{ outline: 'none', marginRight: 5 }}
-            checked={layersSelected.includes(i, 0)}
-            type={'checkbox'} />
-          {source[selectedUnit].layers[i].title}</div>
-      );
-    }
-
-
-    if (selectedLayer === -1) {
-      let layerNum = 0;
-      source[selectedUnit].layers.forEach(element => {
-        if (element.objects !== undefined) {
-          for (let i = 0; i < element.objects!.length; i++) {
-            objects.push(
-              <MapObject
-                key={element.objects[i].key}
-                source={element.objects![i]}
-              />
-            );
-          }
-        }
-        if (element.stillages !== undefined) {
-          let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
-          for (let i = 0; i < element.stillages!.length; i++) {
-            stillages.push(
-              <Stillage
-                key={element.stillages[i].key}
-                source={element.stillages![i]}
-                mapStillages={_mapStillages!}
-              />
-            );
-          }
-        }
-        if (element.walls !== undefined) {
-          for (let i = 0; i < element.walls!.length; i++) {
-            walls.push(
-              <Wall
-                key={element.walls[i].key}
-                source={element.walls[i]}
-              />
-            );
-          }
-        }
-        layerNum++;
-      });
     } else {
-      if (this.state.layersSelected.length !== 0) {
-        layersSelected.forEach(el => {
-          if (source[selectedUnit].layers[el] !== undefined) {
-            if (source[selectedUnit].layers[el].stillages !== undefined) {
-              for (let i = 0; i < source[selectedUnit].layers[el].stillages!.length; i++) {
-                stillages.push(
-                  <Stillage
-                    key={source[selectedUnit].layers[el].stillages![i].key}
-                    source={source[selectedUnit].layers[el].stillages![i]}
-                    mapStillages={source[selectedUnit].layers[el].stillages!}
-                  />
-                );
-              }
-            }
-            if (source[selectedUnit].layers[el].walls !== undefined) {
-              for (let i = 0; i < source[selectedUnit].layers[el].walls!.length; i++) {
-                let element = source[selectedUnit].layers[el].walls![i];
-                walls.push(
-                  <Wall
-                    key={element.key}
-                    source={source[selectedUnit].layers[el].walls![i]}
-                  />
-                );
-              }
-            }
-            if (source[selectedUnit].layers[el].objects !== undefined) {
-              for (let i = 0; i < source[selectedUnit].layers[el].objects!.length; i++) {
-                walls.push(
+      const {source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading} = this.state;
+      let unitsTitles: Array<JSX.Element> = [];
+      let layersTitles: Array<JSX.Element> = [];
+      let objects: Array<JSX.Element> = [];
+      let texts: Array<JSX.Element> = [];
+      let stillages: Array<JSX.Element> = [];
+      let signatures: Array<JSX.Element> = [];
+      let layers: Array<JSX.Element> = [];
+      let walls: Array<JSX.Element> = [];
+
+      let height = window.innerHeight;
+
+      // вывод списка блоков
+      for (let i = 0; i < source.length; i++) {
+        unitsTitles.push(
+            <div
+                key={source[i].key + '_unitNameDiv_' + i}
+                onClick={() => {
+                  this.setState({...this.state, ...{selectedUnit: i, selectedLayer: -1, layersSelected: []}});
+                }} className="unit-title">
+          <span
+              key={source[i].key + '_unitNameDivSpan_' + i}
+              style={{
+                fontWeight: selectedUnit === i ? 'bold' : 'normal',
+                color: selectedUnit === i ? '#2f00ff' : 'black'
+              }}>{source[i].title}</span>
+            </div>
+        );
+      }
+      layersTitles = [];
+      /* добавления слоя для отображения всех слоев */
+      layersTitles.push(
+          <div key={source[selectedUnit].key + '_layerNameDiv_-1'} style={{
+            fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
+            color: selectedLayer === -1 ? '#2f00ff' : 'black'
+          }} className="layer-title" onClick={() => {
+            this.setState({layersSelected, selectedLayer: -1})
+          }}>
+            все слои
+          </div>
+      );
+      /* добавление заголовков слоев */
+      for (let i = 0; i < source[selectedUnit].layers.length; i++) {
+        layersTitles.push(
+            <div key={source[selectedUnit].layers[i].key + '_layerNameDiv_' + i} style={{
+              fontWeight: layersSelected.includes(i, 0) ? 'bold' : 'normal',
+              color: layersSelected.includes(i, 0) ? '#2f00ff' : 'black'
+            }} onClick={() => {
+              this.selectLayerToList(i);
+            }} className="layer-title">
+              <input
+                  key={source[selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
+                  onChange={() => {
+                    console.log(i)
+                  }}
+                  style={{outline: 'none', marginRight: 5}}
+                  checked={layersSelected.includes(i, 0)}
+                  type={'checkbox'}/>
+              {source[selectedUnit].layers[i].title}</div>
+        );
+      }
+
+
+      if (selectedLayer === -1) {
+        let layerNum = 0;
+        source[selectedUnit].layers.forEach(element => {
+          if (element.texts !== undefined) {
+            element.texts.forEach(textElement => {
+              texts.push(
+                  <Text key={textElement.key} source={textElement} />
+              );
+            });
+          }
+          if (element.objects !== undefined) {
+            for (let i = 0; i < element.objects!.length; i++) {
+              objects.push(
                   <MapObject
-                    key={source[selectedUnit].layers[el].objects![i].key}
-                    source={source[selectedUnit].layers[el].objects![i]}
+                      key={element.objects[i].key}
+                      source={element.objects![i]}
                   />
-                );
-              }
+              );
             }
           }
+          if (element.stillages !== undefined) {
+            let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
+            for (let i = 0; i < element.stillages!.length; i++) {
+              stillages.push(
+                  <Stillage
+                      key={element.stillages[i].key}
+                      source={element.stillages![i]}
+                      mapStillages={_mapStillages!}
+                  />
+              );
+            }
+          }
+          if (element.walls !== undefined) {
+            for (let i = 0; i < element.walls!.length; i++) {
+              walls.push(
+                  <Wall
+                      key={element.walls[i].key}
+                      source={element.walls[i]}
+                  />
+              );
+            }
+          }
+          layerNum++;
         });
+      } else {
+        if (this.state.layersSelected.length !== 0) {
+          layersSelected.forEach(el => {
+            if (source[selectedUnit].layers[el] !== undefined) {
+              if (source[selectedUnit].layers[el].stillages !== undefined) {
+                for (let i = 0; i < source[selectedUnit].layers[el].stillages!.length; i++) {
+                  stillages.push(
+                      <Stillage
+                          key={source[selectedUnit].layers[el].stillages![i].key}
+                          source={source[selectedUnit].layers[el].stillages![i]}
+                          mapStillages={source[selectedUnit].layers[el].stillages!}
+                      />
+                  );
+                }
+              }
+              if (source[selectedUnit].layers[el].walls !== undefined) {
+                for (let i = 0; i < source[selectedUnit].layers[el].walls!.length; i++) {
+                  let element = source[selectedUnit].layers[el].walls![i];
+                  walls.push(
+                      <Wall
+                          key={element.key}
+                          source={source[selectedUnit].layers[el].walls![i]}
+                      />
+                  );
+                }
+              }
+              if (source[selectedUnit].layers[el].objects !== undefined) {
+                for (let i = 0; i < source[selectedUnit].layers[el].objects!.length; i++) {
+                  walls.push(
+                      <MapObject
+                          key={source[selectedUnit].layers[el].objects![i].key}
+                          source={source[selectedUnit].layers[el].objects![i]}
+                      />
+                  );
+                }
+              }
+              if (source[selectedUnit].layers[el].texts !== undefined) {
+                source[selectedUnit].layers[el].texts!.forEach(textEl => texts.push(<Text key={textEl.key} source={textEl} />));
+              }
+            }
+          });
+        }
+
       }
 
-    }
 
+      let main, blocks, filters, elementsPanel, defectBrowsePanel, addLayerSubModal;
 
-
-    let main, blocks, filters, elementsPanel, defectBrowsePanel, addLayerSubModal;
-
-    blocks = (
-      <div style={{ background: '#E0E0E0' }} className="units-selector">
-        <div style={{ background: '' }} className="unit-header-title">
-          <span style={{ height: '50%' }}>выбор блока</span>
-        </div>
-        <div style={{ background: '' }} className="unit-content">
-          {unitsTitles}
-        </div>
-      </div>
-    );
-    filters = (
-      <div className="filters-selector" style={{ background: '#E0E0E0' }}>
-        <div style={{ background: '' }} className="filter-header-title">
-          <span style={{ height: '50%' }}>фильтры</span>
-        </div>
-        <div style={{ background: '' }} className="filter-content">
-          <div className="input-checkbox">
-            <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }} type="checkbox" name="option2" value="a2" /></div>
-            <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
-              только опасные
+      blocks = (
+          <div id={'units-block'} style={{background: '#E0E0E0'}} className="units-selector">
+            <div style={{background: ''}} className="unit-header-title">
+              <span style={{height: '50%'}}>выбор блока</span>
+            </div>
+            <div style={{background: ''}} className="unit-content">
+              {unitsTitles}
             </div>
           </div>
-          <div className="input-checkbox">
-            <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }} type="checkbox" name="option2" value="a2" /></div>
-            <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
-              убрать повреждения
+      );
+
+      filters = (
+          <div id={'filters-block'} className="filters-selector" style={{background: '#E0E0E0'}}>
+            <div style={{background: ''}} className="filter-header-title">
+              <span style={{height: '50%'}}>фильтры</span>
+            </div>
+            <div style={{background: ''}} className="filter-content">
+              <div className="input-checkbox">
+                <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{height: '50%'}}
+                                       type="checkbox" name="option2" value="a2"/></div>
+                <div style={{height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex'}}>
+                  только опасные
+                </div>
+              </div>
+              <div className="input-checkbox">
+                <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{height: '50%'}}
+                                       type="checkbox" name="option2" value="a2"/></div>
+                <div style={{height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex'}}>
+                  убрать повреждения
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    );
+      );
 
-    elementsPanel = <ElementsPanel source={ElementSource} />;
+      elementsPanel = <ElementsPanel source={ElementSource}/>;
 
-    if (isDefectBrowsePanel) {
-      defectBrowsePanel = <DefectBrowsePanel />;
-    }
-
-    let check = false;
-    if (AppState.State.selectedEl !== undefined) {
-      if (AppState.State.selectedEl.type !== undefined && AppState.State.selectedEl.type === LayerType.WALLS) {
-        check = true;
+      if (isDefectBrowsePanel) {
+        defectBrowsePanel = <DefectBrowsePanel/>;
       }
-    }
 
-    /* очистка списка стен от дублей с одинаковыми key */
-    let keys: string[] = [];
-    walls.forEach((el) => {
-      if (keys.indexOf(el.key!.toString()) === -1) {
-        keys.push(el.key!.toString());
+      let check = false;
+      if (AppState.State.selectedEl !== undefined) {
+        if (AppState.State.selectedEl.type !== undefined && AppState.State.selectedEl.type === LayerType.WALLS) {
+          check = true;
+        }
       }
-    });
-    walls = walls.filter((item, index) => {
-      return index === keys.indexOf(item.key!.toString());
-    });
 
+      /* очистка списка стен от дублей с одинаковыми key */
+      let keys: string[] = [];
+      walls.forEach((el) => {
+        if (keys.indexOf(el.key!.toString()) === -1) {
+          keys.push(el.key!.toString());
+        }
+      });
+      walls = walls.filter((item, index) => {
+        return index === keys.indexOf(item.key!.toString());
+      });
 
-    main = (
-      <div
-        key={this.state.parentKey + '_mapWrapper_div'}
-        className="map-wrapper"
-        onDragOver={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
+      main = (
+          <div
+              key={this.state.parentKey + '_mapWrapper_div'}
+              className="map-wrapper"
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
 
-      >
+          >
 
-        <div className="stage-wrapper"
-          key={this.state.parentKey + '_stageWrapper_div'}
-          onDrop={(e) => { this.ElementOnDrop(e) }}
-          onClick={(e) => { this.stageOnClickHandler(e) }}
-          onMouseMove={(e) => { this.MapWrapperOnMouseMove(e) }}
-          onTouchMove={(e) => { this.MapWrapperOnMouseMove(e) }}
-          onMouseUp={(e) => { this.wallLabelButtonInteractionWayUp(e) }}
-          id={"stageWrapper"}
-        >
-          <Stage
-            key={this.state.parentKey + '_mapStage_stage'}
-            draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
+            <div className="stage-wrapper"
+                 key={this.state.parentKey + '_stageWrapper_div'}
+                 onDrop={(e) => {
+                   this.ElementOnDrop(e)
+                 }}
+                 onClick={(e) => {
+                   this.stageOnClickHandler(e)
+                 }}
+                 onMouseMove={(e) => {
+                   this.MapWrapperOnMouseMove(e)
+                 }}
+                 onTouchMove={(e) => {
+                   this.MapWrapperOnMouseMove(e)
+                 }}
+                 onMouseUp={(e) => {
+                   this.wallLabelButtonInteractionWayUp(e)
+                 }}
+                 id={"stageWrapper"}
+            >
+              <Stage
+                  key={this.state.parentKey + '_mapStage_stage'}
+                  draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
 
-            onTouchMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => { }}
-            onTouchStart={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => { }}
-            onTouchEnd={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => { }}
+                  onTouchMove={check ? (e) => {
+                    this.StageOnMouseMoveHandler(e)
+                  } : () => {
+                  }}
+                  onTouchStart={check ? (e) => {
+                    this.StageOnMouseDownHandler(e)
+                  } : () => {
+                  }}
+                  onTouchEnd={check ? (e) => {
+                    this.StageOnMouseUpHandler(e)
+                  } : () => {
+                  }}
 
-            onDragEnd={e => { this.stageDragEnd(e.target.x(), e.target.y()) }}
+                  onDragEnd={e => {
+                    this.stageDragEnd(e.target.x(), e.target.y())
+                  }}
 
-            onMouseMove={check ? (e) => { this.StageOnMouseMoveHandler(e) } : () => { }}
-            onMouseDown={check ? (e) => { this.StageOnMouseDownHandler(e) } : () => { }}
-            onMouseUp={check ? (e) => { this.StageOnMouseUpHandler(e) } : () => { }}
+                  onMouseMove={check ? (e) => {
+                    this.StageOnMouseMoveHandler(e)
+                  } : () => {
+                  }}
+                  onMouseDown={check ? (e) => {
+                    this.StageOnMouseDownHandler(e)
+                  } : () => {
+                  }}
+                  onMouseUp={check ? (e) => {
+                    this.StageOnMouseUpHandler(e)
+                  } : () => {
+                  }}
 
-            style={{ cursor: 'pointer' }}
-            width={window.innerWidth}
-            height={height}
-            onWheel={this.handleWheel}
+                  style={{cursor: 'pointer'}}
+                  width={window.innerWidth}
+                  height={height}
+                  onWheel={this.handleWheel}
 
-            scaleX={this.state.stageScale}
-            scaleY={this.state.stageScale}
-            x={this.state.stageX}
-            y={this.state.stageY}>
-            <Layer>
-              {walls}
-              {stillages}
-              {objects}
-            </Layer>
-          </Stage>
-        </div>
-        {elementsPanel}
+                  scaleX={this.state.stageScale}
+                  scaleY={this.state.stageScale}
+                  x={this.state.stageX}
+                  y={this.state.stageY}>
+                <Layer>
+                  {walls}
+                  {stillages}
+                  {objects}
+                  {texts}
+                </Layer>
+              </Stage>
+            </div>
+            {elementsPanel}
 
-        <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
-          {blocks}
-          {filters}
-        </div>
-        <div key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{ background: '#E0E0E0' }} className="layers-selector-wrapper">
-          {layersTitles}
-        </div>
-        {defectBrowsePanel}
-      </div>);
-    return [main];
+            <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
+              {blocks}
+              {filters}
+            </div>
+            <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{background: '#E0E0E0'}}
+                 className="layers-selector-wrapper">
+              {layersTitles}
+            </div>
+            {defectBrowsePanel}
+          </div>);
+      return [main];
+    }
   }
 }

@@ -142,7 +142,7 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
             }
 
             content = (
-                <div className={'elements-panel-wrapper'}>
+                <div id={'elements-panel'} className={'elements-panel-wrapper'}>
                     <div className={'inner-wrapper'}>
                         <div className={'category-tabs-wrapper'}>
                             {categories}
@@ -160,7 +160,7 @@ export default class ElementsPanel extends React.Component<IElementsPanelProps, 
             );
         } else {
             content = (
-                <div onClick={() => {
+                <div id={'elements-panel'} onClick={() => {
                     this.setState({...this.state, ...{isToggled: false}})
                 }} className={'elements-panel-wrapper-toggled'}>
                     <div className={'inner-wrapper-toggled'}>

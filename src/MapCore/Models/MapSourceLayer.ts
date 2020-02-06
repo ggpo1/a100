@@ -4,6 +4,7 @@ import StillageItem from './ArrayItems/StillageItem';
 import LayerType from './Enums/LayerType';
 import WallItem from './ArrayItems/WallIem';
 import MapIconsType from "./Enums/MapIconsType";
+import TextItem from "./ArrayItems/TextItem";
 
 interface MapSourceLayer {
     id: number,
@@ -14,6 +15,7 @@ interface MapSourceLayer {
     objects?: Array<ObjectItem>, // when prop type is "abstracts"
     stillages?: Array<StillageItem>, // when prop type is "stillages"
     walls?: Array<WallItem> // when prop type is "walls"
+    texts?: Array<TextItem>  // when prop type is "text"
 }
 
 export default MapSourceLayer;

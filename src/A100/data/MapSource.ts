@@ -1,303 +1,50 @@
 import LayerType from '../../MapCore/Models/Enums/LayerType';
-import Orientation from '../../MapCore/Models/Enums/Orientation';
-import StillageSize from '../../MapCore/Models/Enums/StillageSize/StillageSize';
 import MapSourceUnit from '../../MapCore/Models/MapSourceUnit';
-import DefectColors from '../../MapCore/Models/Enums/Colors/DefectColors';
-import SignaturePosition from './../../MapCore/Models/Enums/SignaturePosition';
-import Images from "../../MapCore/Data/Images";
+import A100ConnectionData from "./A100ConnectionData";
+import MapAPI from "../api/MapAPI";
+import Emit from "../../MapCore/Data/Emit";
 import MapIconsType from "../../MapCore/Models/Enums/MapIconsType";
 
-const MapSource: Array<MapSourceUnit> = [
-    {
-        id: 0,
-        key: 'unit_0',
-        title: 'Блок 1',
-        layers: [
-            {
-                id: 1,
-                key: 'unit_0_layer_1',
-                title: 'Освещение',
-                type: LayerType.LIGHTING,
-                mapIconsType: MapIconsType.IMAGE,
-                objects: [
-                    {
-                        id: 0,
-                        key: 'unit_0_layer_1_object_0',
-                        x: 450,
-                        y: 150,
-                        photo: Images.lightbulb,
-                    },
-                ]
-            },
-            {
-                id: 0,
-                key: 'unit_0_layer_0',
-                title: 'Стеллажи',
-                type: LayerType.STILLAGES,
-                mapIconsType: MapIconsType.DRAWING,
-                stillages: [
-                    {
-                        id: 0,
-                        key: 'unit_0_layer_0_stillage_0',
-                        x: 250,
-                        y: 600,
-                        orientation: Orientation.HORIZONTAL,
-                        signature: {
-                            title: '12',
-                            position: SignaturePosition.TOP,
-                        },
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '12',
-                            },
-                            {
-                                place: 2,
-                                title: '112',
-                            },
-                            {
-                                place: 3,
-                                title: '6',
-                            },
-                        ],
-                        viks: [
-                            // {
-                            //     place: 1,
-                            //     level: 2,
-                            //     color: DefectColors.YELLOW
-                            // },
-                            // {
-                            //     place: 2,
-                            //     level: 3,
-                            //     color: DefectColors.GREEN,
-                            // },
-                            // {
-                            //     place: 3,
-                            //     level: 3,
-                            //     color: DefectColors.RED
-                            // }
-                        ]
-                    },
-                    {
-                        id: 1,
-                        key: 'unit_0_layer_0_stillage_1',
-                        x: 600,
-                        y: 456,
-                        orientation: Orientation.VERTICAL,
-                        signature: {
-                            title: '15',
-                            position: SignaturePosition.LEFT,
-                        },
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '12',
-                            },
-                            {
-                                place: 2,
-                                title: '112',
-                            },
-                            {
-                                place: 3,
-                                title: '6',
-                            },
-                        ],
-                        viks: [
+export default class MapSource {
 
-                        ]
-                    },
-                    {
-                        id: 2,
-                        key: 'unit_0_layer_0_stillage_2',
-                        x: 250,
-                        y: 456,
-                        orientation: Orientation.HORIZONTAL,
-                        signature: {
-                            title: '15',
-                            position: SignaturePosition.BOTTOM,
-                        },
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '10',
-                            },
-                            {
-                                place: 2,
-                                title: '11',
-                            },
-                            {
-                                place: 3,
-                                title: '12',
-                            },
-                        ],
-                        viks: [
+    public static async GetMap() {
+        let mapAPI = new MapAPI();
+        this.data = await mapAPI.getMap(A100ConnectionData.data);
+        let that = this;
+        let nullableUnits: Array<number> = [];
+        setTimeout(function () {
+            // empty blocks deleting
+            // for (let k = 0; k < MapSource.data.length; k++) {
+            //     if (MapSource.data[k].layers === null || MapSource.data[k].layers === undefined) {
+            //         nullableUnits.push(k);
+            //     }
+            // }
+            // nullableUnits.forEach((el) => {
+            //     MapSource.data.splice(el, 1);
+            // });
+            Emit.Emitter.emit('mapSetState');
+        }, 1000);
+    }
 
-                        ]
-                    },
-                    {
-                        id: 3,
-                        key: 'unit_0_layer_0_stillage_3',
-                        x: 330,
-                        y: 456,
-                        orientation: Orientation.HORIZONTAL,
-                        signature: {
-                            title: '15',
-                            position: SignaturePosition.BOTTOM,
-                        },
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '13',
-                            },
-                            {
-                                place: 2,
-                                title: '14',
-                            },
-                            {
-                                place: 3,
-                                title: '15',
-                            },
-                        ],
-                        viks: [
+    public static data: Array<MapSourceUnit> = [
+        {
+            id: 0,
+            key: 'unit_0',
+            title: 'Блок 1',
+            layers: []
+        },
+        {
+            id: 1,
+            key: 'unit_1',
+            title: 'Блок 2',
+            layers: []
+        },
+        {
+            id: 2,
+            key: 'unit_2',
+            title: 'Блок 3',
+            layers: []
+        },
+    ];
+}
 
-                        ]
-                    },
-                    {
-                        id: 4,
-                        key: 'unit_0_layer_0_stillage_4',
-                        x: 1000,
-                        y: 200,
-                        orientation: Orientation.HORIZONTAL,
-                        signature: {
-                            title: '25',
-                            position: SignaturePosition.BOTTOM,
-                        },
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '24',
-                            },
-                            {
-                                place: 2,
-                                title: '25',
-                            },
-                            {
-                                place: 3,
-                                title: '26',
-                            },
-                        ],
-                        viks: [
-
-                        ]
-                    },
-                    {
-                        id: 5,
-                        key: 'unit_0_layer_0_stillage_5',
-                        x: 600,
-                        y: 700,
-                        orientation: Orientation.VERTICAL,
-                        signature: {
-                            title: '15',
-                            position: SignaturePosition.RIGHT,
-                        },
-                        size: StillageSize.NORMAL,
-                        placeSignatures: [
-                            {
-                                place: 1,
-                                title: '12',
-                            },
-                            {
-                                place: 2,
-                                title: '112',
-                            },
-                            {
-                                place: 3,
-                                title: '6',
-                            },
-                        ],
-                        viks: [
-
-                        ]
-                    },
-                ]
-            },
-            {
-                id: 2,
-                key: 'unit_0_layer_2',
-                title: 'Стены',
-                type: LayerType.WALLS,
-                mapIconsType: MapIconsType.DRAWING,
-                walls: [
-                    {
-                        id: 0,
-                        key: 'unit_0_layer_2_wall_0',
-                        startX: 100,
-                        startY: 250,
-                        length: 950,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                ]
-            },
-        ]
-    },
-    {
-        id: 1,
-        key: 'unit_1',
-        title: 'Склад',
-        layers: [
-            {
-                id: 0,
-                key: 'unit_1_layer_0',
-                title: 'Стеллажи',
-                type: LayerType.STILLAGES,
-                mapIconsType: MapIconsType.DRAWING,
-                stillages: [
-
-                ],
-            },
-            {
-                id: 1,
-                key: 'unit_1_layer_0',
-                title: 'Стены',
-                type: LayerType.WALLS,
-                mapIconsType: MapIconsType.DRAWING,
-                walls: [
-                    {
-                        id: 0,
-                        key: 'unit_1_layer_0_wall_0',
-                        startX: 500,
-                        startY: 300,
-                        length: 400,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        id: 1,
-                        key: 'unit_1_layer_0_wall_1',
-                        startX: 500,
-                        startY: 400,
-                        length: 400,
-                        orientation: Orientation.HORIZONTAL,
-                    },
-                    {
-                        id: 2,
-                        key: 'unit_1_layer_0_wall_2',
-                        startX: 300,
-                        startY: 400,
-                        length: 200,
-                        orientation: Orientation.VERTICAL,
-                    },
-                ],
-            }
-        ]
-    },
-
-
-
-];
-
-export default MapSource;

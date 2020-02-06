@@ -42,6 +42,12 @@ export default class Wall extends Component<IWallProps, IWallState> {
         this.setState({isDelete: true});
     }
 
+    clickHandler = () => {
+        const { source } = this.state;
+
+        console.log(source);
+    };
+
     public setShapeMoveNow(e, value: boolean) {
         if (e.evt.which === 1) {
             Emit.Emitter.emit('setIsShapeMovingNow', value, {
@@ -93,6 +99,7 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 x={source.startX}
                 y={source.startY}
                 cornerRadius={10}
+                onClick={() => { this.clickHandler() }}
                 width={source.orientation === Orientation.HORIZONTAL ? source.length : 10}
                 height={source.orientation === Orientation.VERTICAL ? source.length : 10}
                 fill={'#dcdcdc'}
