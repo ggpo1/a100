@@ -3,6 +3,7 @@ import MapSourceUnit from "../../MapCore/Models/MapSourceUnit";
 import BaseUrl from "../data/BaseUrl";
 import LogHandler from "../../LogHandler/LogHandler";
 import LogType from "../model/enums/LogType";
+import MapSource from "../data/MapSource";
 
 export default class MapAPI {
     public async getMap(connectionData: A100ConnectionDataType): Promise<Array<MapSourceUnit>> {
@@ -12,7 +13,9 @@ export default class MapAPI {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 resolve(body);
-            }).catch(error => LogHandler.handle('MapAPI', LogType.ERROR, 'error while fetching data from A100'))
+            }).catch(() => {
+                MapSource.GetMap();
+            })
         }));
     }
 }

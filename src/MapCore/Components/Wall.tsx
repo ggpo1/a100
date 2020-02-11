@@ -102,7 +102,8 @@ export default class Wall extends Component<IWallProps, IWallState> {
                 onClick={() => { this.clickHandler() }}
                 width={source.orientation === Orientation.HORIZONTAL ? source.length : 10}
                 height={source.orientation === Orientation.VERTICAL ? source.length : 10}
-                fill={'#dcdcdc'}
+                // source.color === undefined ? '#dcdcdc' : source.color
+                fill={source.color?.length === 0 ? '#dcdcdc' : source.color}
             />
         );
         return [wall, labelButton, deleteCircle];

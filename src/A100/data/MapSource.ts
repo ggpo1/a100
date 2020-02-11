@@ -8,9 +8,35 @@ import MapIconsType from "../../MapCore/Models/Enums/MapIconsType";
 export default class MapSource {
 
     public static async GetMap() {
+        let _t: Array<MapSourceUnit> = [];
+        let that = this;
         let mapAPI = new MapAPI();
         this.data = await mapAPI.getMap(A100ConnectionData.data);
-        let that = this;
+        // console.log(this.data);
+
+        if (this.data["status"] !== undefined) {
+            this.data = [
+                {
+                    id: 0,
+                    key: 'unit_0',
+                    title: 'Блок 1',
+                    layers: []
+                },
+                {
+                    id: 1,
+                    key: 'unit_1',
+                    title: 'Блок 2',
+                    layers: []
+                },
+                {
+                    id: 2,
+                    key: 'unit_2',
+                    title: 'Блок 3',
+                    layers: []
+                },
+            ];
+        }
+
         let nullableUnits: Array<number> = [];
         setTimeout(function () {
             // empty blocks deleting

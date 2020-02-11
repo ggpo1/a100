@@ -1,4 +1,4 @@
-import React, {isValidElement} from 'react';
+import React from 'react';
 import Konva from 'konva';
 import {Rect} from 'react-konva';
 import IStillageProps from './../Models/Components/Stillage/IStillageProps';
@@ -9,7 +9,6 @@ import StillageColors from '../Models/Enums/Colors/StillageColors';
 import Defect from './Defect';
 import PlaceSignature from './PlaceSignature';
 import Signature from './SIgnature';
-import StillageSize from "../Models/Enums/StillageSize/StillageSize";
 import Emit from "../Data/Emit";
 import StillageService from "../Services/StillageService";
 import LayerType from "../Models/Enums/LayerType";
@@ -17,6 +16,7 @@ import DeleteCircle from "./Stage/DeleteCircle";
 import AddCircle from "./Stage/AddCircle";
 import PlaceSignatureItem from "../Models/ArrayItems/PlaceSignatureItem";
 import SignatureItem from "../Models/ArrayItems/SignatureItem";
+import DefectColors from "../Models/Enums/Colors/DefectColors";
 
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
@@ -40,6 +40,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             isMoveEnabled: false,
             isAdding: false,
         };
+
         this.setStillageMoveEnabled = this.setStillageMoveEnabled.bind(this);
         this.setStillageMoveNow = this.setStillageMoveNow.bind(this);
         this.isAddingChange = this.isAddingChange.bind(this);
@@ -123,6 +124,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
     render() {
         const { source } = this.state;
         const stillageSizeReducer = new StillageSizeReducer();
+
         let stillage;
         let deleteCircle;
         let addCircles;
@@ -192,21 +194,44 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             });
         }
 
-        if (source.viks !== undefined) {
-            let i = 0;
-            source.viks!.forEach(element => {
-                viks.push(
-                    <Defect
-                        parentKey={source.key}
-                        key={source.key + '_defect_' + (i++)}
-                        parentX={source.x}
-                        parentY={source.y}
-                        parentOrientation={source.orientation}
-                        source={element}
-                    />
-                );
+        // console.log(source.viks);
+        // source.viks?.forEach(el => console.log(el));
+
+        // source.viks.forEach(el => console.log(el));
+        let redDefects: Array<JSX.Element> = [];
+        let greenDefects: Array<JSX.Element> = [];
+        if (source.viks !== undefined && source.viks.length !== 0) {
+            source.viks!.forEach((element, i) => {
+                if (element.color === DefectColors.RED) {
+                    redDefects.push(
+                        <Defect
+                            parentScale={source.scale!}
+                            isBlockScaling={source.isBlockScaling!}
+                            parentKey={source.key}
+                            key={source.key + '_defect_' + (i++)}
+                            parentX={source.x}
+                            parentY={source.y}
+                            parentOrientation={source.orientation}
+                            source={element}
+                        />
+                    );
+                } else if (element.color === DefectColors.GREEN) {
+                    greenDefects.push(
+                        <Defect
+                            parentScale={source.scale!}
+                            isBlockScaling={source.isBlockScaling!}
+                            parentKey={source.key}
+                            key={source.key + '_defect_' + (i++)}
+                            parentX={source.x}
+                            parentY={source.y}
+                            parentOrientation={source.orientation}
+                            source={element}
+                        />
+                    );
+                }
             });
         }
+
         // if (source.pmCount === 1) alert('1!');
         if (source.orientation === Orientation.HORIZONTAL) {
             stillage = (
@@ -268,7 +293,8 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             addCircles,
             signature,
             stillage,
-            viks,
+            greenDefects,
+            redDefects,
             placeSignatures,
             stillageMoveArrows,
             deleteCircle,

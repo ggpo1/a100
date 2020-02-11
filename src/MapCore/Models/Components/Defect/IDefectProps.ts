@@ -7,6 +7,8 @@ interface IDefectProps {
     parentY: number,
     parentOrientation: Orientation,
     source: VikItem,
+    isBlockScaling: boolean,
+    parentScale: number
 }
 
 export default IDefectProps;

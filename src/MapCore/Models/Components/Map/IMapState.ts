@@ -8,6 +8,11 @@ interface IMapState {
 
     parentKey: string,
 
+    stageScales: {
+        x: number,
+        y: number
+    }
+
     isAddCircleAdding: boolean,
     isToggledToAdd: boolean,
     lastAddedItemType?: LayerType,

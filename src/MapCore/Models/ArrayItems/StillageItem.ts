@@ -14,7 +14,7 @@ interface StillageItem {
     height?: number,
     size: StillageSize,
     orientation: Orientation,
-    viks?: Array<VikItem>,
+    viks: Array<VikItem>,
     deviations?: Array<DeviationItem>,
     placeSignatures?: Array<PlaceSignatureItem>,
     signature?: SignatureItem,

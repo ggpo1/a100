@@ -53,6 +53,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      stageScales: {
+        x: 1,
+        y: 1
+      },
       lazyLoading: true,
       parentKey: this.props.parentKey,
 
@@ -342,7 +346,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   // saving cur pos and wall resizing move rendering
   public MapWrapperOnMouseMove(e) {
-    const { source, selectedUnit, layersSelected, selectedWallToResize, wallLayerIndex, resizingWallIndex, isStart } = this.state;
+    const { source, selectedUnit, layersSelected, selectedWallToResize, wallLayerIndex, resizingWallIndex, isStart, stageScale, stageScales } = this.state;
     let { selectedLayer } = this.state;
     // TODO: rows and columns checks
     // TODO: small stillages checks
@@ -404,10 +408,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               */
             }
           }
-
+          console.log('ТУТ');
+          console.log(stageScales);
           // TODO: add scaling
-          stillage.x = e.clientX - this.state.moveStageParams.x;
-          stillage.y = e.clientY - this.state.moveStageParams.y;
+          stillage.x = (e.clientX - this.state.moveStageParams.x);
+          stillage.y = (e.clientY - this.state.moveStageParams.y);
           source[selectedUnit].layers[stillageLayerIndex].stillages![searchedObj.index] = stillage;
           Emit.Emitter.emit('stillageSignatureForceUpdate', stillage.key, stillage.x, stillage.y);
           Emit.Emitter.emit('placeSignaturesForceUpdate', stillage.key, stillage.x, stillage.y);
@@ -794,6 +799,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     stage.scale({ x: (newScale * -1), y: (newScale * -1) });
 
     this.setState({
+      stageScales: {
+        x: (newScale * -1),
+        y: (newScale * -1)
+      },
       stageScale: newScale,
       stageX:
         -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale,
@@ -806,8 +815,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   public mapSetState() {
     try {
       // this.animate.finish();
-      this.animates.map(el => el.cancel());
-      console.log(MapSource.data);
+      this.animates.forEach(el => el.cancel());
+      // console.log(MapSource.data);
       this.setState({source: MapSource.data, lazyLoading: false});
     } catch (e) {
       console.error('[Component: Map] - invalid data!');

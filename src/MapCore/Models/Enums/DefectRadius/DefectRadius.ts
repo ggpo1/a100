@@ -1,9 +1,9 @@
 
 enum DefectRadius {
     // 12.5
-    RED = 10.5,
-    YELLOW = 10.5,
-    GREEN = 10.5,
+    RED = 12,
+    YELLOW = 12,
+    GREEN = 12,
 }
 
 export default  DefectRadius;
