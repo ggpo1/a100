@@ -31,6 +31,7 @@ import StillageItem from "./Models/ArrayItems/StillageItem";
 import Position from "./Models/Enums/Position";
 import StillageSize from "./Models/Enums/StillageSize/StillageSize";
 import MapSource from "../A100/data/MapSource";
+import VikItem from "./Models/ArrayItems/VikItem";
 
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
@@ -167,7 +168,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('addSameShape', this.addSameShape);
     //
     Emit.Emitter.addListener('mapSetState', this.mapSetState);
+
+    Emit.Emitter.addListener('setSelectedVik', (vik: VikItem, stillage: StillageItem) => this.setState({ selectedVik: vik, selectedStillage: stillage }));
   }
+
+
 
   public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
   componentDidMount(): void {
@@ -816,7 +821,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     try {
       // this.animate.finish();
       this.animates.forEach(el => el.cancel());
-      // console.log(MapSource.data);
+      console.log(MapSource.data);
       this.setState({source: MapSource.data, lazyLoading: false});
     } catch (e) {
       console.error('[Component: Map] - invalid data!');
@@ -1021,7 +1026,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       elementsPanel = <ElementsPanel source={ElementSource}/>;
 
       if (isDefectBrowsePanel) {
-        defectBrowsePanel = <DefectBrowsePanel/>;
+        defectBrowsePanel = <DefectBrowsePanel parentSource={this.state.selectedStillage!} source={this.state.selectedVik} />;
       }
 
       let check = false;

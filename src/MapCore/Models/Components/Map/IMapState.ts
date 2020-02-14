@@ -3,7 +3,11 @@ import WallItem from "../../ArrayItems/WallIem";
 import LayerType from "../../Enums/LayerType";
 import StillageItem from "../../ArrayItems/StillageItem";
 import ObjectItem from "../../ArrayItems/ObjectItem";
+import VikItem from "../../ArrayItems/VikItem";
 interface IMapState {
+    selectedStillage?: StillageItem,
+    selectedVik?: VikItem,
+
     lazyLoading: boolean,
 
     parentKey: string,

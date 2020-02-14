@@ -200,11 +200,13 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         // source.viks.forEach(el => console.log(el));
         let redDefects: Array<JSX.Element> = [];
         let greenDefects: Array<JSX.Element> = [];
+        let yellowDefects: Array<JSX.Element> = [];
         if (source.viks !== undefined && source.viks.length !== 0) {
             source.viks!.forEach((element, i) => {
                 if (element.color === DefectColors.RED) {
                     redDefects.push(
                         <Defect
+                            parentSource={source}
                             parentScale={source.scale!}
                             isBlockScaling={source.isBlockScaling!}
                             parentKey={source.key}
@@ -218,6 +220,21 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                 } else if (element.color === DefectColors.GREEN) {
                     greenDefects.push(
                         <Defect
+                            parentSource={source}
+                            parentScale={source.scale!}
+                            isBlockScaling={source.isBlockScaling!}
+                            parentKey={source.key}
+                            key={source.key + '_defect_' + (i++)}
+                            parentX={source.x}
+                            parentY={source.y}
+                            parentOrientation={source.orientation}
+                            source={element}
+                        />
+                    );
+                } else if (element.color === DefectColors.YELLOW) {
+                    yellowDefects.push(
+                        <Defect
+                            parentSource={source}
                             parentScale={source.scale!}
                             isBlockScaling={source.isBlockScaling!}
                             parentKey={source.key}
@@ -294,6 +311,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             signature,
             stillage,
             greenDefects,
+            yellowDefects,
             redDefects,
             placeSignatures,
             stillageMoveArrows,

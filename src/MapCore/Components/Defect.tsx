@@ -3,7 +3,7 @@ import IDefectProps from './../Models/Components/Defect/IDefectProps';
 import IDefectState from './../Models/Components/Defect/IDefectState';
 import DefectRadiusReducer from '../Models/Enums/DefectRadius/DefectRadiusReducer';
 import Orientation from './../Models/Enums/Orientation';
-import {Circle} from 'react-konva';
+import { Circle } from 'react-konva';
 import Emit from "../Data/Emit";
 
 
@@ -12,6 +12,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
     constructor(props) {
         super(props);
         this.state = {
+            parentSource: this.props.parentSource,
             parentScale: this.props.parentScale,
             isBlockScaling: this.props.isBlockScaling,
             parentKey: this.props.parentKey,
@@ -28,7 +29,9 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
     }
 
     public openModal() {
-        // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
+        console.log(this.state.source);
+        Emit.Emitter.emit('setSelectedVik', this.state.source, this.state.parentSource);
+        Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {

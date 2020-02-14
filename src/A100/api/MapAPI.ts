@@ -14,7 +14,7 @@ export default class MapAPI {
             }).then((response) => response.json()).then((body) => {
                 resolve(body);
             }).catch(() => {
-                MapSource.GetMap();
+                setTimeout(() => MapSource.GetMap(), 2000);
             })
         }));
     }

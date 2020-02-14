@@ -1,5 +1,6 @@
 import VikItem from './../../ArrayItems/VikItem';
 import Orientation from './../../Enums/Orientation';
+import StillageItem from "../../ArrayItems/StillageItem";
 
 interface IDefectState {
     parentKey: string,
@@ -8,7 +9,8 @@ interface IDefectState {
     parentOrientation: Orientation,
     source: VikItem,
     isBlockScaling: boolean,
-    parentScale: number
+    parentScale: number,
+    parentSource: StillageItem
 }
 
 export default IDefectState;

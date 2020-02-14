@@ -80,7 +80,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
 
     public openModal() {
         console.log(this.state);
-        // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
+        Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {
@@ -108,7 +108,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
             />;
         } else {
             if (isBlockScaling) {
-                delta = (A100CellSize * source.place - (A100CellSize / 2 + this.fontSize / 2)) * parentScale * (parentScale > 1 ? 1 : 2);
+                delta = (A100CellSize * source.place - (A100CellSize / 2)) * parentScale * (isBlockScaling ? 2 : 1) - 10;
                 ps = <Text
                     key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
                     onTap={() => {
@@ -117,7 +117,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
                     onClick={() => {
                         this.openModal()
                     }}
-                    x={parentX + 10.5 + this.getScaleK * 2 - 10 * source.title.length}
+                    x={parentX + (30 * parentScale - 10 * source.title.length)}
                     y={parentY + delta}
                     fontSize={this.fontSize}
                     fill={'white'}
