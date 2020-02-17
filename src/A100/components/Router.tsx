@@ -16,7 +16,7 @@ export default class Router extends React.Component<IRouterProps, IRouterState> 
         return (
             <Switch>
                 <Route exact path='/' component={Introducing}>
-                    <Redirect to="/map" />
+                    {/*<Redirect to="/map" />*/}
                 </Route>
                 <Route path='/map' component={MapView} />
             </Switch>

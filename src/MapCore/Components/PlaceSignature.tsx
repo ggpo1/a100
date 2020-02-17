@@ -80,7 +80,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
 
     public openModal() {
         console.log(this.state);
-        Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
+        // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {

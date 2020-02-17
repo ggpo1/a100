@@ -11,7 +11,7 @@ export default class Introducing extends React.Component<IIntroducingProps, IInt
 
     render() {
         return (
-            <div>Intro</div>
+            <div>go to https://url/map?resoultID=...</div>
         );
     }
 

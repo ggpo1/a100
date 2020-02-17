@@ -172,11 +172,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('setSelectedVik', (vik: VikItem, stillage: StillageItem) => this.setState({ selectedVik: vik, selectedStillage: stillage }));
   }
 
-
-
   public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
   componentDidMount(): void {
-    const {lazyLoading} = this.state;
+    const {lazyLoading, source} = this.state;
     if (lazyLoading) {
       this.animationIDs.forEach(el => {
         this.animates.push(document.getElementById(el)!.animate([
@@ -851,14 +849,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             <div
                 key={source[i].key + '_unitNameDiv_' + i}
                 onClick={() => {
-                  this.setState({...this.state, ...{selectedUnit: i, selectedLayer: -1, layersSelected: []}});
+                  console.log('this');
+                  this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
                 }} className="unit-title">
-          <span
-              key={source[i].key + '_unitNameDivSpan_' + i}
-              style={{
-                fontWeight: selectedUnit === i ? 'bold' : 'normal',
-                color: selectedUnit === i ? '#2f00ff' : 'black'
-              }}>{source[i].title}</span>
+              <span
+                key={source[i].key + '_unitNameDivSpan_' + i}
+                style={{
+                  fontWeight: selectedUnit === i ? 'bold' : 'normal',
+                  color: selectedUnit === i ? '#2f00ff' : 'black'
+                }}>{source[i].title}</span>
             </div>
         );
       }
