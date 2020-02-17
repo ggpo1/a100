@@ -17,6 +17,8 @@ import AddCircle from "./Stage/AddCircle";
 import PlaceSignatureItem from "../Models/ArrayItems/PlaceSignatureItem";
 import SignatureItem from "../Models/ArrayItems/SignatureItem";
 import DefectColors from "../Models/Enums/Colors/DefectColors";
+import Deviation from "./Deviation";
+import SignaturePosition from "../Models/Enums/SignaturePosition";
 
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
@@ -133,6 +135,18 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let signature;
         let stillageSR = new StillageSizeReducer();
         let stillageMoveArrows: Array<JSX.Element> = [];
+        // source={source.deviations}
+        let deviations;
+
+        // source.deviations!.forEach(el => {
+        //     deviations = (
+        //         <Deviation
+        //             source={el}
+        //             parentSource={source}
+        //             key={source.key + '_deviation'}
+        //         />
+        //     );
+        // });
 
         if (this.state.isAdding) {
               addCircles = (
@@ -316,7 +330,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             placeSignatures,
             stillageMoveArrows,
             deleteCircle,
-
+            deviations
         ];
     }
 }

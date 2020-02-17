@@ -178,18 +178,18 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   componentDidMount(): void {
     const {lazyLoading} = this.state;
     try {
-      if (lazyLoading) {
-        this.animationIDs.forEach(el => {
-          this.animates.push(document.getElementById(el)!.animate([
-            {opacity: '0.8'},
-            {opacity: '0.4'},
-            {opacity: '0.8'}
-          ], {
-            duration: 2000,
-            iterations: Infinity
-          }));
-        });
-      }
+      // if (lazyLoading) {
+      //   this.animationIDs.forEach(el => {
+      //     this.animates.push(document.getElementById(el)!.animate([
+      //       {opacity: '0.8'},
+      //       {opacity: '0.4'},
+      //       {opacity: '0.8'}
+      //     ], {
+      //       duration: 2000,
+      //       iterations: Infinity
+      //     }));
+      //   });
+      // }
     } catch (e) {
       LogHandler.handle('Map', LogType.ERROR, 'lazy loading error!');
     }

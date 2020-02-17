@@ -3,8 +3,8 @@ import StillageSize from './StillageSize';
 import Orientation from "../Orientation";
 
 
+const A100SizeK = 30;
 export default class StillageSizeReducer {
-    public A100SizeK = 30;
 
 
     public GetSize(stillageSize: StillageSize): StillageSizeReducerType {
@@ -26,13 +26,13 @@ export default class StillageSizeReducer {
         if (scale > 1 && isBlockScaling) {
             if (orientation === Orientation.HORIZONTAL) {
                 return {
-                    firstSide: this.A100SizeK * pmCount * scale,
-                    secondSide: this.A100SizeK * scale * 2
+                    firstSide: A100SizeK * pmCount * scale,
+                    secondSide: A100SizeK * scale * 2
                 }
             } else if (orientation === Orientation.VERTICAL) {
                 return {
-                    firstSide: this.A100SizeK * scale * 2,
-                    secondSide: this.A100SizeK * pmCount * scale
+                    firstSide: A100SizeK * scale * 2,
+                    secondSide: A100SizeK * pmCount * scale
                 }
             } else {
                 return {
@@ -43,13 +43,13 @@ export default class StillageSizeReducer {
         } else if (scale === 1 && isBlockScaling) {
             if (orientation === Orientation.HORIZONTAL) {
                 return {
-                    firstSide: this.A100SizeK * pmCount * 2,
-                    secondSide: this.A100SizeK * scale * 2
+                    firstSide: A100SizeK * pmCount * 2,
+                    secondSide: A100SizeK * scale * 2
                 }
             } else if (orientation === Orientation.VERTICAL) {
                 return {
-                    firstSide: this.A100SizeK * scale * 2,
-                    secondSide: this.A100SizeK * pmCount * 2
+                    firstSide: A100SizeK * scale * 2,
+                    secondSide: A100SizeK * pmCount * 2
                 }
             } else {
                 return {
@@ -60,13 +60,13 @@ export default class StillageSizeReducer {
         } else {
             if (orientation === Orientation.HORIZONTAL) {
                 return {
-                    firstSide: this.A100SizeK * pmCount * scale,
-                    secondSide: this.A100SizeK * scale
+                    firstSide: A100SizeK * pmCount * scale,
+                    secondSide: A100SizeK * scale
                 }
             } else if (orientation === Orientation.VERTICAL) {
                 return {
-                    firstSide: this.A100SizeK * scale,
-                    secondSide: this.A100SizeK * pmCount * scale
+                    firstSide: A100SizeK * scale,
+                    secondSide: A100SizeK * pmCount * scale
                 }
             } else {
                 return { firstSide: 0, secondSide: 0 }
