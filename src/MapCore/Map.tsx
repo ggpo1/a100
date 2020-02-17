@@ -32,7 +32,8 @@ import Position from "./Models/Enums/Position";
 import StillageSize from "./Models/Enums/StillageSize/StillageSize";
 import MapSource from "../A100/data/MapSource";
 import VikItem from "./Models/ArrayItems/VikItem";
-
+import LogType from "../A100/model/enums/LogType";
+import LogHandler from "../LogHandler/LogHandler";
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
@@ -173,19 +174,24 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
+
   componentDidMount(): void {
-    const {lazyLoading, source} = this.state;
-    if (lazyLoading) {
-      this.animationIDs.forEach(el => {
-        this.animates.push(document.getElementById(el)!.animate([
-          { opacity: '0.8' },
-          { opacity: '0.4' },
-          { opacity: '0.8' }
-        ], {
-          duration: 2000,
-          iterations: Infinity
-        }));
-      });
+    const {lazyLoading} = this.state;
+    try {
+      if (lazyLoading) {
+        this.animationIDs.forEach(el => {
+          this.animates.push(document.getElementById(el)!.animate([
+            {opacity: '0.8'},
+            {opacity: '0.4'},
+            {opacity: '0.8'}
+          ], {
+            duration: 2000,
+            iterations: Infinity
+          }));
+        });
+      }
+    } catch (e) {
+      LogHandler.handle('Map', LogType.ERROR, 'lazy loading error!');
     }
   }
 
