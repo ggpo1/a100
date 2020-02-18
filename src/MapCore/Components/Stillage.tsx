@@ -138,15 +138,15 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         // source={source.deviations}
         let deviations;
 
-        // source.deviations!.forEach(el => {
-        //     deviations = (
-        //         <Deviation
-        //             source={el}
-        //             parentSource={source}
-        //             key={source.key + '_deviation'}
-        //         />
-        //     );
-        // });
+        source.deviations!.forEach(el => {
+            deviations = (
+                <Deviation
+                    source={el}
+                    parentSource={source}
+                    key={source.key + '_deviation'}
+                />
+            );
+        });
 
         if (this.state.isAdding) {
               addCircles = (

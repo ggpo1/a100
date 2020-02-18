@@ -9,7 +9,7 @@ import Orientation from "../../MapCore/Models/Enums/Orientation";
 import SignaturePosition from "../../MapCore/Models/Enums/SignaturePosition";
 
 export default class MapSource {
-    public static offline: boolean = false;
+    public static offline: boolean = true;
 
     public static async GetMap() {
         let _t: Array<MapSourceUnit> = [];
@@ -93,10 +93,10 @@ export default class MapSource {
                             key: 'unit_0_layer_0_stillage_0',
                             x: 300,
                             y: 290,
-                            orientation: Orientation.VERTICAL,
+                            orientation: Orientation.HORIZONTAL,
                             signature: {
                                 title: '12',
-                                position: SignaturePosition.LEFT,
+                                position: SignaturePosition.TOP,
                             },
                             deviations: [
                                 {
@@ -104,7 +104,7 @@ export default class MapSource {
                                     key: 'unit_0_layer_0_stillage_0_deviation_0',
                                     x: 300,
                                     y: 290,
-                                    deviationPosition: SignaturePosition.BOTTOM,
+                                    deviationPosition: SignaturePosition.RIGHT,
                                     arrowFirstToSecond: false,
                                 }
                             ],

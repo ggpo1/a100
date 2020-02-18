@@ -44,7 +44,33 @@ const Deviation = (props: IDeviationProps) => {
             }
         }
     } else if (parentSource.orientation === Orientation.HORIZONTAL) {
-
+        pointerLength = 3;
+        pointerWidth = 2;
+        if (source.deviationPosition === SignaturePosition.LEFT) {
+            if (source.arrowFirstToSecond) {
+                startX = source.x;
+                startY = source.y;
+                endX = source.x;
+                endY = source.y + A100SectionSize - LENGTHK;
+            } else {
+                startX = source.x;
+                startY = source.y + A100SectionSize;
+                endX = source.x;
+                endY = source.y + LENGTHK;
+            }
+        } else if (source.deviationPosition === SignaturePosition.RIGHT) {
+            if (source.arrowFirstToSecond) {
+                startX = source.x + A100SectionSize * parentSource.pmCount!;
+                startY = source.y;
+                endX = source.x + A100SectionSize * parentSource.pmCount!;
+                endY = source.y + A100SectionSize - LENGTHK;
+            } else {
+                startX = source.x + A100SectionSize * parentSource.pmCount!;
+                startY = source.y + A100SectionSize;
+                endX = source.x + A100SectionSize * parentSource.pmCount!;
+                endY = source.y + LENGTHK;
+            }
+        }
     }
 
     return (
