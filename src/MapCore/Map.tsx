@@ -903,7 +903,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         );
       }
 
-      let absStageCoords = { x: Math.abs(this.state.moveStageParams.x + 60), y: Math.abs(this.state.moveStageParams.y + 60) };
+      let absStageCoords = { x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y) };
       let isInChunk: boolean = false;
 
       if (selectedLayer === -1) {
@@ -932,7 +932,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           if (element.stillages !== undefined) {
             let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
             for (let i = 0; i < element.stillages!.length; i++) {
-              isInChunk = (element.stillages[i].x > absStageCoords.x && element.stillages[i].x < (absStageCoords.x + width)) && (element.stillages[i].y > absStageCoords.y && element.stillages[i].y < (absStageCoords.y + height));
+              isInChunk = (element.stillages[i].x > absStageCoords.x - 500 && element.stillages[i].x < (absStageCoords.x + width + 500)) &&
+                  (element.stillages[i].y > absStageCoords.y - 500 && element.stillages[i].y < (absStageCoords.y + height + 500));
               if (isInChunk) {
                 stillages.push(
                     <Stillage
@@ -1098,14 +1099,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   key={this.state.parentKey + '_mapStage_stage'}
                   draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
 
-                  onDragMove={(e) => {
-                    this.setState({
-                      moveStageParams: {
-                        x: e.target.x(),
-                        y: e.target.y()
-                      }
-                    });
-                  }}
+                  // onDragMove={(e) => {
+                  //   this.setState({
+                  //     moveStageParams: {
+                  //       x: e.target.x(),
+                  //       y: e.target.y()
+                  //     }
+                  //   });
+                  // }}
 
                   onTouchMove={check ? (e) => {
                     this.StageOnMouseMoveHandler(e)
