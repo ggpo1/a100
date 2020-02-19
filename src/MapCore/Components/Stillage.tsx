@@ -18,7 +18,8 @@ import PlaceSignatureItem from "../Models/ArrayItems/PlaceSignatureItem";
 import SignatureItem from "../Models/ArrayItems/SignatureItem";
 import DefectColors from "../Models/Enums/Colors/DefectColors";
 import Deviation from "./Deviation";
-import SignaturePosition from "../Models/Enums/SignaturePosition";
+import LogHandler from "../../LogHandler/LogHandler";
+import LogType from "../../A100/model/enums/LogType";
 
 
 export default class Stillage extends React.Component<IStillageProps, IStillageState> {
@@ -138,15 +139,20 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         // source={source.deviations}
         let deviations;
 
-        source.deviations!.forEach(el => {
-            deviations = (
-                <Deviation
-                    source={el}
-                    parentSource={source}
-                    key={source.key + '_deviation'}
-                />
-            );
-        });
+        try {
+            source.deviations!.forEach(el => {
+                deviations = (
+                    <Deviation
+                        source={el}
+                        parentSource={source}
+                        key={source.key + '_deviation'}
+                    />
+                );
+            });
+        } catch(e) {
+            LogHandler.handle('Stillage', LogType.ERROR, 'deviation array is undefined!');
+            source.deviations = [];
+        }
 
         if (this.state.isAdding) {
               addCircles = (

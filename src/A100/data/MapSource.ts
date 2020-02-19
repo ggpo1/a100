@@ -9,7 +9,7 @@ import Orientation from "../../MapCore/Models/Enums/Orientation";
 import SignaturePosition from "../../MapCore/Models/Enums/SignaturePosition";
 
 export default class MapSource {
-    public static offline: boolean = true;
+    public static offline: boolean = false;
 
     public static async GetMap() {
         let _t: Array<MapSourceUnit> = [];
