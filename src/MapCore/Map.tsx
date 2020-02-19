@@ -527,6 +527,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
   private stageDragEnd(x: number, y: number) {
+    // console.log('move: ' + Math.abs(x) + ':' + Math.abs(y));
     this.setState({
       moveStageParams: {
         x: x,
@@ -847,7 +848,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       let layers: Array<JSX.Element> = [];
       let walls: Array<JSX.Element> = [];
 
+      let width = window.innerWidth;
       let height = window.innerHeight;
+      console.log(width + ':' + height);
 
       // вывод списка блоков
       for (let i = 0; i < source.length; i++) {
@@ -900,10 +903,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         );
       }
 
+      let absStageCoords = { x: Math.abs(this.state.moveStageParams.x + 60), y: Math.abs(this.state.moveStageParams.y + 60) };
+      let isInChunk: boolean = false;
 
       if (selectedLayer === -1) {
         let layerNum = 0;
         source[selectedUnit].layers.forEach(element => {
+          isInChunk = false;
           if (element.texts !== undefined) {
             element.texts.forEach(textElement => {
               texts.push(
@@ -911,6 +917,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               );
             });
           }
+          isInChunk = false;
           if (element.objects !== undefined) {
             for (let i = 0; i < element.objects!.length; i++) {
               objects.push(
@@ -921,18 +928,23 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               );
             }
           }
+          isInChunk = false;
           if (element.stillages !== undefined) {
             let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
             for (let i = 0; i < element.stillages!.length; i++) {
-              stillages.push(
-                  <Stillage
-                      key={element.stillages[i].key}
-                      source={element.stillages![i]}
-                      mapStillages={_mapStillages!}
-                  />
-              );
+              isInChunk = (element.stillages[i].x > absStageCoords.x && element.stillages[i].x < (absStageCoords.x + width)) && (element.stillages[i].y > absStageCoords.y && element.stillages[i].y < (absStageCoords.y + height));
+              if (isInChunk) {
+                stillages.push(
+                    <Stillage
+                        key={element.stillages[i].key}
+                        source={element.stillages![i]}
+                        mapStillages={_mapStillages!}
+                    />
+                );
+              }
             }
           }
+          isInChunk = false;
           if (element.walls !== undefined) {
             for (let i = 0; i < element.walls!.length; i++) {
               walls.push(
@@ -1085,6 +1097,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               <Stage
                   key={this.state.parentKey + '_mapStage_stage'}
                   draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
+
+                  onDragMove={(e) => {
+                    this.setState({
+                      moveStageParams: {
+                        x: e.target.x(),
+                        y: e.target.y()
+                      }
+                    });
+                  }}
 
                   onTouchMove={check ? (e) => {
                     this.StageOnMouseMoveHandler(e)
