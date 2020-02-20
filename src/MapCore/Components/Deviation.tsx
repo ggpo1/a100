@@ -20,27 +20,27 @@ const Deviation = (props: IDeviationProps) => {
         pointerWidth = 2;
         if (source.deviationPosition === SignaturePosition.TOP) {
             if (source.arrowFirstToSecond) {
-                startX = source.x;
-                startY = source.y;
-                endX = source.x + A100SectionSize - LENGTHK;
-                endY = source.y;
+                startX = parentSource.x;
+                startY = parentSource.y;
+                endX = parentSource.x + A100SectionSize - LENGTHK;
+                endY = parentSource.y;
             } else {
-                startX = source.x + A100SectionSize;
-                startY = source.y;
-                endX = source.x + LENGTHK;
-                endY = source.y;
+                startX = parentSource.x + A100SectionSize;
+                startY = parentSource.y;
+                endX = parentSource.x + LENGTHK;
+                endY = parentSource.y;
             }
         } else if (source.deviationPosition === SignaturePosition.BOTTOM) {
             if (source.arrowFirstToSecond) {
-                startX = source.x;
-                startY = source.y + A100SectionSize * parentSource.pmCount!;
-                endX = source.x + A100SectionSize - LENGTHK;
-                endY = source.y + A100SectionSize * parentSource.pmCount!;
+                startX = parentSource.x;
+                startY = parentSource.y + A100SectionSize * parentSource.pmCount!;
+                endX = parentSource.x + A100SectionSize - LENGTHK;
+                endY = parentSource.y + A100SectionSize * parentSource.pmCount!;
             } else {
-                startX = source.x + A100SectionSize;
-                startY = source.y + A100SectionSize * parentSource.pmCount!;
-                endX = source.x + LENGTHK;
-                endY = source.y + A100SectionSize * parentSource.pmCount!;
+                startX = parentSource.x + A100SectionSize;
+                startY = parentSource.y + A100SectionSize * parentSource.pmCount!;
+                endX = parentSource.x + LENGTHK;
+                endY = parentSource.y + A100SectionSize * parentSource.pmCount!;
             }
         }
     } else if (parentSource.orientation === Orientation.HORIZONTAL) {
@@ -48,27 +48,27 @@ const Deviation = (props: IDeviationProps) => {
         pointerWidth = 2;
         if (source.deviationPosition === SignaturePosition.LEFT) {
             if (source.arrowFirstToSecond) {
-                startX = source.x;
-                startY = source.y;
-                endX = source.x;
-                endY = source.y + A100SectionSize - LENGTHK;
+                startX = parentSource.x;
+                startY = parentSource.y;
+                endX = parentSource.x;
+                endY = parentSource.y + A100SectionSize - LENGTHK;
             } else {
-                startX = source.x;
-                startY = source.y + A100SectionSize;
-                endX = source.x;
-                endY = source.y + LENGTHK;
+                startX = parentSource.x;
+                startY = parentSource.y + A100SectionSize;
+                endX = parentSource.x;
+                endY = parentSource.y + LENGTHK;
             }
         } else if (source.deviationPosition === SignaturePosition.RIGHT) {
             if (source.arrowFirstToSecond) {
-                startX = source.x + A100SectionSize * parentSource.pmCount!;
-                startY = source.y;
-                endX = source.x + A100SectionSize * parentSource.pmCount!;
-                endY = source.y + A100SectionSize - LENGTHK;
+                startX = parentSource.x + A100SectionSize * parentSource.pmCount!;
+                startY = parentSource.y;
+                endX = parentSource.x + A100SectionSize * parentSource.pmCount!;
+                endY = parentSource.y + A100SectionSize - LENGTHK;
             } else {
-                startX = source.x + A100SectionSize * parentSource.pmCount!;
-                startY = source.y + A100SectionSize;
-                endX = source.x + A100SectionSize * parentSource.pmCount!;
-                endY = source.y + LENGTHK;
+                startX = parentSource.x + A100SectionSize * parentSource.pmCount!;
+                startY = parentSource.y + A100SectionSize;
+                endX = parentSource.x + A100SectionSize * parentSource.pmCount!;
+                endY = parentSource.y + LENGTHK;
             }
         }
     }
@@ -79,6 +79,7 @@ const Deviation = (props: IDeviationProps) => {
             stroke={'red'}
             pointerLength={pointerLength}
             pointerWidth={pointerWidth}
+            zIndex={1}
         />
     );
 };

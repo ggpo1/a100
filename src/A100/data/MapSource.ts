@@ -93,19 +93,18 @@ export default class MapSource {
                             key: 'unit_0_layer_0_stillage_0',
                             x: 300,
                             y: 290,
-                            orientation: Orientation.HORIZONTAL,
+                            orientation: Orientation.VERTICAL,
                             signature: {
                                 title: '12',
-                                position: SignaturePosition.TOP,
+                                position: SignaturePosition.RIGHT,
                             },
                             deviations: [
                                 {
                                     id: 0,
                                     key: 'unit_0_layer_0_stillage_0_deviation_0',
-                                    x: 300,
-                                    y: 290,
-                                    deviationPosition: SignaturePosition.RIGHT,
+                                    deviationPosition: SignaturePosition.TOP,
                                     arrowFirstToSecond: false,
+                                    stillageID: 0
                                 }
                             ],
                             placeSignatures: [

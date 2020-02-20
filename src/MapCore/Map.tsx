@@ -55,6 +55,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      dragNum: 0,
       stageScales: {
         x: 1,
         y: 1
@@ -417,8 +418,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               */
             }
           }
-          console.log('ТУТ');
-          console.log(stageScales);
           // TODO: add scaling
           stillage.x = (e.clientX - this.state.moveStageParams.x);
           stillage.y = (e.clientY - this.state.moveStageParams.y);
@@ -850,7 +849,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
       let width = window.innerWidth;
       let height = window.innerHeight;
-      console.log(width + ':' + height);
 
       // вывод списка блоков
       for (let i = 0; i < source.length; i++) {
@@ -858,7 +856,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             <div
                 key={source[i].key + '_unitNameDiv_' + i}
                 onClick={() => {
-                  console.log('this');
                   this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
                 }} className="unit-title">
               <span
@@ -912,9 +909,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           isInChunk = false;
           if (element.texts !== undefined) {
             element.texts.forEach(textElement => {
-              texts.push(
-                  <Text key={textElement.key} source={textElement} />
-              );
+              isInChunk = (textElement.x > absStageCoords.x - 500 && textElement.x < (absStageCoords.x + width + 500)) &&
+                  (textElement.y > absStageCoords.y - 500 && textElement.y < (absStageCoords.y + height + 500));
+              if (isInChunk) {
+                texts.push(
+                    <Text key={textElement.key} source={textElement}/>
+                );
+              }
             });
           }
           isInChunk = false;
@@ -948,12 +949,16 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           isInChunk = false;
           if (element.walls !== undefined) {
             for (let i = 0; i < element.walls!.length; i++) {
-              walls.push(
-                  <Wall
-                      key={element.walls[i].key}
-                      source={element.walls[i]}
-                  />
-              );
+              isInChunk = (element.walls[i].startX > absStageCoords.x - 500 && element.walls[i].startX < (absStageCoords.x + width + 500)) &&
+                  (element.walls[i].startX > absStageCoords.y - 500 && element.walls[i].startY < (absStageCoords.y + height + 500));
+              if (isInChunk) {
+                walls.push(
+                    <Wall
+                        key={element.walls[i].key}
+                        source={element.walls[i]}
+                    />
+                );
+              }
             }
           }
           layerNum++;
@@ -1100,12 +1105,20 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
 
                   // onDragMove={(e) => {
-                  //   this.setState({
-                  //     moveStageParams: {
-                  //       x: e.target.x(),
-                  //       y: e.target.y()
-                  //     }
-                  //   });
+                  //   // console.log(this.state.dragNum);
+                  //   if (this.state.dragNum === 50) {
+                  //     this.setState({
+                  //       moveStageParams: {
+                  //         x: e.target.x(),
+                  //         y: e.target.y()
+                  //       },
+                  //       dragNum: 0
+                  //     });
+                  //   } else {
+                  //     this.setState({
+                  //       dragNum: this.state.dragNum + 1
+                  //     });
+                  //   }
                   // }}
 
                   onTouchMove={check ? (e) => {

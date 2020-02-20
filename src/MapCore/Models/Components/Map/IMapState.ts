@@ -5,6 +5,7 @@ import StillageItem from "../../ArrayItems/StillageItem";
 import ObjectItem from "../../ArrayItems/ObjectItem";
 import VikItem from "../../ArrayItems/VikItem";
 interface IMapState {
+    dragNum: number,
     selectedStillage?: StillageItem,
     selectedVik?: VikItem,
 
