@@ -35,7 +35,8 @@ export default class MapView extends React.Component<IMapViewProps, IMapViewStat
 
     componentWillMount() {
         let that = this;
-        MapSource.GetMap();
+        // MapSource.GetMap();
+        MapSource.GetUnits();
         setTimeout(function() {
             that.forceUpdate();
         }, 5000);

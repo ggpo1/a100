@@ -172,6 +172,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     Emit.Emitter.addListener('mapSetState', this.mapSetState);
 
     Emit.Emitter.addListener('setSelectedVik', (vik: VikItem, stillage: StillageItem) => this.setState({ selectedVik: vik, selectedStillage: stillage }));
+
+    Emit.Emitter.addListener('setSelectedUnit', this.setMapUnit);
   }
 
   public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
@@ -820,12 +822,18 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     });
   };
 
+  setMapUnit = (selectedUnit: number) => {
+    this.setState({selectedUnit: selectedUnit, selectedLayer: -1, layersSelected: []});
+  };
 
   public mapSetState() {
     try {
       // this.animate.finish();
       this.animates.forEach(el => el.cancel());
+      console.log('_______________');
+      console.log('set state emit');
       console.log(MapSource.data);
+      console.log('_______________');
       this.setState({source: MapSource.data, lazyLoading: false});
     } catch (e) {
       console.error('[Component: Map] - invalid data!');
@@ -856,7 +864,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             <div
                 key={source[i].key + '_unitNameDiv_' + i}
                 onClick={() => {
-                  this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
+                  // this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
+                  Emit.Emitter.emit('GetMapByParams', source[i].title, source[i].key, i);
                 }} className="unit-title">
               <span
                 key={source[i].key + '_unitNameDivSpan_' + i}
@@ -1104,6 +1113,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   key={this.state.parentKey + '_mapStage_stage'}
                   draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
 
+
                   // onDragMove={(e) => {
                   //   // console.log(this.state.dragNum);
                   //   if (this.state.dragNum === 50) {
@@ -1152,7 +1162,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   }}
 
                   style={{cursor: 'pointer'}}
-                  width={window.innerWidth}
+                  width={width}
                   height={height}
                   onWheel={this.handleWheel}
 

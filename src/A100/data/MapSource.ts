@@ -10,51 +10,9 @@ import SignaturePosition from "../../MapCore/Models/Enums/SignaturePosition";
 
 export default class MapSource {
     public static offline: boolean = false;
+    public static firstLoading: boolean = true;
 
-    public static async GetMap() {
-        let _t: Array<MapSourceUnit> = [];
-        let that = this;
-        let mapAPI = new MapAPI();
-        if (!this.offline) this.data = await mapAPI.getMap(A100ConnectionData.data);
-        // console.log(this.data);
-
-        if (this.data["status"] !== undefined) {
-            this.data = [
-                {
-                    id: 0,
-                    key: 'unit_0',
-                    title: 'Блок 1',
-                    layers: []
-                },
-                {
-                    id: 1,
-                    key: 'unit_1',
-                    title: 'Блок 2',
-                    layers: []
-                },
-                {
-                    id: 2,
-                    key: 'unit_2',
-                    title: 'Блок 3',
-                    layers: []
-                },
-            ];
-        }
-
-        let nullableUnits: Array<number> = [];
-        setTimeout(function () {
-            // empty blocks deleting
-            // for (let k = 0; k < MapSource.data.length; k++) {
-            //     if (MapSource.data[k].layers === null || MapSource.data[k].layers === undefined) {
-            //         nullableUnits.push(k);
-            //     }
-            // }
-            // nullableUnits.forEach((el) => {
-            //     MapSource.data.splice(el, 1);
-            // });
-            Emit.Emitter.emit('mapSetState');
-        }, 1000);
-    }
+    // public static mapAPI: MapAPI = new MapAPI();
 
     public static data: Array<MapSourceUnit> = [
         // {
@@ -130,5 +88,94 @@ export default class MapSource {
             ]
         },
     ];
+
+    public static async GetMapByParams(mapUnit: string, mapKey: string, selectedUnit: number) {
+        let layers = [];
+
+        if (MapSource.data[selectedUnit].layers.length === 0) {
+
+            layers = await MapAPI.GetMapByParams(A100ConnectionData.data, mapUnit, mapKey);
+
+            console.log(MapSource.data);
+            for (let i = 0; i < MapSource.data.length; i++) {
+                if (MapSource.data[i].title === mapUnit) {
+                    MapSource.data[i].layers = layers;
+                }
+            }
+            setTimeout(function () {
+                Emit.Emitter.emit('mapSetState');
+                Emit.Emitter.emit('setSelectedUnit', selectedUnit);
+            }, 1000);
+            console.log(layers);
+        } else {
+            Emit.Emitter.emit('setSelectedUnit', selectedUnit);
+        }
+    }
+
+    public static async GetUnits() {
+        if (this.firstLoading) {
+            Emit.Emitter.addListener('GetMapByParams', this.GetMapByParams);
+            this.firstLoading = false;
+        }
+        let units: Array<any> = [];
+        units = await MapAPI.getUnitNames(A100ConnectionData.data);
+        this.data = [];
+        units.forEach(el => {
+           this.data.push(el);
+        });
+
+        MapSource.GetMapByParams(MapSource.data[0].title, MapSource.data[0].key, 0);
+
+        setTimeout(function () {
+            Emit.Emitter.emit('mapSetState');
+            Emit.Emitter.emit('setSelectedUnit', 0);
+        }, 1000);
+    }
+
+    public static async GetMap() {
+        let _t: Array<MapSourceUnit> = [];
+        let that = this;
+        if (!this.offline) this.data = await MapAPI.getMap(A100ConnectionData.data);
+        // console.log(this.data);
+
+        if (this.data["status"] !== undefined) {
+            this.data = [
+                {
+                    id: 0,
+                    key: 'unit_0',
+                    title: 'Блок 1',
+                    layers: []
+                },
+                {
+                    id: 1,
+                    key: 'unit_1',
+                    title: 'Блок 2',
+                    layers: []
+                },
+                {
+                    id: 2,
+                    key: 'unit_2',
+                    title: 'Блок 3',
+                    layers: []
+                },
+            ];
+        }
+
+        let nullableUnits: Array<number> = [];
+        setTimeout(function () {
+            // empty blocks deleting
+            // for (let k = 0; k < MapSource.data.length; k++) {
+            //     if (MapSource.data[k].layers === null || MapSource.data[k].layers === undefined) {
+            //         nullableUnits.push(k);
+            //     }
+            // }
+            // nullableUnits.forEach((el) => {
+            //     MapSource.data.splice(el, 1);
+            // });
+            Emit.Emitter.emit('mapSetState');
+        }, 1000);
+    }
+
+
 }
 
