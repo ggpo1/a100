@@ -1,6 +1,7 @@
 import Orientation from './../../Enums/Orientation';
 import PlaceSignatureItem from './../../ArrayItems/PlaceSignatureItem';
 import VikItem from './../../ArrayItems/VikItem';
+import StillageItem from "../../ArrayItems/StillageItem";
 
 interface IPlaceSignatureState {
     parentPlaceSignatures: Array<PlaceSignatureItem>,
@@ -13,6 +14,7 @@ interface IPlaceSignatureState {
     parentDefects: Array<VikItem>,
     source: PlaceSignatureItem,
     isBlockScaling: boolean,
+    parentSource: StillageItem
 }
 
 export default IPlaceSignatureState;

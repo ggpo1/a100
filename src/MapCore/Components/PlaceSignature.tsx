@@ -13,6 +13,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
         super(props);
 
         this.state = {
+            parentSource: this.props.parentSource,
             parentPlaceSignatures: this.props.parentPlaceSignatures,
             isBlockScaling: this.props.isBlockScaling,
             parentScale: this.props.parentScale,
@@ -80,7 +81,15 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
 
     public openModal() {
         console.log(this.state);
-        // Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
+        const { parentDefects, source, parentSource } = this.state;
+        let selectedDefectSource;
+        parentDefects.forEach(el => {
+            if (el.place === source.place) selectedDefectSource = el;
+        });
+
+
+        Emit.Emitter.emit('setSelectedVik', selectedDefectSource, parentSource);
+        Emit.Emitter.emit('defectBrowsePanelWorkerHandle', true);
     }
 
     public thisForceUpdate(parentKey: string, newParentX: number, newParentY: number) {

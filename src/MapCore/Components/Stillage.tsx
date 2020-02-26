@@ -198,6 +198,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             source.placeSignatures.forEach(element => {
                 placeSignatures.push(
                     <PlaceSignature
+                        parentSource={source}
                         parentPlaceSignatures={source.placeSignatures!}
                         isBlockScaling={source.isBlockScaling!}
                         parentScale={source.scale!}
