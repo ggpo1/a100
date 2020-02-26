@@ -7,6 +7,8 @@ import MapIconsType from "../../MapCore/Models/Enums/MapIconsType";
 import StillageSize from "../../MapCore/Models/Enums/StillageSize/StillageSize";
 import Orientation from "../../MapCore/Models/Enums/Orientation";
 import SignaturePosition from "../../MapCore/Models/Enums/SignaturePosition";
+import LogHandler from '../../LogHandler/LogHandler';
+import LogType from "../model/enums/LogType";
 
 export default class MapSource {
     public static offline: boolean = false;
@@ -91,24 +93,28 @@ export default class MapSource {
 
     public static async GetMapByParams(mapUnit: string, mapKey: string, selectedUnit: number) {
         let layers = [];
+        if (MapSource.data[selectedUnit].layers !== undefined) {
+            // if (MapSource.data[selectedUnit].layers.length === 0) {
+                LogHandler.handle('MapSource', LogType.LOG, 'fetching data by params...');
 
-        if (MapSource.data[selectedUnit].layers.length === 0) {
+                layers = await MapAPI.GetMapByParams(A100ConnectionData.data, mapUnit, mapKey);
 
-            layers = await MapAPI.GetMapByParams(A100ConnectionData.data, mapUnit, mapKey);
-
-            console.log(MapSource.data);
-            for (let i = 0; i < MapSource.data.length; i++) {
-                if (MapSource.data[i].title === mapUnit) {
-                    MapSource.data[i].layers = layers;
+                for (let i = 0; i < MapSource.data.length; i++) {
+                    if (MapSource.data[i].title === mapUnit) {
+                        MapSource.data[i].layers = layers;
+                    }
                 }
-            }
-            setTimeout(function () {
-                Emit.Emitter.emit('mapSetState');
-                Emit.Emitter.emit('setSelectedUnit', selectedUnit);
-            }, 1000);
-            console.log(layers);
+                setTimeout(function () {
+                    Emit.Emitter.emit('mapSetState');
+                    Emit.Emitter.emit('setSelectedUnit', selectedUnit);
+                }, 1000);
+
+                LogHandler.handle('MapSource', LogType.LOG, 'OK');
+            // } else {
+            //     Emit.Emitter.emit('setSelectedUnit', selectedUnit);
+            // }
         } else {
-            Emit.Emitter.emit('setSelectedUnit', selectedUnit);
+            LogHandler.handle('MapSource', LogType.ERROR, 'error while fetching data by params!')
         }
     }
 

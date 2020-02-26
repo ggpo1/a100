@@ -26,7 +26,7 @@ export default class MapAPI {
             }).then((response) => response.json()).then((body) => {
                 resolve(body);
             }).catch(() => {
-                console.log('units catch!');
+                setTimeout(() => MapSource.GetMap(), 2000);
             })
         }));
     }
@@ -38,7 +38,7 @@ export default class MapAPI {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 resolve(body);
-            }).catch(() => {
+            }).catch((e) => {
                 console.log('units catch!');
             })
         }));

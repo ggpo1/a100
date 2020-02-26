@@ -34,6 +34,7 @@ import MapSource from "../A100/data/MapSource";
 import VikItem from "./Models/ArrayItems/VikItem";
 import LogType from "../A100/model/enums/LogType";
 import LogHandler from "../LogHandler/LogHandler";
+import IsReadOnlyMode from "./Data/IsReadOnlyMode";
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
@@ -55,6 +56,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     this.state = {
+      isReadOnly: true,
       dragNum: 0,
       stageScales: {
         x: 1,
@@ -830,10 +832,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     try {
       // this.animate.finish();
       this.animates.forEach(el => el.cancel());
-      console.log('_______________');
-      console.log('set state emit');
-      console.log(MapSource.data);
-      console.log('_______________');
       this.setState({source: MapSource.data, lazyLoading: false});
     } catch (e) {
       console.error('[Component: Map] - invalid data!');
@@ -845,7 +843,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     if (this.state.source === undefined || this.state.source.length === 0) {
 
     } else {
-      const {source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading} = this.state;
+      const {source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading, isReadOnly} = this.state;
       let unitsTitles: Array<JSX.Element> = [];
       let layersTitles: Array<JSX.Element> = [];
       let objects: Array<JSX.Element> = [];
@@ -1093,25 +1091,25 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             <div className="stage-wrapper"
                  key={this.state.parentKey + '_stageWrapper_div'}
                  onDrop={(e) => {
-                   this.ElementOnDrop(e)
+                   if (!IsReadOnlyMode) this.ElementOnDrop(e)
                  }}
                  onClick={(e) => {
-                   this.stageOnClickHandler(e)
+                   if (!IsReadOnlyMode) this.stageOnClickHandler(e)
                  }}
                  onMouseMove={(e) => {
-                   this.MapWrapperOnMouseMove(e)
+                   if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
                  }}
                  onTouchMove={(e) => {
-                   this.MapWrapperOnMouseMove(e)
+                   if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
                  }}
                  onMouseUp={(e) => {
-                   this.wallLabelButtonInteractionWayUp(e)
+                   if (!IsReadOnlyMode) this.wallLabelButtonInteractionWayUp(e)
                  }}
                  id={"stageWrapper"}
             >
               <Stage
                   key={this.state.parentKey + '_mapStage_stage'}
-                  draggable={!this.state.isDrawing && !this.state.isShapeMovingNow}
+                  draggable={IsReadOnlyMode ? true : !this.state.isDrawing && !this.state.isShapeMovingNow}
 
 
                   // onDragMove={(e) => {
@@ -1131,16 +1129,16 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   //   }
                   // }}
 
-                  onTouchMove={check ? (e) => {
-                    this.StageOnMouseMoveHandler(e)
+                  onTouchMove={check && isReadOnly ? (e) => {
+                    if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
                   } : () => {
                   }}
                   onTouchStart={check ? (e) => {
-                    this.StageOnMouseDownHandler(e)
+                    if (!IsReadOnlyMode) this.StageOnMouseDownHandler(e)
                   } : () => {
                   }}
                   onTouchEnd={check ? (e) => {
-                    this.StageOnMouseUpHandler(e)
+                    if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
                   } : () => {
                   }}
 
@@ -1149,15 +1147,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   }}
 
                   onMouseMove={check ? (e) => {
-                    this.StageOnMouseMoveHandler(e)
+                    if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
                   } : () => {
                   }}
                   onMouseDown={check ? (e) => {
-                    this.StageOnMouseDownHandler(e)
+                    if (!IsReadOnlyMode) this.StageOnMouseDownHandler(e)
                   } : () => {
                   }}
                   onMouseUp={check ? (e) => {
-                    this.StageOnMouseUpHandler(e)
+                    if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
                   } : () => {
                   }}
 
@@ -1178,11 +1176,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 </Layer>
               </Stage>
             </div>
-            {elementsPanel}
+            {IsReadOnlyMode ? '' : elementsPanel}
 
             <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
               {blocks}
-              {filters}
+              {IsReadOnlyMode ? '' : filters}
             </div>
             <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{background: '#E0E0E0'}}
                  className="layers-selector-wrapper">

@@ -18,6 +18,8 @@ interface IMapState {
         y: number
     }
 
+    isReadOnly: boolean,
+
     isAddCircleAdding: boolean,
     isToggledToAdd: boolean,
     lastAddedItemType?: LayerType,
