@@ -201,7 +201,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   componentDidUpdate(prevProps: Readonly<IMapProps>, prevState: Readonly<IMapState>, snapshot?: any): void {
-    document.getElementById('units-block')!.style.opacity = '0.8';
+    // document.getElementById('units-block')!.style.opacity = '0.8';
   }
 
   public addSameShape(type: LayerType, prevShape: any, position: Position) {
@@ -856,6 +856,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       let width = window.innerWidth;
       let height = window.innerHeight;
 
+      let unitsOptions: Array<JSX.Element> = [];
+
       let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
       let stageX = 999999;
       let stageY = 999999;
@@ -868,11 +870,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           });
         }
       }
-      
+
 
 
       // вывод списка блоков
       for (let i = 0; i < source.length; i++) {
+        unitsOptions.push(
+          <option className={'units-blocks-option'} key={source[i].key + '_unitNameOption_' + i} value={i}>{source[i].title}</option>
+        );
         unitsTitles.push(
           <div
             key={source[i].key + '_unitNameDiv_' + i}
@@ -1092,9 +1097,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         return index === keys.indexOf(item.key!.toString());
       });
 
-      console.log(stageX);
-      console.log(stageY);
-
       main = (
         <div
           key={this.state.parentKey + '_mapWrapper_div'}
@@ -1196,8 +1198,18 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           </div>
           {IsReadOnlyMode ? '' : elementsPanel}
 
+          <div className={'menus-up-wrapper'}>
+            <div className={'units-menu-horizontal'}>
+              <select name="" onChange={(e) => {
+                Emit.Emitter.emit('GetMapByParams', source[parseInt(e.target.value)].title, source[parseInt(e.target.value)].key, parseInt(e.target.value));
+              }} id="">
+                {unitsOptions}
+              </select>
+            </div>
+          </div>
+
           <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
-            {blocks}
+            {/* {blocks} */}
             {IsReadOnlyMode ? '' : filters}
           </div>
           <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{ background: '#E0E0E0' }}
