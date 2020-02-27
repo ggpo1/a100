@@ -92,9 +92,10 @@ export default class MapSource {
     ];
 
     public static async GetMapByParams(mapUnit: string, mapKey: string, selectedUnit: number) {
-        let layers = [];
-        if (MapSource.data[selectedUnit].layers !== undefined) {
-            // if (MapSource.data[selectedUnit].layers.length === 0) {
+        if (!this.offline) {
+            let layers = [];
+            if (MapSource.data[selectedUnit].layers !== undefined) {
+                // if (MapSource.data[selectedUnit].layers.length === 0) {
                 LogHandler.handle('MapSource', LogType.LOG, 'fetching data by params...');
 
                 layers = await MapAPI.GetMapByParams(A100ConnectionData.data, mapUnit, mapKey);
@@ -110,32 +111,35 @@ export default class MapSource {
                 }, 1000);
 
                 LogHandler.handle('MapSource', LogType.LOG, 'OK');
-            // } else {
-            //     Emit.Emitter.emit('setSelectedUnit', selectedUnit);
-            // }
-        } else {
-            LogHandler.handle('MapSource', LogType.ERROR, 'error while fetching data by params!')
+                // } else {
+                //     Emit.Emitter.emit('setSelectedUnit', selectedUnit);
+                // }
+            } else {
+                LogHandler.handle('MapSource', LogType.ERROR, 'error while fetching data by params!')
+            }
         }
     }
 
     public static async GetUnits() {
-        if (this.firstLoading) {
-            Emit.Emitter.addListener('GetMapByParams', this.GetMapByParams);
-            this.firstLoading = false;
+        if (!this.offline) {
+            if (this.firstLoading) {
+                Emit.Emitter.addListener('GetMapByParams', this.GetMapByParams);
+                this.firstLoading = false;
+            }
+            let units: Array<any> = [];
+            units = await MapAPI.getUnitNames(A100ConnectionData.data);
+            this.data = [];
+            units.forEach(el => {
+                this.data.push(el);
+            });
+
+            MapSource.GetMapByParams(MapSource.data[0].title, MapSource.data[0].key, 0);
+
+            setTimeout(function () {
+                Emit.Emitter.emit('mapSetState');
+                Emit.Emitter.emit('setSelectedUnit', 0);
+            }, 1000);
         }
-        let units: Array<any> = [];
-        units = await MapAPI.getUnitNames(A100ConnectionData.data);
-        this.data = [];
-        units.forEach(el => {
-           this.data.push(el);
-        });
-
-        MapSource.GetMapByParams(MapSource.data[0].title, MapSource.data[0].key, 0);
-
-        setTimeout(function () {
-            Emit.Emitter.emit('mapSetState');
-            Emit.Emitter.emit('setSelectedUnit', 0);
-        }, 1000);
     }
 
     public static async GetMap() {

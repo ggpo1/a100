@@ -1,5 +1,5 @@
 import React from 'react';
-import {Layer, Stage} from 'react-konva';
+import { Layer, Stage } from 'react-konva';
 
 import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
@@ -181,7 +181,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
 
   componentDidMount(): void {
-    const {lazyLoading} = this.state;
+    const { lazyLoading } = this.state;
     try {
       // if (lazyLoading) {
       //   this.animationIDs.forEach(el => {
@@ -825,17 +825,17 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   };
 
   setMapUnit = (selectedUnit: number) => {
-    this.setState({selectedUnit: selectedUnit, selectedLayer: -1, layersSelected: []});
+    this.setState({ selectedUnit: selectedUnit, selectedLayer: -1, layersSelected: [] });
   };
 
   public mapSetState() {
     try {
       // this.animate.finish();
       this.animates.forEach(el => el.cancel());
-      this.setState({source: MapSource.data, lazyLoading: false});
+      this.setState({ source: MapSource.data, lazyLoading: false });
     } catch (e) {
       console.error('[Component: Map] - invalid data!');
-      this.setState({lazyLoading: false});
+      this.setState({ lazyLoading: false });
     }
   }
 
@@ -843,7 +843,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     if (this.state.source === undefined || this.state.source.length === 0) {
 
     } else {
-      const {source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading, isReadOnly} = this.state;
+      const { source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading, isReadOnly } = this.state;
       let unitsTitles: Array<JSX.Element> = [];
       let layersTitles: Array<JSX.Element> = [];
       let objects: Array<JSX.Element> = [];
@@ -856,54 +856,69 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       let width = window.innerWidth;
       let height = window.innerHeight;
 
+      let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
+      let stageX = 999999;
+      let stageY = 999999;
+      if (stillagesLayer !== -1) {
+        if (source[selectedUnit].layers[stillagesLayer].stillages !== undefined) {
+          let _stillages = source[selectedUnit].layers[stillagesLayer].stillages;
+          _stillages!.forEach(el => {
+            if (el.x < stageX) stageX = el.x;
+            if (el.y < stageY) stageY = el.y;
+          });
+        }
+      }
+      
+
+
       // вывод списка блоков
       for (let i = 0; i < source.length; i++) {
         unitsTitles.push(
-            <div
-                key={source[i].key + '_unitNameDiv_' + i}
-                onClick={() => {
-                  // this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
-                  Emit.Emitter.emit('GetMapByParams', source[i].title, source[i].key, i);
-                }} className="unit-title">
-              <span
-                key={source[i].key + '_unitNameDivSpan_' + i}
-                style={{
-                  fontWeight: selectedUnit === i ? 'bold' : 'normal',
-                  color: selectedUnit === i ? '#2f00ff' : 'black'
-                }}>{source[i].title}</span>
-            </div>
+          <div
+            key={source[i].key + '_unitNameDiv_' + i}
+            onClick={() => {
+              // this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
+              Emit.Emitter.emit('GetMapByParams', source[i].title, source[i].key, i);
+            }} className="unit-title">
+            <span
+              key={source[i].key + '_unitNameDivSpan_' + i}
+              style={{
+                fontWeight: selectedUnit === i ? 'bold' : 'normal',
+                color: selectedUnit === i ? '#2f00ff' : 'black'
+              }}>{source[i].title}</span>
+          </div>
         );
       }
       layersTitles = [];
       /* добавления слоя для отображения всех слоев */
       layersTitles.push(
-          <div key={source[selectedUnit].key + '_layerNameDiv_-1'} style={{
-            fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
-            color: selectedLayer === -1 ? '#2f00ff' : 'black'
-          }} className="layer-title" onClick={() => {
-            this.setState({layersSelected, selectedLayer: -1})
-          }}>
-            все слои
+        <div key={source[selectedUnit].key + '_layerNameDiv_-1'} style={{
+          fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
+          color: selectedLayer === -1 ? '#2f00ff' : 'black'
+        }} className="layer-title" onClick={() => {
+          this.setState({ layersSelected, selectedLayer: -1 })
+        }}>
+          все слои
           </div>
       );
       /* добавление заголовков слоев */
       for (let i = 0; i < source[selectedUnit].layers.length; i++) {
         layersTitles.push(
-            <div key={source[selectedUnit].layers[i].key + '_layerNameDiv_' + i} style={{
-              fontWeight: layersSelected.includes(i, 0) ? 'bold' : 'normal',
-              color: layersSelected.includes(i, 0) ? '#2f00ff' : 'black'
-            }} onClick={() => {
-              this.selectLayerToList(i);
-            }} className="layer-title">
-              <input
-                  key={source[selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
-                  onChange={() => {
-                    console.log(i)
-                  }}
-                  style={{outline: 'none', marginRight: 5}}
-                  checked={layersSelected.includes(i, 0)}
-                  type={'checkbox'}/>
-              {source[selectedUnit].layers[i].title}</div>
+          <div key={source[selectedUnit].layers[i].key + '_layerNameDiv_' + i} style={{
+            fontWeight: layersSelected.includes(i, 0) ? 'bold' : 'normal',
+            color: layersSelected.includes(i, 0) ? '#2f00ff' : 'black'
+          }} onClick={() => {
+            this.selectLayerToList(i);
+          }} className="layer-title">
+            <input
+              key={source[selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
+              onChange={() => {
+                console.log(i)
+              }}
+              style={{ outline: 'none', marginRight: 5 }}
+              checked={layersSelected.includes(i, 0)}
+              type={'checkbox'} />
+            {source[selectedUnit].layers[i].title}</div>
         );
       }
 
@@ -917,10 +932,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           if (element.texts !== undefined) {
             element.texts.forEach(textElement => {
               isInChunk = (textElement.x > absStageCoords.x - 500 && textElement.x < (absStageCoords.x + width + 500)) &&
-                  (textElement.y > absStageCoords.y - 500 && textElement.y < (absStageCoords.y + height + 500));
+                (textElement.y > absStageCoords.y - 500 && textElement.y < (absStageCoords.y + height + 500));
               if (isInChunk) {
                 texts.push(
-                    <Text key={textElement.key} source={textElement}/>
+                  <Text key={textElement.key} source={textElement} />
                 );
               }
             });
@@ -929,10 +944,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           if (element.objects !== undefined) {
             for (let i = 0; i < element.objects!.length; i++) {
               objects.push(
-                  <MapObject
-                      key={element.objects[i].key}
-                      source={element.objects![i]}
-                  />
+                <MapObject
+                  key={element.objects[i].key}
+                  source={element.objects![i]}
+                />
               );
             }
           }
@@ -941,14 +956,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
             for (let i = 0; i < element.stillages!.length; i++) {
               isInChunk = (element.stillages[i].x > absStageCoords.x - 500 && element.stillages[i].x < (absStageCoords.x + width + 500)) &&
-                  (element.stillages[i].y > absStageCoords.y - 500 && element.stillages[i].y < (absStageCoords.y + height + 500));
+                (element.stillages[i].y > absStageCoords.y - 500 && element.stillages[i].y < (absStageCoords.y + height + 500));
               if (isInChunk) {
                 stillages.push(
-                    <Stillage
-                        key={element.stillages[i].key}
-                        source={element.stillages![i]}
-                        mapStillages={_mapStillages!}
-                    />
+                  <Stillage
+                    key={element.stillages[i].key}
+                    source={element.stillages![i]}
+                    mapStillages={_mapStillages!}
+                  />
                 );
               }
             }
@@ -957,13 +972,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           if (element.walls !== undefined) {
             for (let i = 0; i < element.walls!.length; i++) {
               isInChunk = (element.walls[i].startX > absStageCoords.x - 500 && element.walls[i].startX < (absStageCoords.x + width + 500)) &&
-                  (element.walls[i].startX > absStageCoords.y - 500 && element.walls[i].startY < (absStageCoords.y + height + 500));
+                (element.walls[i].startX > absStageCoords.y - 500 && element.walls[i].startY < (absStageCoords.y + height + 500));
               if (isInChunk) {
                 walls.push(
-                    <Wall
-                        key={element.walls[i].key}
-                        source={element.walls[i]}
-                    />
+                  <Wall
+                    key={element.walls[i].key}
+                    source={element.walls[i]}
+                  />
                 );
               }
             }
@@ -977,11 +992,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               if (source[selectedUnit].layers[el].stillages !== undefined) {
                 for (let i = 0; i < source[selectedUnit].layers[el].stillages!.length; i++) {
                   stillages.push(
-                      <Stillage
-                          key={source[selectedUnit].layers[el].stillages![i].key}
-                          source={source[selectedUnit].layers[el].stillages![i]}
-                          mapStillages={source[selectedUnit].layers[el].stillages!}
-                      />
+                    <Stillage
+                      key={source[selectedUnit].layers[el].stillages![i].key}
+                      source={source[selectedUnit].layers[el].stillages![i]}
+                      mapStillages={source[selectedUnit].layers[el].stillages!}
+                    />
                   );
                 }
               }
@@ -989,20 +1004,20 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 for (let i = 0; i < source[selectedUnit].layers[el].walls!.length; i++) {
                   let element = source[selectedUnit].layers[el].walls![i];
                   walls.push(
-                      <Wall
-                          key={element.key}
-                          source={source[selectedUnit].layers[el].walls![i]}
-                      />
+                    <Wall
+                      key={element.key}
+                      source={source[selectedUnit].layers[el].walls![i]}
+                    />
                   );
                 }
               }
               if (source[selectedUnit].layers[el].objects !== undefined) {
                 for (let i = 0; i < source[selectedUnit].layers[el].objects!.length; i++) {
                   walls.push(
-                      <MapObject
-                          key={source[selectedUnit].layers[el].objects![i].key}
-                          source={source[selectedUnit].layers[el].objects![i]}
-                      />
+                    <MapObject
+                      key={source[selectedUnit].layers[el].objects![i].key}
+                      source={source[selectedUnit].layers[el].objects![i]}
+                    />
                   );
                 }
               }
@@ -1019,41 +1034,41 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       let main, blocks, filters, elementsPanel, defectBrowsePanel, addLayerSubModal;
 
       blocks = (
-          <div id={'units-block'} style={{background: '#E0E0E0'}} className="units-selector">
-            <div style={{background: ''}} className="unit-header-title">
-              <span style={{height: '50%'}}>выбор блока</span>
-            </div>
-            <div style={{background: ''}} className="unit-content">
-              {unitsTitles}
-            </div>
+        <div id={'units-block'} style={{ background: '#E0E0E0' }} className="units-selector">
+          <div style={{ background: '' }} className="unit-header-title">
+            <span style={{ height: '50%' }}>выбор блока</span>
           </div>
+          <div style={{ background: '' }} className="unit-content">
+            {unitsTitles}
+          </div>
+        </div>
       );
 
       filters = (
-          <div id={'filters-block'} className="filters-selector" style={{background: '#E0E0E0'}}>
-            <div style={{background: ''}} className="filter-header-title">
-              <span style={{height: '50%'}}>фильтры</span>
+        <div id={'filters-block'} className="filters-selector" style={{ background: '#E0E0E0' }}>
+          <div style={{ background: '' }} className="filter-header-title">
+            <span style={{ height: '50%' }}>фильтры</span>
+          </div>
+          <div style={{ background: '' }} className="filter-content">
+            <div className="input-checkbox">
+              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }}
+                type="checkbox" name="option2" value="a2" /></div>
+              <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
+                только опасные
+                </div>
             </div>
-            <div style={{background: ''}} className="filter-content">
-              <div className="input-checkbox">
-                <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{height: '50%'}}
-                                       type="checkbox" name="option2" value="a2"/></div>
-                <div style={{height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex'}}>
-                  только опасные
+            <div className="input-checkbox">
+              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }}
+                type="checkbox" name="option2" value="a2" /></div>
+              <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
+                убрать повреждения
                 </div>
-              </div>
-              <div className="input-checkbox">
-                <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{height: '50%'}}
-                                       type="checkbox" name="option2" value="a2"/></div>
-                <div style={{height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex'}}>
-                  убрать повреждения
-                </div>
-              </div>
             </div>
           </div>
+        </div>
       );
 
-      elementsPanel = <ElementsPanel source={ElementSource}/>;
+      elementsPanel = <ElementsPanel source={ElementSource} />;
 
       if (isDefectBrowsePanel) {
         defectBrowsePanel = <DefectBrowsePanel parentSource={this.state.selectedStillage!} source={this.state.selectedVik} />;
@@ -1077,117 +1092,120 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         return index === keys.indexOf(item.key!.toString());
       });
 
+      console.log(stageX);
+      console.log(stageY);
+
       main = (
-          <div
-              key={this.state.parentKey + '_mapWrapper_div'}
-              className="map-wrapper"
-              onDragOver={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+        <div
+          key={this.state.parentKey + '_mapWrapper_div'}
+          className="map-wrapper"
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+
+        >
+
+          <div className="stage-wrapper"
+            key={this.state.parentKey + '_stageWrapper_div'}
+            onDrop={(e) => {
+              if (!IsReadOnlyMode) this.ElementOnDrop(e)
+            }}
+            onClick={(e) => {
+              if (!IsReadOnlyMode) this.stageOnClickHandler(e)
+            }}
+            onMouseMove={(e) => {
+              if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
+            }}
+            onTouchMove={(e) => {
+              if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
+            }}
+            onMouseUp={(e) => {
+              if (!IsReadOnlyMode) this.wallLabelButtonInteractionWayUp(e)
+            }}
+            id={"stageWrapper"}
+          >
+            <Stage
+              key={this.state.parentKey + '_mapStage_stage'}
+              draggable={IsReadOnlyMode ? true : !this.state.isDrawing && !this.state.isShapeMovingNow}
+
+
+              // onDragMove={(e) => {
+              //   // console.log(this.state.dragNum);
+              //   if (this.state.dragNum === 50) {
+              //     this.setState({
+              //       moveStageParams: {
+              //         x: e.target.x(),
+              //         y: e.target.y()
+              //       },
+              //       dragNum: 0
+              //     });
+              //   } else {
+              //     this.setState({
+              //       dragNum: this.state.dragNum + 1
+              //     });
+              //   }
+              // }}
+
+              onTouchMove={check && isReadOnly ? (e) => {
+                if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
+              } : () => {
+              }}
+              onTouchStart={check ? (e) => {
+                if (!IsReadOnlyMode) this.StageOnMouseDownHandler(e)
+              } : () => {
+              }}
+              onTouchEnd={check ? (e) => {
+                if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
+              } : () => {
               }}
 
-          >
+              onDragEnd={e => {
+                this.stageDragEnd(e.target.x(), e.target.y())
+              }}
 
-            <div className="stage-wrapper"
-                 key={this.state.parentKey + '_stageWrapper_div'}
-                 onDrop={(e) => {
-                   if (!IsReadOnlyMode) this.ElementOnDrop(e)
-                 }}
-                 onClick={(e) => {
-                   if (!IsReadOnlyMode) this.stageOnClickHandler(e)
-                 }}
-                 onMouseMove={(e) => {
-                   if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
-                 }}
-                 onTouchMove={(e) => {
-                   if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
-                 }}
-                 onMouseUp={(e) => {
-                   if (!IsReadOnlyMode) this.wallLabelButtonInteractionWayUp(e)
-                 }}
-                 id={"stageWrapper"}
-            >
-              <Stage
-                  key={this.state.parentKey + '_mapStage_stage'}
-                  draggable={IsReadOnlyMode ? true : !this.state.isDrawing && !this.state.isShapeMovingNow}
+              onMouseMove={check ? (e) => {
+                if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
+              } : () => {
+              }}
+              onMouseDown={check ? (e) => {
+                if (!IsReadOnlyMode) this.StageOnMouseDownHandler(e)
+              } : () => {
+              }}
+              onMouseUp={check ? (e) => {
+                if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
+              } : () => {
+              }}
 
+              style={{ cursor: 'pointer' }}
+              width={width}
+              height={height}
+              onWheel={this.handleWheel}
 
-                  // onDragMove={(e) => {
-                  //   // console.log(this.state.dragNum);
-                  //   if (this.state.dragNum === 50) {
-                  //     this.setState({
-                  //       moveStageParams: {
-                  //         x: e.target.x(),
-                  //         y: e.target.y()
-                  //       },
-                  //       dragNum: 0
-                  //     });
-                  //   } else {
-                  //     this.setState({
-                  //       dragNum: this.state.dragNum + 1
-                  //     });
-                  //   }
-                  // }}
+              scaleX={this.state.stageScale}
+              scaleY={this.state.stageScale}
+              x={stageX * -1}
+              y={stageY * -1}>
+              <Layer>
+                {walls}
+                {stillages}
+                {objects}
+                {texts}
+              </Layer>
+            </Stage>
+          </div>
+          {IsReadOnlyMode ? '' : elementsPanel}
 
-                  onTouchMove={check && isReadOnly ? (e) => {
-                    if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
-                  } : () => {
-                  }}
-                  onTouchStart={check ? (e) => {
-                    if (!IsReadOnlyMode) this.StageOnMouseDownHandler(e)
-                  } : () => {
-                  }}
-                  onTouchEnd={check ? (e) => {
-                    if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
-                  } : () => {
-                  }}
-
-                  onDragEnd={e => {
-                    this.stageDragEnd(e.target.x(), e.target.y())
-                  }}
-
-                  onMouseMove={check ? (e) => {
-                    if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
-                  } : () => {
-                  }}
-                  onMouseDown={check ? (e) => {
-                    if (!IsReadOnlyMode) this.StageOnMouseDownHandler(e)
-                  } : () => {
-                  }}
-                  onMouseUp={check ? (e) => {
-                    if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
-                  } : () => {
-                  }}
-
-                  style={{cursor: 'pointer'}}
-                  width={width}
-                  height={height}
-                  onWheel={this.handleWheel}
-
-                  scaleX={this.state.stageScale}
-                  scaleY={this.state.stageScale}
-                  x={this.state.stageX}
-                  y={this.state.stageY}>
-                <Layer>
-                  {walls}
-                  {stillages}
-                  {objects}
-                  {texts}
-                </Layer>
-              </Stage>
-            </div>
-            {IsReadOnlyMode ? '' : elementsPanel}
-
-            <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
-              {blocks}
-              {IsReadOnlyMode ? '' : filters}
-            </div>
-            <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{background: '#E0E0E0'}}
-                 className="layers-selector-wrapper">
-              {layersTitles}
-            </div>
-            {defectBrowsePanel}
-          </div>);
+          <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
+            {blocks}
+            {IsReadOnlyMode ? '' : filters}
+          </div>
+          <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{ background: '#E0E0E0' }}
+            className="layers-selector-wrapper">
+            {layersTitles}
+          </div>
+          {defectBrowsePanel}
+        </div>);
       return [main];
     }
   }
