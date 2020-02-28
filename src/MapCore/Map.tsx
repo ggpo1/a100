@@ -53,7 +53,20 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     this.layerService = new LayerService();
     this.wallService = new WallService();
 
-
+    let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(this.props.source[0].layers, LayerType.STILLAGES);
+    let stageX = 999999;
+    let stageY = 999999;
+    if (stillagesLayer !== -1) {
+      if (this.props.source[0].layers[stillagesLayer].stillages !== undefined) {
+        let _stillages = this.props.source[0].layers[stillagesLayer].stillages;
+        _stillages!.forEach(el => {
+          if (el.x < stageX) stageX = el.x;
+          if (el.y < stageY) stageY = el.y;
+        });
+      }
+      stageX *= -1;
+      stageY *= -1;
+    }
 
     this.state = {
       isReadOnly: true,
@@ -79,8 +92,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       selectedUnit: 0,
       selectedLayer: -1,
       stageScale: 1,
-      stageX: 0,
-      stageY: 0,
+      stageX: stageX,
+      stageY: stageY,
       isMouseDown: false,
       source: this.props.source,
       isOnlyRed: true,
@@ -789,7 +802,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
   handleWheel = e => {
     e.evt.preventDefault();
-    let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(this.state.source[this.state.selectedUnit].layers, LayerType.STILLAGES);
+    // let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(this.state.source[this.state.selectedUnit].layers, LayerType.STILLAGES);
     let scaleBy = 1.025;
     // console.log(this.state.source[this.state.selectedUnit].layers[stillagesLayer].stillages!.length);
     // let stillagesCount = this.state.source[this.state.selectedUnit].layers[stillagesLayer].stillages!.length;
@@ -807,7 +820,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       y: stage.getPointerPosition().y / oldScale - stage.y() / oldScale
     };
 
-    const newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    const newScale =
+        e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    stage.scale({ x: newScale, y: newScale });
 
     stage.scale({ x: (newScale * -1), y: (newScale * -1) });
 
@@ -853,23 +868,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       let layers: Array<JSX.Element> = [];
       let walls: Array<JSX.Element> = [];
 
+      let absStageCoords = { x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y) };
+
       let width = window.innerWidth;
       let height = window.innerHeight;
 
       let unitsOptions: Array<JSX.Element> = [];
 
-      let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
-      let stageX = 999999;
-      let stageY = 999999;
-      if (stillagesLayer !== -1) {
-        if (source[selectedUnit].layers[stillagesLayer].stillages !== undefined) {
-          let _stillages = source[selectedUnit].layers[stillagesLayer].stillages;
-          _stillages!.forEach(el => {
-            if (el.x < stageX) stageX = el.x;
-            if (el.y < stageY) stageY = el.y;
-          });
-        }
-      }
+
 
 
 
@@ -927,7 +933,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         );
       }
 
-      let absStageCoords = { x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y) };
+
       let isInChunk: boolean = false;
 
       if (selectedLayer === -1) {
@@ -1097,6 +1103,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         return index === keys.indexOf(item.key!.toString());
       });
 
+      console.log(this.state.stageScale);
+
       main = (
         <div
           key={this.state.parentKey + '_mapWrapper_div'}
@@ -1183,11 +1191,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               width={width}
               height={height}
               onWheel={this.handleWheel}
-
               scaleX={this.state.stageScale}
               scaleY={this.state.stageScale}
-              x={stageX * -1}
-              y={stageY * -1}>
+              x={this.state.stageX} //  * -1
+              y={this.state.stageY}>
               <Layer>
                 {walls}
                 {stillages}
@@ -1201,6 +1208,22 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           <div className={'menus-up-wrapper'}>
             <div className={'units-menu-horizontal'}>
               <select name="" onChange={(e) => {
+                let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(source[e.target.value].layers, LayerType.STILLAGES);
+                let stageX = 999999;
+                let stageY = 999999;
+                if (stillagesLayer !== -1) {
+                  if (source[e.target.value].layers[stillagesLayer].stillages !== undefined) {
+                    let _stillages = source[e.target.value].layers[stillagesLayer].stillages;
+                    _stillages!.forEach(el => {
+                      if (el.x < stageX) stageX = el.x;
+                      if (el.y < stageY) stageY = el.y;
+                    });
+                  }
+                  this.setState({
+                    stageX: stageX * -1,
+                    stageY: stageY * -1
+                  });
+                }
                 Emit.Emitter.emit('GetMapByParams', source[parseInt(e.target.value)].title, source[parseInt(e.target.value)].key, parseInt(e.target.value));
               }} id="">
                 {unitsOptions}
@@ -1208,10 +1231,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             </div>
           </div>
 
-          <div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>
-            {/* {blocks} */}
-            {IsReadOnlyMode ? '' : filters}
-          </div>
+          {/*<div key={this.state.parentKey + '_rightBarsWrapper_div'} className={"right-bars-wrapper"}>*/}
+          {/*  /!* {blocks} *!/*/}
+          {/*  {IsReadOnlyMode ? '' : filters}*/}
+          {/*</div>*/}
           <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{ background: '#E0E0E0' }}
             className="layers-selector-wrapper">
             {layersTitles}
