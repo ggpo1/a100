@@ -966,8 +966,17 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           if (element.stillages !== undefined) {
             let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
             for (let i = 0; i < element.stillages!.length; i++) {
-              isInChunk = (element.stillages[i].x > absStageCoords.x - 500 && element.stillages[i].x < (absStageCoords.x + width + 500)) &&
-                (element.stillages[i].y > absStageCoords.y - 500 && element.stillages[i].y < (absStageCoords.y + height + 500));
+              let scale = 30 * this.state.stageScale;
+              let scaledX = element.stillages[i].x - scale;
+              let scaledY = element.stillages[i].y - scale;
+              let scaledAbsStageCoordsX = absStageCoords.x - scale;
+              let scaledAbsStageCoordsY = absStageCoords.y - scale;
+
+              // isInChunk = (scaledX > scaledAbsStageCoordsX - 500 && scaledX < (scaledAbsStageCoordsX + width + 500)) &&
+              //     (scaledY > scaledAbsStageCoordsY - 500 && scaledY < (scaledAbsStageCoordsY + height + 500));
+
+              isInChunk = (scaledX > scaledAbsStageCoordsX && scaledX < (scaledAbsStageCoordsX + width)) &&
+                (scaledY > scaledAbsStageCoordsY && scaledY < (scaledAbsStageCoordsY + height));
               if (isInChunk) {
                 stillages.push(
                   <Stillage
@@ -1140,22 +1149,22 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               draggable={IsReadOnlyMode ? true : !this.state.isDrawing && !this.state.isShapeMovingNow}
 
 
-              // onDragMove={(e) => {
-              //   // console.log(this.state.dragNum);
-              //   if (this.state.dragNum === 50) {
-              //     this.setState({
-              //       moveStageParams: {
-              //         x: e.target.x(),
-              //         y: e.target.y()
-              //       },
-              //       dragNum: 0
-              //     });
-              //   } else {
-              //     this.setState({
-              //       dragNum: this.state.dragNum + 1
-              //     });
-              //   }
-              // }}
+              onDragMove={(e) => {
+                // console.log(this.state.dragNum);
+                // if (this.state.dragNum === 50) {
+                  this.setState({
+                    moveStageParams: {
+                      x: e.target.x(),
+                      y: e.target.y()
+                    },
+                    // dragNum: 0
+                  });
+                // } else {
+                //   this.setState({
+                //     dragNum: this.state.dragNum + 1
+                //   });
+                // }
+              }}
 
               onTouchMove={check && isReadOnly ? (e) => {
                 if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
