@@ -79,7 +79,6 @@ const Deviation = (props: IDeviationProps) => {
             stroke={'red'}
             pointerLength={pointerLength}
             pointerWidth={pointerWidth}
-            zIndex={1}
         />
     );
 };

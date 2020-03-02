@@ -5,6 +5,13 @@ import StillageItem from "../../ArrayItems/StillageItem";
 import ObjectItem from "../../ArrayItems/ObjectItem";
 import VikItem from "../../ArrayItems/VikItem";
 interface IMapState {
+
+    // render elements
+    unitsOptions: Array<JSX.Element>,
+    layersTitles: Array<JSX.Element>,
+    // _______________
+
+
     dragNum: number,
     selectedStillage?: StillageItem,
     selectedVik?: VikItem,

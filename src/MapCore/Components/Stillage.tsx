@@ -37,11 +37,127 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         }
         this.props.source.width = width;
         this.props.source.height = height;
+
+        let deviations: Array<JSX.Element> = [];
+
+        try {
+            props.source.deviations!.forEach((el, i) => {
+                deviations.push(
+                    <Deviation
+                        source={el}
+                        parentSource={props.source}
+                        key={`${props.source.key}_deviation_${i}`}
+                    />
+                );
+            });
+        } catch(e) {
+            LogHandler.handle('Stillage', LogType.ERROR, 'deviation array is undefined!');
+            props.source.deviations = [];
+        }
+
+        let placeSignatures: Array<JSX.Element> = [];
+        if (props.source.placeSignatures !== undefined) {
+            let i = 0;
+            props.source.placeSignatures.forEach(element => {
+                placeSignatures.push(
+                    <PlaceSignature
+                        parentSource={props.source}
+                        parentPlaceSignatures={props.source.placeSignatures!}
+                        isBlockScaling={props.source.isBlockScaling!}
+                        parentScale={props.source.scale!}
+                        pmCount={props.source.pmCount!}
+                        parentKey={props.source.key}
+                        key={`${props.source.key}_placeSignature_${(i++)}`}
+                        parentX={props.source.x}
+                        parentY={props.source.y}
+                        parentDefects={props.source.viks!}
+                        parentOrientation={props.source.orientation}
+                        source={element}
+                    />
+                );
+            });
+        }
+
+        let signature;
+        if (props.source.signature !== undefined) {
+            signature =
+                <Signature
+                    parentScale={props.source.scale!}
+                    isBlockScaling={props.source.isBlockScaling!}
+                    pmCount={props.source.pmCount!}
+                    parentKey={props.source.key}
+                    key={`${props.source.key}_signature`}
+                    parentX={props.source.x}
+                    parentY={props.source.y}
+                    parentOrientation={props.source.orientation}
+                    parentSize={props.source.size}
+                    source={props.source.signature}
+                />
+            ;
+        }
+
+        let redDefects: Array<JSX.Element> = [];
+        let greenDefects: Array<JSX.Element> = [];
+        let yellowDefects: Array<JSX.Element> = [];
+        if (props.source.viks !== undefined && props.source.viks.length !== 0) {
+            props.source.viks!.forEach((element, i) => {
+                if (element.color === DefectColors.RED) {
+                    redDefects.push(
+                        <Defect
+                            parentSource={props.source}
+                            parentScale={props.source.scale!}
+                            isBlockScaling={props.source.isBlockScaling!}
+                            parentKey={props.source.key}
+                            key={`${props.source.key}_defect_${(i++)}`}
+                            parentX={props.source.x}
+                            parentY={props.source.y}
+                            parentOrientation={props.source.orientation}
+                            source={element}
+                        />
+                    );
+                } else if (element.color === DefectColors.GREEN) {
+                    greenDefects.push(
+                        <Defect
+                            parentSource={props.source}
+                            parentScale={props.source.scale!}
+                            isBlockScaling={props.source.isBlockScaling!}
+                            parentKey={props.source.key}
+                            key={`${props.source.key}_defect_${(i++)}`}
+                            parentX={props.source.x}
+                            parentY={props.source.y}
+                            parentOrientation={props.source.orientation}
+                            source={element}
+                        />
+                    );
+                } else if (element.color === DefectColors.YELLOW) {
+                    yellowDefects.push(
+                        <Defect
+                            parentSource={props.source}
+                            parentScale={props.source.scale!}
+                            isBlockScaling={props.source.isBlockScaling!}
+                            parentKey={props.source.key}
+                            key={`${props.source.key}_defect_${(i++)}`}
+                            parentX={props.source.x}
+                            parentY={props.source.y}
+                            parentOrientation={props.source.orientation}
+                            source={element}
+                        />
+                    );
+                }
+            });
+        }
+
         this.state = {
             source: this.props.source,
             mapStillages: this.props.mapStillages,
             isMoveEnabled: false,
             isAdding: false,
+            deviations,
+            placeSignatures,
+            signature,
+            redDefects,
+            yellowDefects,
+            greenDefects
         };
 
         this.setStillageMoveEnabled = this.setStillageMoveEnabled.bind(this);
@@ -131,28 +247,7 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         let stillage;
         let deleteCircle;
         let addCircles;
-        let viks: Array<JSX.Element> = [];
-        let placeSignatures: Array<JSX.Element> = [];
-        let signature;
-        let stillageSR = new StillageSizeReducer();
         let stillageMoveArrows: Array<JSX.Element> = [];
-        // source={source.deviations}
-        let deviations;
-
-        try {
-            source.deviations!.forEach(el => {
-                deviations = (
-                    <Deviation
-                        source={el}
-                        parentSource={source}
-                        key={source.key + '_deviation'}
-                    />
-                );
-            });
-        } catch(e) {
-            LogHandler.handle('Stillage', LogType.ERROR, 'deviation array is undefined!');
-            source.deviations = [];
-        }
 
         if (this.state.isAdding) {
               addCircles = (
@@ -176,105 +271,10 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
             );
         }
 
-        if (source.signature !== undefined) {
-            signature =
-                <Signature
-                    parentScale={source.scale!}
-                    isBlockScaling={source.isBlockScaling!}
-                    pmCount={source.pmCount!}
-                    parentKey={source.key}
-                    key={source.key + '_signature'}
-                    parentX={source.x}
-                    parentY={source.y}
-                    parentOrientation={source.orientation}
-                    parentSize={source.size}
-                    source={source.signature}
-                />
-            ;
-        }
-
-        if (source.placeSignatures !== undefined) {
-            let i = 0;
-            source.placeSignatures.forEach(element => {
-                placeSignatures.push(
-                    <PlaceSignature
-                        parentSource={source}
-                        parentPlaceSignatures={source.placeSignatures!}
-                        isBlockScaling={source.isBlockScaling!}
-                        parentScale={source.scale!}
-                        pmCount={source.pmCount!}
-                        parentKey={source.key}
-                        key={source.key + '_placeSignature_' + (i++)}
-                        parentX={source.x}
-                        parentY={source.y}
-                        parentDefects={source.viks!}
-                        parentOrientation={source.orientation}
-                        source={element}
-                    />
-                );
-            });
-        }
-
-        // console.log(source.viks);
-        // source.viks?.forEach(el => console.log(el));
-
-        // source.viks.forEach(el => console.log(el));
-        let redDefects: Array<JSX.Element> = [];
-        let greenDefects: Array<JSX.Element> = [];
-        let yellowDefects: Array<JSX.Element> = [];
-        if (source.viks !== undefined && source.viks.length !== 0) {
-            source.viks!.forEach((element, i) => {
-                if (element.color === DefectColors.RED) {
-                    redDefects.push(
-                        <Defect
-                            parentSource={source}
-                            parentScale={source.scale!}
-                            isBlockScaling={source.isBlockScaling!}
-                            parentKey={source.key}
-                            key={source.key + '_defect_' + (i++)}
-                            parentX={source.x}
-                            parentY={source.y}
-                            parentOrientation={source.orientation}
-                            source={element}
-                        />
-                    );
-                } else if (element.color === DefectColors.GREEN) {
-                    greenDefects.push(
-                        <Defect
-                            parentSource={source}
-                            parentScale={source.scale!}
-                            isBlockScaling={source.isBlockScaling!}
-                            parentKey={source.key}
-                            key={source.key + '_defect_' + (i++)}
-                            parentX={source.x}
-                            parentY={source.y}
-                            parentOrientation={source.orientation}
-                            source={element}
-                        />
-                    );
-                } else if (element.color === DefectColors.YELLOW) {
-                    yellowDefects.push(
-                        <Defect
-                            parentSource={source}
-                            parentScale={source.scale!}
-                            isBlockScaling={source.isBlockScaling!}
-                            parentKey={source.key}
-                            key={source.key + '_defect_' + (i++)}
-                            parentX={source.x}
-                            parentY={source.y}
-                            parentOrientation={source.orientation}
-                            source={element}
-                        />
-                    );
-                }
-            });
-        }
-
-        // if (source.pmCount === 1) alert('1!');
         if (source.orientation === Orientation.HORIZONTAL) {
             stillage = (
                 <Rect
-                    key={source.key + '_rect'}
+                    key={`${source.key}_rect`}
                     // move actions
                     onDblTap={(e) => this.setStillageMoveEnabled(e)}
                     onDblClick={(e) => this.setStillageMoveEnabled(e)}
@@ -284,13 +284,9 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
                     onTouchEnd={(e) => this.setStillageMoveNow(e, false)}
                     onClick={(e) => {
                         Emit.Emitter.emit('mapShapeClickEmit', e.evt.which, e.evt, source.id, LayerType.STILLAGES);
-                        // console.error(e.evt.which);
                     }}
-                    // ____
                     x={source.x}
                     y={source.y}
-                    // width={stillageSizeReducer.GetSize(source.size).firstSide}
-                    // height={stillageSizeReducer.GetSize(source.size).secondSide}
                     width={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).firstSide}
                     height={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).secondSide}
                     fill={StillageColors.STILLAGE_NORMAL}
@@ -303,19 +299,15 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
         } else if (source.orientation === Orientation.VERTICAL) {
             stillage = (
                 <Rect
-                    key={source.key + '_rect'}
-                    // move actions
+                    key={`${source.key}_rect`}
                     onDblTap={(e) => this.setStillageMoveEnabled(e)}
                     onDblClick={(e) => this.setStillageMoveEnabled(e)}
                     onMouseDown={(e) => this.setStillageMoveNow(e, true)}
                     onTouchStart={(e) => this.setStillageMoveNow(e, true)}
                     onMouseUp={(e) => this.setStillageMoveNow(e, false)}
                     onTouchEnd={(e) => this.setStillageMoveNow(e, false)}
-                    // ____
                     x={source.x}
                     y={source.y}
-                    // width={stillageSizeReducer.GetSize(source.size).secondSide}
-                    // height={stillageSizeReducer.GetSize(source.size).firstSide}
                     width={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).firstSide}
                     height={stillageSizeReducer.GetA100Size(source.pmCount!, source.orientation, source.scale!, source.isBlockScaling!).secondSide}
                     fill={StillageColors.STILLAGE_NORMAL}
@@ -329,15 +321,15 @@ export default class Stillage extends React.Component<IStillageProps, IStillageS
 
         return [
             addCircles,
-            signature,
+            this.state.signature,
             stillage,
-            greenDefects,
-            yellowDefects,
-            redDefects,
-            placeSignatures,
+            this.state.greenDefects,
+            this.state.yellowDefects,
+            this.state.redDefects,
+            this.state.placeSignatures,
             stillageMoveArrows,
             deleteCircle,
-            deviations
+            this.state.deviations
         ];
     }
 }

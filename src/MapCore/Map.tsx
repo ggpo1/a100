@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layer, Stage } from 'react-konva';
+import { Stage, Layer, FastLayer } from 'react-konva';
 
 import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
@@ -68,7 +68,21 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       stageY *= -1;
     }
 
+    let unitsOptions: Array<JSX.Element> = [];
+    for (let i = 0; i < props.source.length; i++) {
+      unitsOptions.push(
+          <option className={'units-blocks-option'} key={props.source[i].key + '_unitNameOption_' + i}
+                  value={i}>{props.source[i].title}</option>
+      );
+    }
+
     this.state = {
+
+      // render elements
+      unitsOptions: unitsOptions,
+      layersTitles: [],
+      // _______________
+
       isReadOnly: true,
       dragNum: 0,
       stageScales: {
@@ -192,6 +206,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   }
 
   public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
+
 
   componentDidMount(): void {
     const { lazyLoading } = this.state;
@@ -846,8 +861,51 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
   public mapSetState() {
     try {
       // this.animate.finish();
+      let unitsOptions: Array<JSX.Element> = [];
+      for (let i = 0; i < this.state.source.length; i++) {
+        unitsOptions.push(
+            <option className={'units-blocks-option'} key={this.state.source[i].key + '_unitNameOption_' + i}
+                    value={i}>{this.state.source[i].title}</option>
+        );
+      }
+      const { layersSelected } = this.state;
+      let layersTitles: Array<JSX.Element> = [
+        <div key={this.state.source[this.state.selectedUnit].key + '_layerNameDiv_-1'} style={{
+          fontWeight: this.state.selectedLayer === -1 ? 'bold' : 'normal',
+          color: this.state.selectedLayer === -1 ? '#2f00ff' : 'black'
+        }} className="layer-title" onClick={() => {
+          this.setState({ layersSelected, selectedLayer: -1 })
+        }}>
+          все слои
+        </div>
+      ];
+      for (let i = 0; i < this.state.source[this.state.selectedUnit].layers.length; i++) {
+        layersTitles.push(
+            <div key={this.state.source[this.state.selectedUnit].layers[i].key + '_layerNameDiv_' + i} style={{
+              fontWeight: this.state.layersSelected.includes(i, 0) ? 'bold' : 'normal',
+              color: this.state.layersSelected.includes(i, 0) ? '#2f00ff' : 'black'
+            }} onClick={() => {
+              this.selectLayerToList(i);
+            }} className="layer-title">
+              <input
+                  key={this.state.source[this.state.selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
+                  onChange={() => {
+                    console.log(i)
+                  }}
+                  style={{ outline: 'none', marginRight: 5 }}
+                  checked={this.state.layersSelected.includes(i, 0)}
+                  type={'checkbox'} />
+              {this.state.source[this.state.selectedUnit].layers[i].title}</div>
+        );
+      }
+
       this.animates.forEach(el => el.cancel());
-      this.setState({ source: MapSource.data, lazyLoading: false });
+      this.setState({
+        source: MapSource.data,
+        lazyLoading: false,
+        unitsOptions,
+        layersTitles
+      });
     } catch (e) {
       console.error('[Component: Map] - invalid data!');
       this.setState({ lazyLoading: false });
@@ -880,58 +938,31 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
       // вывод списка блоков
-      for (let i = 0; i < source.length; i++) {
-        unitsOptions.push(
-          <option className={'units-blocks-option'} key={source[i].key + '_unitNameOption_' + i} value={i}>{source[i].title}</option>
-        );
-        unitsTitles.push(
-          <div
-            key={source[i].key + '_unitNameDiv_' + i}
-            onClick={() => {
-              // this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
-              Emit.Emitter.emit('GetMapByParams', source[i].title, source[i].key, i);
-            }} className="unit-title">
-            <span
-              key={source[i].key + '_unitNameDivSpan_' + i}
-              style={{
-                fontWeight: selectedUnit === i ? 'bold' : 'normal',
-                color: selectedUnit === i ? '#2f00ff' : 'black'
-              }}>{source[i].title}</span>
-          </div>
-        );
-      }
-      layersTitles = [];
+      // for (let i = 0; i < source.length; i++) {
+      //   unitsOptions.push(
+      //     <option className={'units-blocks-option'} key={source[i].key + '_unitNameOption_' + i} value={i}>{source[i].title}</option>
+      //   );
+      //   // unitsTitles.push(
+      //   //   <div
+      //   //     key={source[i].key + '_unitNameDiv_' + i}
+      //   //     onClick={() => {
+      //   //       // this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
+      //   //       Emit.Emitter.emit('GetMapByParams', source[i].title, source[i].key, i);
+      //   //     }} className="unit-title">
+      //   //     <span
+      //   //       key={source[i].key + '_unitNameDivSpan_' + i}
+      //   //       style={{
+      //   //         fontWeight: selectedUnit === i ? 'bold' : 'normal',
+      //   //         color: selectedUnit === i ? '#2f00ff' : 'black'
+      //   //       }}>{source[i].title}</span>
+      //   //   </div>
+      //   // );
+      // }
+      // layersTitles = [];
       /* добавления слоя для отображения всех слоев */
-      layersTitles.push(
-        <div key={source[selectedUnit].key + '_layerNameDiv_-1'} style={{
-          fontWeight: selectedLayer === -1 ? 'bold' : 'normal',
-          color: selectedLayer === -1 ? '#2f00ff' : 'black'
-        }} className="layer-title" onClick={() => {
-          this.setState({ layersSelected, selectedLayer: -1 })
-        }}>
-          все слои
-          </div>
-      );
+
       /* добавление заголовков слоев */
-      for (let i = 0; i < source[selectedUnit].layers.length; i++) {
-        layersTitles.push(
-          <div key={source[selectedUnit].layers[i].key + '_layerNameDiv_' + i} style={{
-            fontWeight: layersSelected.includes(i, 0) ? 'bold' : 'normal',
-            color: layersSelected.includes(i, 0) ? '#2f00ff' : 'black'
-          }} onClick={() => {
-            this.selectLayerToList(i);
-          }} className="layer-title">
-            <input
-              key={source[selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
-              onChange={() => {
-                console.log(i)
-              }}
-              style={{ outline: 'none', marginRight: 5 }}
-              checked={layersSelected.includes(i, 0)}
-              type={'checkbox'} />
-            {source[selectedUnit].layers[i].title}</div>
-        );
-      }
+
 
 
       let isInChunk: boolean = false;
@@ -1080,14 +1111,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 type="checkbox" name="option2" value="a2" /></div>
               <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
                 только опасные
-                </div>
+              </div>
             </div>
             <div className="input-checkbox">
               <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }}
                 type="checkbox" name="option2" value="a2" /></div>
               <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
                 убрать повреждения
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1117,7 +1148,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         return index === keys.indexOf(item.key!.toString());
       });
 
-      console.log(this.state.stageScale);
 
       main = (
         <div
@@ -1209,19 +1239,25 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
               scaleY={this.state.stageScale}
               x={this.state.stageX} //  * -1
               y={this.state.stageY}>
-              <Layer>
+              <FastLayer>
                 {walls}
+              </FastLayer>
+              <FastLayer>
                 {stillages}
+              </FastLayer>
+              <FastLayer>
                 {objects}
+              </FastLayer>
+              <FastLayer>
                 {texts}
-              </Layer>
+              </FastLayer>
             </Stage>
           </div>
           {IsReadOnlyMode ? '' : elementsPanel}
 
           <div className={'menus-up-wrapper'}>
             <div className={'units-menu-horizontal'}>
-              <select name="" onChange={(e) => {
+              <select onChange={(e) => {
                 let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(source[e.target.value].layers, LayerType.STILLAGES);
                 let stageX = 999999;
                 let stageY = 999999;
@@ -1239,8 +1275,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                   });
                 }
                 Emit.Emitter.emit('GetMapByParams', source[parseInt(e.target.value)].title, source[parseInt(e.target.value)].key, parseInt(e.target.value));
-              }} id="">
-                {unitsOptions}
+              }}>
+                {this.state.unitsOptions}
               </select>
             </div>
           </div>
@@ -1251,7 +1287,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           {/*</div>*/}
           <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{ background: '#E0E0E0' }}
             className="layers-selector-wrapper">
-            {layersTitles}
+            {this.state.layersTitles}
           </div>
           {defectBrowsePanel}
         </div>);
