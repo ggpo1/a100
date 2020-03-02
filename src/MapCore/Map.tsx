@@ -974,9 +974,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
               // isInChunk = (scaledX > scaledAbsStageCoordsX - 500 && scaledX < (scaledAbsStageCoordsX + width + 500)) &&
               //     (scaledY > scaledAbsStageCoordsY - 500 && scaledY < (scaledAbsStageCoordsY + height + 500));
-
-              isInChunk = (scaledX > scaledAbsStageCoordsX && scaledX < (scaledAbsStageCoordsX + width)) &&
-                (scaledY > scaledAbsStageCoordsY && scaledY < (scaledAbsStageCoordsY + height));
+              // console.log('this scale: ' + this.state.stageScale);
+              if (this.state.stageScale === 1) {
+                isInChunk = (element.stillages[i].x > absStageCoords.x - 150 && element.stillages[i].x < (absStageCoords.x + width + 150)) &&
+                    (element.stillages[i].y > absStageCoords.y - 150 && element.stillages[i].y < (absStageCoords.y + height + 150));
+              } else {
+                isInChunk = (scaledX > scaledAbsStageCoordsX - 150 && scaledX < (scaledAbsStageCoordsX + width + 150)) &&
+                    (scaledY > scaledAbsStageCoordsY - 150 && scaledY < (scaledAbsStageCoordsY + height + 150));
+              }
               if (isInChunk) {
                 stillages.push(
                   <Stillage
