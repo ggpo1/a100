@@ -918,52 +918,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     } else {
       const { source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading, isReadOnly } = this.state;
       let unitsTitles: Array<JSX.Element> = [];
-      let layersTitles: Array<JSX.Element> = [];
       let objects: Array<JSX.Element> = [];
       let texts: Array<JSX.Element> = [];
       let stillages: Array<JSX.Element> = [];
-      let signatures: Array<JSX.Element> = [];
-      let layers: Array<JSX.Element> = [];
       let walls: Array<JSX.Element> = [];
 
       let absStageCoords = { x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y) };
 
       let width = window.innerWidth;
       let height = window.innerHeight;
-
-      let unitsOptions: Array<JSX.Element> = [];
-
-
-
-
-
-      // вывод списка блоков
-      // for (let i = 0; i < source.length; i++) {
-      //   unitsOptions.push(
-      //     <option className={'units-blocks-option'} key={source[i].key + '_unitNameOption_' + i} value={i}>{source[i].title}</option>
-      //   );
-      //   // unitsTitles.push(
-      //   //   <div
-      //   //     key={source[i].key + '_unitNameDiv_' + i}
-      //   //     onClick={() => {
-      //   //       // this.setState({selectedUnit: i, selectedLayer: -1, layersSelected: []});
-      //   //       Emit.Emitter.emit('GetMapByParams', source[i].title, source[i].key, i);
-      //   //     }} className="unit-title">
-      //   //     <span
-      //   //       key={source[i].key + '_unitNameDivSpan_' + i}
-      //   //       style={{
-      //   //         fontWeight: selectedUnit === i ? 'bold' : 'normal',
-      //   //         color: selectedUnit === i ? '#2f00ff' : 'black'
-      //   //       }}>{source[i].title}</span>
-      //   //   </div>
-      //   // );
-      // }
-      // layersTitles = [];
-      /* добавления слоя для отображения всех слоев */
-
-      /* добавление заголовков слоев */
-
-
 
       let isInChunk: boolean = false;
 
@@ -973,8 +936,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           isInChunk = false;
           if (element.texts !== undefined) {
             element.texts.forEach(textElement => {
-              isInChunk = (textElement.x > absStageCoords.x - 500 && textElement.x < (absStageCoords.x + width + 500)) &&
-                (textElement.y > absStageCoords.y - 500 && textElement.y < (absStageCoords.y + height + 500));
+              isInChunk = (textElement.x > absStageCoords.x && textElement.x < (absStageCoords.x + width)) &&
+                (textElement.y > absStageCoords.y && textElement.y < (absStageCoords.y + height));
               if (isInChunk) {
                 texts.push(
                   <Text key={textElement.key} source={textElement} />

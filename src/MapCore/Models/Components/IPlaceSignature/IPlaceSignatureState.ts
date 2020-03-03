@@ -14,7 +14,8 @@ interface IPlaceSignatureState {
     parentDefects: Array<VikItem>,
     source: PlaceSignatureItem,
     isBlockScaling: boolean,
-    parentSource: StillageItem
+    parentSource: StillageItem,
+    textElement: JSX.Element
 }
 
 export default IPlaceSignatureState;

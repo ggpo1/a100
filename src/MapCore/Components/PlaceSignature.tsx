@@ -12,6 +12,56 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
     constructor(props) {
         super(props);
 
+        let ps;
+        let delta = 0;
+        if (this.props.parentOrientation === Orientation.HORIZONTAL) {
+            delta = (A100CellSize * this.props.source.place - (A100CellSize/2 + 4 * this.props.source.title.length)) * this.props.parentScale * (this.props.isBlockScaling ? 2 : 1);
+            ps = <Text
+                key={'place_signature_text_' + this.props.parentX + '_' + this.props.parentY + '_' + this.props.parentOrientation + '_' + this.props.source.place + '_' + this.props.source.title + '_' + this.props.source.title.length}
+                onTap={() => { this.openModal() }}
+                onClick={() => { this.openModal() }}
+                x={this.props.parentX + delta}
+                y={this.props.parentY + 9 + this.getScaleK}
+                fontSize={this.fontSize}
+                fill={'white'}
+                text={this.props.source.title}
+            />;
+        } else {
+            if (this.props.isBlockScaling) {
+                delta = (A100CellSize * this.props.source.place - (A100CellSize / 2)) * this.props.parentScale * (this.props.isBlockScaling ? 2 : 1) - 10;
+                ps = <Text
+                    key={'place_signature_text_' + this.props.parentX + '_' + this.props.parentY + '_' + this.props.parentOrientation + '_' + this.props.source.place + '_' + this.props.source.title + '_' + this.props.source.title.length}
+                    onTap={() => {
+                        this.openModal()
+                    }}
+                    onClick={() => {
+                        this.openModal()
+                    }}
+                    x={this.props.parentX + (30 * this.props.parentScale - 10 * this.props.source.title.length)}
+                    y={this.props.parentY + delta}
+                    fontSize={this.fontSize}
+                    fill={'white'}
+                    text={this.props.source.title}
+                />;
+            } else {
+                delta = (A100CellSize * this.props.source.place - (A100CellSize / 2 + this.fontSize / 2)) * this.props.parentScale * (this.props.isBlockScaling ? 2 : 1);
+                ps = <Text
+                    key={'place_signature_text_' + this.props.parentX + '_' + this.props.parentY + '_' + this.props.parentOrientation + '_' + this.props.source.place + '_' + this.props.source.title + '_' + this.props.source.title.length}
+                    onTap={() => {
+                        this.openModal()
+                    }}
+                    onClick={() => {
+                        this.openModal()
+                    }}
+                    x={this.props.parentX + 10.5 + this.getScaleK - (this.props.source.title.length > 1 ? (this.props.source.title.length * 2) : 0)}
+                    y={this.props.parentY + delta}
+                    fontSize={this.fontSize}
+                    fill={'white'}
+                    text={this.props.source.title}
+                />;
+            }
+        }
+
         this.state = {
             parentSource: this.props.parentSource,
             parentPlaceSignatures: this.props.parentPlaceSignatures,
@@ -24,6 +74,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
             parentOrientation: this.props.parentOrientation,
             parentDefects: this.props.parentDefects,
             source: this.props.source,
+            textElement: ps
         };
 
         this.openModal = this.openModal.bind(this);
@@ -35,41 +86,44 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
     }
 
     public get getScaleK(): number {
-        const { parentScale, parentOrientation, isBlockScaling, source } = this.state;
+        try {
+            const {parentScale, parentOrientation, isBlockScaling, source} = this.props;
 
-        const VERTICAL_PARENT_SCALE_K_BIG = 20 * parentScale;
-        const HORIZONTAL_PARENT_SCALE_K_BIG = 20 * parentScale;
-        const VERTICAL_PARENT_SCALE_K_SMALL = 13 * parentScale;
-        const HORIZONTAL_PARENT_SCALE_K_SMALL = 13 * parentScale;
+            const VERTICAL_PARENT_SCALE_K_BIG = 20 * parentScale;
+            const HORIZONTAL_PARENT_SCALE_K_BIG = 20 * parentScale;
+            const VERTICAL_PARENT_SCALE_K_SMALL = 13 * parentScale;
+            const HORIZONTAL_PARENT_SCALE_K_SMALL = 13 * parentScale;
 
-        if (parentScale > 1 && isBlockScaling) {
-            if (parentOrientation === Orientation.VERTICAL) return VERTICAL_PARENT_SCALE_K_BIG;
-            if (parentOrientation === Orientation.HORIZONTAL) return HORIZONTAL_PARENT_SCALE_K_BIG;
-        } else if (parentScale === 1 && isBlockScaling) {
-            if (parentOrientation === Orientation.VERTICAL) {
-                if (source.title.length === 1) return VERTICAL_PARENT_SCALE_K_SMALL;
-                if (source.title.length === 2) return VERTICAL_PARENT_SCALE_K_SMALL - 5;
+            if (parentScale > 1 && isBlockScaling) {
+                if (parentOrientation === Orientation.VERTICAL) return VERTICAL_PARENT_SCALE_K_BIG;
+                if (parentOrientation === Orientation.HORIZONTAL) return HORIZONTAL_PARENT_SCALE_K_BIG;
+            } else if (parentScale === 1 && isBlockScaling) {
+                if (parentOrientation === Orientation.VERTICAL) {
+                    if (source.title.length === 1) return VERTICAL_PARENT_SCALE_K_SMALL;
+                    if (source.title.length === 2) return VERTICAL_PARENT_SCALE_K_SMALL - 5;
+                }
+                if (parentOrientation === Orientation.HORIZONTAL) return HORIZONTAL_PARENT_SCALE_K_SMALL;
             }
-            if (parentOrientation === Orientation.HORIZONTAL) return HORIZONTAL_PARENT_SCALE_K_SMALL;
-        }
+        } catch(e) {}
         return 0;
     }
 
     public get fontSize(): number {
-        const {parentScale, parentOrientation, isBlockScaling} = this.state;
-        const NORMAL_FONT_SIZE = 14;
-        const SCALED_FONT_SIZE_NORMAL = 25;
-        const SCALED_FONT_SIZE_BIG = 35;
+        try {
+            const {parentScale, isBlockScaling} = this.props;
+            const NORMAL_FONT_SIZE = 14;
+            const SCALED_FONT_SIZE_NORMAL = 25;
+            const SCALED_FONT_SIZE_BIG = 35;
 
-        if (parentScale > 1) {
-            return SCALED_FONT_SIZE_BIG;
-        } else if (parentScale === 1 && isBlockScaling) {
-            return SCALED_FONT_SIZE_NORMAL;
-        } else if (!isBlockScaling) {
-            return NORMAL_FONT_SIZE;
-            // return SCALED_FONT_SIZE_NORMAL;
-        }
-
+            if (parentScale > 1) {
+                return SCALED_FONT_SIZE_BIG;
+            } else if (parentScale === 1 && isBlockScaling) {
+                return SCALED_FONT_SIZE_NORMAL;
+            } else if (!isBlockScaling) {
+                return NORMAL_FONT_SIZE;
+                // return SCALED_FONT_SIZE_NORMAL;
+            }
+        } catch(e) {}
         return 0;
     }
 
@@ -99,60 +153,12 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
     };
 
     render() {
-        const { parentX, parentY, parentOrientation, source, parentPlaceSignatures, pmCount, isBlockScaling, parentScale } = this.state;
-
-        let ps;
-        let delta = 0;
-        if (parentOrientation === Orientation.HORIZONTAL) {
-            delta = (A100CellSize * source.place - (A100CellSize/2 + 4 * source.title.length)) * parentScale * (isBlockScaling ? 2 : 1);
-            ps = <Text
-                key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                onTap={() => { this.openModal() }}
-                onClick={() => { this.openModal() }}
-                x={parentX + delta}
-                y={parentY + 9 + this.getScaleK}
-                fontSize={this.fontSize}
-                fill={'white'}
-                text={source.title}
-            />;
-        } else {
-            if (isBlockScaling) {
-                delta = (A100CellSize * source.place - (A100CellSize / 2)) * parentScale * (isBlockScaling ? 2 : 1) - 10;
-                ps = <Text
-                    key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                    onTap={() => {
-                        this.openModal()
-                    }}
-                    onClick={() => {
-                        this.openModal()
-                    }}
-                    x={parentX + (30 * parentScale - 10 * source.title.length)}
-                    y={parentY + delta}
-                    fontSize={this.fontSize}
-                    fill={'white'}
-                    text={source.title}
-                />;
-            } else {
-                delta = (A100CellSize * source.place - (A100CellSize / 2 + this.fontSize / 2)) * parentScale * (isBlockScaling ? 2 : 1);
-                ps = <Text
-                    key={'place_signature_text_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.title + '_' + source.title.length}
-                    onTap={() => {
-                        this.openModal()
-                    }}
-                    onClick={() => {
-                        this.openModal()
-                    }}
-                    x={parentX + 10.5 + this.getScaleK - (source.title.length > 1 ? (source.title.length * 2) : 0)}
-                    y={parentY + delta}
-                    fontSize={this.fontSize}
-                    fill={'white'}
-                    text={source.title}
-                />;
-            }
-        }
+        // const { parentX, parentY, parentOrientation, source, parentPlaceSignatures, pmCount, isBlockScaling, parentScale } = this.state;
 
 
 
-        return ps;
+
+
+        return this.state.textElement;
     }
 }
