@@ -1009,29 +1009,40 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         if (this.state.layersSelected.length !== 0) {
           layersSelected.forEach(el => {
             if (source[selectedUnit].layers[el] !== undefined) {
+              isInChunk = false;
               if (source[selectedUnit].layers[el].stillages !== undefined) {
                 for (let i = 0; i < source[selectedUnit].layers[el].stillages!.length; i++) {
-                  stillages.push(
-                    <Stillage
-                      key={source[selectedUnit].layers[el].stillages![i].key}
-                      source={source[selectedUnit].layers[el].stillages![i]}
-                      mapStillages={source[selectedUnit].layers[el].stillages!}
-                    />
-                  );
+                  isInChunk = (source[selectedUnit].layers[el].stillages![i].x > absStageCoords.x - 150 && source[selectedUnit].layers[el].stillages![i].x < (absStageCoords.x + width + 150)) &&
+                      (source[selectedUnit].layers[el].stillages![i].y > absStageCoords.y - 150 && source[selectedUnit].layers[el].stillages![i].y < (absStageCoords.y + height + 150));
+                  if (isInChunk) {
+                    stillages.push(
+                        <Stillage
+                            key={source[selectedUnit].layers[el].stillages![i].key}
+                            source={source[selectedUnit].layers[el].stillages![i]}
+                            mapStillages={source[selectedUnit].layers[el].stillages!}
+                        />
+                    );
+                  }
                 }
               }
               if (source[selectedUnit].layers[el].walls !== undefined) {
+                isInChunk = false;
                 for (let i = 0; i < source[selectedUnit].layers[el].walls!.length; i++) {
                   let element = source[selectedUnit].layers[el].walls![i];
-                  walls.push(
-                    <Wall
-                      key={element.key}
-                      source={source[selectedUnit].layers[el].walls![i]}
-                    />
-                  );
+                  isInChunk = (element.startX > absStageCoords.x - 150 && element.startX < (absStageCoords.x + width + 150)) &&
+                      (element.startX > absStageCoords.y - 150 && element.startY < (absStageCoords.y + height + 150));
+                  if (isInChunk) {
+                    walls.push(
+                        <Wall
+                            key={element.key}
+                            source={source[selectedUnit].layers[el].walls![i]}
+                        />
+                    );
+                  }
                 }
               }
               if (source[selectedUnit].layers[el].objects !== undefined) {
+                isInChunk = false;
                 for (let i = 0; i < source[selectedUnit].layers[el].objects!.length; i++) {
                   walls.push(
                     <MapObject
