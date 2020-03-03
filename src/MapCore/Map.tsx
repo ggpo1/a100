@@ -868,7 +868,37 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     value={i}>{this.state.source[i].title}</option>
         );
       }
-      const { layersSelected } = this.state;
+      // const { layersSelected } = this.state;
+
+
+      this.animates.forEach(el => el.cancel());
+      this.setState({
+        source: MapSource.data,
+        lazyLoading: false,
+        unitsOptions,
+      });
+    } catch (e) {
+      console.error('[Component: Map] - invalid data!');
+      this.setState({ lazyLoading: false });
+    }
+  }
+
+  render() {
+    if (this.state.source === undefined || this.state.source.length === 0) {
+
+    } else {
+      const { source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading, isReadOnly } = this.state;
+      let unitsTitles: Array<JSX.Element> = [];
+      let objects: Array<JSX.Element> = [];
+      let texts: Array<JSX.Element> = [];
+      let stillages: Array<JSX.Element> = [];
+      let walls: Array<JSX.Element> = [];
+
+      let absStageCoords = { x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y) };
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+
       let layersTitles: Array<JSX.Element> = [
         <div key={this.state.source[this.state.selectedUnit].key + '_layerNameDiv_-1'} style={{
           fontWeight: this.state.selectedLayer === -1 ? 'bold' : 'normal',
@@ -899,37 +929,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         );
       }
 
-      this.animates.forEach(el => el.cancel());
-      this.setState({
-        source: MapSource.data,
-        lazyLoading: false,
-        unitsOptions,
-        layersTitles
-      });
-    } catch (e) {
-      console.error('[Component: Map] - invalid data!');
-      this.setState({ lazyLoading: false });
-    }
-  }
-
-  render() {
-    if (this.state.source === undefined || this.state.source.length === 0) {
-
-    } else {
-      const { source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading, isReadOnly } = this.state;
-      let unitsTitles: Array<JSX.Element> = [];
-      let objects: Array<JSX.Element> = [];
-      let texts: Array<JSX.Element> = [];
-      let stillages: Array<JSX.Element> = [];
-      let walls: Array<JSX.Element> = [];
-
-      let absStageCoords = { x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y) };
-
-      let width = window.innerWidth;
-      let height = window.innerHeight;
 
       let isInChunk: boolean = false;
-
       if (selectedLayer === -1) {
         let layerNum = 0;
         source[selectedUnit].layers.forEach(element => {
@@ -1050,42 +1051,42 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
       }
 
 
-      let main, blocks, filters, elementsPanel, defectBrowsePanel, addLayerSubModal;
+      let main, elementsPanel, defectBrowsePanel;
 
-      blocks = (
-        <div id={'units-block'} style={{ background: '#E0E0E0' }} className="units-selector">
-          <div style={{ background: '' }} className="unit-header-title">
-            <span style={{ height: '50%' }}>выбор блока</span>
-          </div>
-          <div style={{ background: '' }} className="unit-content">
-            {unitsTitles}
-          </div>
-        </div>
-      );
-
-      filters = (
-        <div id={'filters-block'} className="filters-selector" style={{ background: '#E0E0E0' }}>
-          <div style={{ background: '' }} className="filter-header-title">
-            <span style={{ height: '50%' }}>фильтры</span>
-          </div>
-          <div style={{ background: '' }} className="filter-content">
-            <div className="input-checkbox">
-              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }}
-                type="checkbox" name="option2" value="a2" /></div>
-              <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
-                только опасные
-              </div>
-            </div>
-            <div className="input-checkbox">
-              <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }}
-                type="checkbox" name="option2" value="a2" /></div>
-              <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
-                убрать повреждения
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+      // blocks = (
+      //   <div id={'units-block'} style={{ background: '#E0E0E0' }} className="units-selector">
+      //     <div style={{ background: '' }} className="unit-header-title">
+      //       <span style={{ height: '50%' }}>выбор блока</span>
+      //     </div>
+      //     <div style={{ background: '' }} className="unit-content">
+      //       {unitsTitles}
+      //     </div>
+      //   </div>
+      // );
+      //
+      // filters = (
+      //   <div id={'filters-block'} className="filters-selector" style={{ background: '#E0E0E0' }}>
+      //     <div style={{ background: '' }} className="filter-header-title">
+      //       <span style={{ height: '50%' }}>фильтры</span>
+      //     </div>
+      //     <div style={{ background: '' }} className="filter-content">
+      //       <div className="input-checkbox">
+      //         <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }}
+      //           type="checkbox" name="option2" value="a2" /></div>
+      //         <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
+      //           только опасные
+      //         </div>
+      //       </div>
+      //       <div className="input-checkbox">
+      //         <div style={{}}><input onChange={() => this.filtersOnChangeAction('onlyRed')} style={{ height: '50%' }}
+      //           type="checkbox" name="option2" value="a2" /></div>
+      //         <div style={{ height: '100%', fontSize: '0.9vw', paddingLeft: '2%', display: 'flex' }}>
+      //           убрать повреждения
+      //         </div>
+      //       </div>
+      //     </div>
+      //   </div>
+      // );
 
       elementsPanel = <ElementsPanel source={ElementSource} />;
 
@@ -1145,25 +1146,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             <Stage
               key={this.state.parentKey + '_mapStage_stage'}
               draggable={IsReadOnlyMode ? true : !this.state.isDrawing && !this.state.isShapeMovingNow}
-
-
               onDragMove={(e) => {
-                // console.log(this.state.dragNum);
-                // if (this.state.dragNum === 50) {
                   this.setState({
                     moveStageParams: {
                       x: e.target.x(),
                       y: e.target.y()
                     },
-                    // dragNum: 0
                   });
-                // } else {
-                //   this.setState({
-                //     dragNum: this.state.dragNum + 1
-                //   });
-                // }
               }}
-
               onTouchMove={check && isReadOnly ? (e) => {
                 if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
               } : () => {
@@ -1176,11 +1166,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
               } : () => {
               }}
-
               onDragEnd={e => {
                 this.stageDragEnd(e.target.x(), e.target.y())
               }}
-
               onMouseMove={check ? (e) => {
                 if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
               } : () => {
@@ -1193,7 +1181,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
               } : () => {
               }}
-
               style={{ cursor: 'pointer' }}
               width={width}
               height={height}
@@ -1250,7 +1237,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
           {/*</div>*/}
           <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'} style={{ background: '#E0E0E0' }}
             className="layers-selector-wrapper">
-            {this.state.layersTitles}
+            {layersTitles}
           </div>
           {defectBrowsePanel}
         </div>);

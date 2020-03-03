@@ -17,7 +17,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
         if (this.props.parentOrientation === Orientation.HORIZONTAL) {
             delta = (A100CellSize * this.props.source.place - (A100CellSize/2 + 4 * this.props.source.title.length)) * this.props.parentScale * (this.props.isBlockScaling ? 2 : 1);
             ps = <Text
-                key={'place_signature_text_' + this.props.parentX + '_' + this.props.parentY + '_' + this.props.parentOrientation + '_' + this.props.source.place + '_' + this.props.source.title + '_' + this.props.source.title.length}
+                key={`${this.props.parentSource.key}_placeSignature`}
                 onTap={() => { this.openModal() }}
                 onClick={() => { this.openModal() }}
                 x={this.props.parentX + delta}
@@ -30,7 +30,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
             if (this.props.isBlockScaling) {
                 delta = (A100CellSize * this.props.source.place - (A100CellSize / 2)) * this.props.parentScale * (this.props.isBlockScaling ? 2 : 1) - 10;
                 ps = <Text
-                    key={'place_signature_text_' + this.props.parentX + '_' + this.props.parentY + '_' + this.props.parentOrientation + '_' + this.props.source.place + '_' + this.props.source.title + '_' + this.props.source.title.length}
+                    key={`${this.props.parentSource.key}_placeSignature`}
                     onTap={() => {
                         this.openModal()
                     }}
@@ -46,7 +46,7 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
             } else {
                 delta = (A100CellSize * this.props.source.place - (A100CellSize / 2 + this.fontSize / 2)) * this.props.parentScale * (this.props.isBlockScaling ? 2 : 1);
                 ps = <Text
-                    key={'place_signature_text_' + this.props.parentX + '_' + this.props.parentY + '_' + this.props.parentOrientation + '_' + this.props.source.place + '_' + this.props.source.title + '_' + this.props.source.title.length}
+                    key={`${this.props.parentSource.key}_placeSignature`}
                     onTap={() => {
                         this.openModal()
                     }}
@@ -153,12 +153,6 @@ export default class PlaceSignature extends Component<IPlaceSignatureProps, IPla
     };
 
     render() {
-        // const { parentX, parentY, parentOrientation, source, parentPlaceSignatures, pmCount, isBlockScaling, parentScale } = this.state;
-
-
-
-
-
         return this.state.textElement;
     }
 }
