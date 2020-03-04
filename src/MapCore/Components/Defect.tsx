@@ -63,6 +63,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                         this.openModal()
                     }}
                     onClick={() => {
+                        console.log('this');
                         this.openModal()
                     }}
                     radius={defectOptions.radius}
@@ -81,6 +82,7 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                         this.openModal()
                     }}
                     onClick={() => {
+                        console.log('this');
                         this.openModal()
                     }}
                     radius={defectOptions.radius}
@@ -90,74 +92,6 @@ export default class Defect extends React.Component<IDefectProps, IDefectState> 
                 />
             );
         }
-        // } else if (source.place === 2) {
-        //     if (parentOrientation === Orientation.VERTICAL) {
-        //
-        //         // other colors
-        //         vik = (
-        //             <Circle
-        //                 key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
-        //                 onTap={() => { this.openModal() }}
-        //                 onClick={() => { this.openModal() }}
-        //                 radius={defectOptions.radius}
-        //                 x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
-        //                 y={parentY + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 2)}
-        //                 fill={source.color}
-        //             />
-        //         );
-        //
-        //
-        //     } else {
-        //         // place 2 and orientation is horizontal
-        //
-        //         vik = (
-        //             <Circle
-        //                 key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
-        //                 onTap={() => { this.openModal() }}
-        //                 onClick={() => { this.openModal() }}
-        //                 radius={defectOptions.radius}
-        //                 x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 2)}
-        //                 y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
-        //                 fill={source.color}
-        //             />
-        //         );
-        //
-        //     }
-        // } else if (source.place === 3) {
-        //     if (parentOrientation === Orientation.VERTICAL) {
-        //         // place 3 and orientation is vertical
-        //
-        //         // other colors
-        //         vik = (
-        //             <Circle
-        //                 key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
-        //                 onTap={() => { this.openModal() }}
-        //                 onClick={() => { this.openModal() }}
-        //                 radius={defectOptions.radius}
-        //                 x={parentX + (defectOptions.radius + defectOptions.centeringValue)}
-        //                 y={parentY + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 4)}
-        //                 fill={source.color}
-        //             />
-        //         );
-        //
-        //     } else {
-        //         // place 3 and orientations is horizontal
-        //
-        //         // other color
-        //         vik = (
-        //             <Circle
-        //                 key={'defect_circle_' + '_' + parentX + '_' + parentY + '_' + parentOrientation + '_' + source.place + '_' + source.level + '_' + source.color}
-        //                 onTap={() => { this.openModal() }}
-        //                 onClick={() => { this.openModal() }}
-        //                 radius={defectOptions.radius}
-        //                 x={parentX + (defectOptions.radius + defectOptions.centeringValue + 12.5 * 4)}
-        //                 y={parentY + (defectOptions.radius + defectOptions.centeringValue)}
-        //                 fill={source.color}
-        //             />
-        //         );
-        //
-        //     }
-        // }
 
         return vik;
     }

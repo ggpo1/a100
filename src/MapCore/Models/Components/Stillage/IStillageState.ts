@@ -8,9 +8,9 @@ interface IStillageState {
     deviations: Array<JSX.Element>,
     placeSignatures: Array<JSX.Element>,
     signature: JSX.Element,
-    redDefects: Array<JSX.Element>,
-    greenDefects: Array<JSX.Element>,
-    yellowDefects: Array<JSX.Element>
+    redDefects?: Array<JSX.Element>,
+    greenDefects?: Array<JSX.Element>,
+    yellowDefects?: Array<JSX.Element>
 }
 
 export default IStillageState;

@@ -166,6 +166,9 @@ export default class Signature extends Component<ISignatureProps, ISignatureStat
     render() {
         const { parentX, parentY, parentOrientation, parentSize, source, pmCount, isBlockScaling, parentScale } = this.state;
         let _x, _y, _width, _height = 0;
+
+        if (source === null) return null;
+
         // if (parentSize === StillageSize.NORMAL) {
         if (parentOrientation === Orientation.VERTICAL) {
 
