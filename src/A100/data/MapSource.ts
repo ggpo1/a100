@@ -9,6 +9,8 @@ import Orientation from "../../MapCore/Models/Enums/Orientation";
 import SignaturePosition from "../../MapCore/Models/Enums/SignaturePosition";
 import LogHandler from '../../LogHandler/LogHandler';
 import LogType from "../model/enums/LogType";
+import GlobalsatBang from "../model/GlobalsatBang";
+import GlobalsatDeviation from "../model/GlobalsatDeviation";
 
 export default class MapSource {
     public static offline: boolean = false;
@@ -59,13 +61,13 @@ export default class MapSource {
                                 position: SignaturePosition.RIGHT,
                             },
                             deviations: [
-                                {
-                                    id: 0,
-                                    key: 'unit_0_layer_0_stillage_0_deviation_0',
-                                    deviationPosition: SignaturePosition.TOP,
-                                    arrowFirstToSecond: false,
-                                    stillageID: 0
-                                }
+                                // {
+                                //     id: 0,
+                                //     key: 'unit_0_layer_0_stillage_0_deviation_0',
+                                //     deviationPosition: SignaturePosition.TOP,
+                                //     arrowFirstToSecond: false,
+                                //     stillageID: 0
+                                // }
                             ],
                             placeSignatures: [
                                 {
@@ -90,6 +92,8 @@ export default class MapSource {
             ]
         },
     ];
+    public static globalsatBangs: Array<GlobalsatBang> = [];
+    public static globalsatDeviations: Array<GlobalsatDeviation> = [];
 
     public static async GetMapByParams(mapUnit: string, mapKey: string, selectedUnit: number) {
         if (!this.offline) {
@@ -115,9 +119,14 @@ export default class MapSource {
                 //     Emit.Emitter.emit('setSelectedUnit', selectedUnit);
                 // }
             } else {
-                LogHandler.handle('MapSource', LogType.ERROR, 'error while fetching data by params!')
+                LogHandler.handle('MapSource', LogType.ERROR, 'error while fetching data by params!');
             }
         }
+    }
+
+    public static async GetGlobalsatData() {
+        let bangs = await MapAPI.getGlobalsatBangs(A100ConnectionData.data);
+        let deviations = await MapAPI.getClobalsatDeviations(A100ConnectionData.data);
     }
 
     public static async GetUnits() {

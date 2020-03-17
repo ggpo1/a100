@@ -4,7 +4,18 @@ import LayerType from "../../Enums/LayerType";
 import StillageItem from "../../ArrayItems/StillageItem";
 import ObjectItem from "../../ArrayItems/ObjectItem";
 import VikItem from "../../ArrayItems/VikItem";
+import GlobalsatBang from "../../../../A100/model/GlobalsatBang";
+import GlobalsatDeviation from "../../../../A100/model/GlobalsatDeviation";
+import IGlobalsatInfoSource from './../GlobalsatInfoModal/IGlobalsatInfoSource';
+
+
 interface IMapState {
+    isGlobalsatMode: boolean,
+    isGlobalsatInfoModal: boolean,
+    globalsatInfoModalSource: IGlobalsatInfoSource
+    globalsatBangs: Array<GlobalsatBang>,
+    globalsatDeviations: Array<GlobalsatDeviation>,
+
 
     // render elements
     unitsOptions: Array<JSX.Element>,

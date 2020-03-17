@@ -1,5 +1,5 @@
 import React from 'react';
-import {Stage, Layer, FastLayer} from 'react-konva';
+import {Layer, Stage} from 'react-konva';
 
 import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
@@ -35,6 +35,13 @@ import VikItem from "./Models/ArrayItems/VikItem";
 import LogType from "../A100/model/enums/LogType";
 import LogHandler from "../LogHandler/LogHandler";
 import IsReadOnlyMode from "./Data/IsReadOnlyMode";
+import GlobalsatBang from "./Components/GlobalsatBang";
+import GlobalsatDeviation from "./Components/GlobalsatDeviation";
+import GlobalsatInfoType from './Models/Enums/GlobalsatInfoType';
+import GlobalsatBangType from './Models/ArrayItems/GlobalsatBang';
+import GlobalsatDeviationType from './Models/ArrayItems/GlobalsatDeviation';
+import IGlobalsatInfoSource from './Models/Components/GlobalsatInfoModal/IGlobalsatInfoSource';
+import GlobalsatInfoModal from "./Components/Page/Modals/GlobalsatInfoModal";
 
 export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
@@ -77,7 +84,17 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         }
 
         this.state = {
-
+            isGlobalsatMode: false,
+            globalsatInfoModalSource: {
+                parentKey: '',
+                type: GlobalsatInfoType.BANG,
+                bangsList: [],
+                deviationsList: [],
+                stillagesList: []
+            },
+            isGlobalsatInfoModal: false,
+            globalsatBangs: [],
+            globalsatDeviations: [],
             // render elements
             unitsOptions: unitsOptions,
             layersTitles: [],
@@ -172,6 +189,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         this.setAddCirclesVisibility = this.setAddCirclesVisibility.bind(this);
         this.addSameShape = this.addSameShape.bind(this);
         this.mapSetState = this.mapSetState.bind(this);
+        this.setGlobalsatData = this.setGlobalsatData.bind(this);
 
         // Событие для удаления стены
         Emit.Emitter.addListener('deleteWall', this.deleteWall);
@@ -205,7 +223,15 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             selectedStillage: stillage
         }));
 
+        Emit.Emitter.addListener('openGlobalsatInfoModal', (infoSource: IGlobalsatInfoSource) =>
+            this.setState({
+                isGlobalsatInfoModal: true,
+                globalsatInfoModalSource: infoSource
+            })
+        );
+
         Emit.Emitter.addListener('setSelectedUnit', this.setMapUnit);
+        Emit.Emitter.addListener('setGlobalsatData', this.setGlobalsatData);
     }
 
     public animationIDs: Array<string> = ['units-block', 'filters-block', 'elements-panel', 'layers-block'];
@@ -871,6 +897,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         this.setState({selectedUnit: selectedUnit, selectedLayer: -1, layersSelected: []});
     };
 
+    public setGlobalsatData() {
+        this.setState({
+            globalsatBangs: MapSource.globalsatBangs,
+            globalsatDeviations: MapSource.globalsatDeviations
+        });
+    }
+
     public mapSetState() {
         try {
             // this.animate.finish();
@@ -900,17 +933,70 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         if (this.state.source === undefined || this.state.source.length === 0) {
 
         } else {
-            const {source, selectedLayer, selectedUnit, layersSelected, isDefectBrowsePanel, isWallResizingNow, lazyLoading, isReadOnly} = this.state;
+            const {
+                source,
+                selectedLayer,
+                selectedUnit,
+                layersSelected,
+                isDefectBrowsePanel,
+                isWallResizingNow,
+                lazyLoading,
+                isReadOnly,
+                globalsatBangs,
+                globalsatDeviations,
+                isGlobalsatMode
+            } = this.state;
+
             let unitsTitles: Array<JSX.Element> = [];
             let objects: Array<JSX.Element> = [];
             let texts: Array<JSX.Element> = [];
             let stillages: Array<JSX.Element> = [];
             let walls: Array<JSX.Element> = [];
 
+            let globalsatBangsElements: Array<JSX.Element> = [];
+            let globalsatDeviationElements: Array<JSX.Element> = [];
+
             let absStageCoords = {x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y)};
 
             let width = window.innerWidth;
             let height = window.innerHeight;
+
+            let globalsatInfoElement;
+            if (this.state.isGlobalsatInfoModal)
+                globalsatInfoElement = <GlobalsatInfoModal source={this.state.globalsatInfoModalSource} />;
+
+            // globalsat bang elements
+
+            if (isGlobalsatMode) {
+                let stillageLayer = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
+                try {
+                    // globalsatBangsElements.push();
+                    globalsatBangs.forEach((el, i) => globalsatBangsElements.push(
+                        <GlobalsatBang
+                            key={`${source[selectedUnit].key}_globalsatBang_${i}`}
+                            parentKey={`${source[selectedUnit].key}_globalsatBang_${i}`}
+                            source={globalsatBangs[i]}
+                            stillages={source[selectedUnit].layers[stillageLayer].stillages!}
+                            bangs={globalsatBangs}
+                        />
+                    ));
+                } catch {
+                }
+
+                try {
+                    globalsatDeviations.forEach((el, i) => globalsatDeviationElements.push(
+                        <GlobalsatDeviation
+                            key={`${source[selectedUnit].key}_globalsatDeviation_${i}`}
+                            parentKey={`${source[selectedUnit].key}_globalsatDeviation_${i}`}
+                            source={el}
+                            stillages={source[selectedUnit].layers[stillageLayer].stillages!}
+                            deviations={globalsatDeviations}
+                        />
+                    ));
+                } catch {
+                }
+
+            }
 
             let layersTitles: Array<JSX.Element> = [
                 <div key={this.state.source[this.state.selectedUnit].key + '_layerNameDiv_-1'} style={{
@@ -933,7 +1019,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                         <input
                             key={this.state.source[this.state.selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
                             onChange={() => {
-                                console.log(i)
                             }}
                             style={{outline: 'none', marginRight: 5}}
                             checked={this.state.layersSelected.includes(i, 0)}
@@ -990,7 +1075,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                                 isInChunk = (scaledX > scaledAbsStageCoordsX - 150 && scaledX < (scaledAbsStageCoordsX + width + 150)) &&
                                     (scaledY > scaledAbsStageCoordsY - 150 && scaledY < (scaledAbsStageCoordsY + height + 150));
                             }
-                            if (isInChunk) {
+                            // if (isInChunk) {
                                 stillages.push(
                                     <Stillage
                                         key={element.stillages[i].key}
@@ -998,7 +1083,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                                         mapStillages={_mapStillages!}
                                     />
                                 );
-                            }
+                            // }
                         }
                     }
                     isInChunk = false;
@@ -1006,14 +1091,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                         for (let i = 0; i < element.walls!.length; i++) {
                             isInChunk = (element.walls[i].startX > absStageCoords.x - 500 && element.walls[i].startX < (absStageCoords.x + width + 500)) &&
                                 (element.walls[i].startX > absStageCoords.y - 500 && element.walls[i].startY < (absStageCoords.y + height + 500));
-                            if (isInChunk) {
+                            // if (isInChunk) {
                                 walls.push(
                                     <Wall
                                         key={element.walls[i].key}
                                         source={element.walls[i]}
                                     />
                                 );
-                            }
+                            // }
                         }
                     }
                     layerNum++;
@@ -1172,14 +1257,14 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                         <Stage
                             key={this.state.parentKey + '_mapStage_stage'}
                             draggable={IsReadOnlyMode ? true : !this.state.isDrawing && !this.state.isShapeMovingNow}
-                            onDragMove={(e) => {
-                                this.setState({
-                                    moveStageParams: {
-                                        x: e.target.x(),
-                                        y: e.target.y()
-                                    },
-                                });
-                            }}
+                            // onDragMove={(e) => {
+                            //     this.setState({
+                            //         moveStageParams: {
+                            //             x: e.target.x(),
+                            //             y: e.target.y()
+                            //         },
+                            //     });
+                            // }}
                             onTouchMove={check && isReadOnly ? (e) => {
                                 if (!IsReadOnlyMode) this.StageOnMouseMoveHandler(e)
                             } : () => {
@@ -1220,6 +1305,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                                 {stillages}
                                 {objects}
                                 {texts}
+                                {globalsatDeviationElements}
+                                {globalsatBangsElements}
+                                {globalsatInfoElement}
                             </Layer>
                         </Stage>
                     </div>
@@ -1228,6 +1316,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     <div className={'menus-up-wrapper'}>
                         <div className={'units-menu-horizontal'}>
                             <select onChange={(e) => {
+                                Emit.Emitter.emit('GetMapByParams', source[parseInt(e.target.value)].title, source[parseInt(e.target.value)].key, parseInt(e.target.value));
                                 let stillagesLayer = this.layerService.getLayerIndexByTypeBinary(source[e.target.value].layers, LayerType.STILLAGES);
                                 let stageX = 999999;
                                 let stageY = 999999;
@@ -1244,7 +1333,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                                         stageY: stageY * -1
                                     });
                                 }
-                                Emit.Emitter.emit('GetMapByParams', source[parseInt(e.target.value)].title, source[parseInt(e.target.value)].key, parseInt(e.target.value));
                             }}>
                                 {this.state.unitsOptions}
                             </select>

@@ -33,10 +33,11 @@ export default class MapView extends React.Component<IMapViewProps, IMapViewStat
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let that = this;
         // MapSource.GetMap();
-        MapSource.GetUnits();
+        (async () =>  MapSource.GetUnits())();
+        (async () => MapSource.GetGlobalsatData())();
         setTimeout(function() {
             that.forceUpdate();
         }, 5000);
