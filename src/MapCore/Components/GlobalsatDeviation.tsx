@@ -88,6 +88,7 @@ export default class GlobalsatDeviation extends React.Component<IGlobalsatDeviat
                     fill={'blue'}
                     onClick={() => Emit.Emitter.emit('openGlobalsatInfoModal', {
                         parentKey: parentKey,
+                        deviationSource: source,
                         type: GlobalsatInfoType.DEVIATION,
                         deviationsList: deviations,
                         stillagesList: stillages

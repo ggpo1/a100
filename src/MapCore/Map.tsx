@@ -84,7 +84,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         }
 
         this.state = {
-            isGlobalsatMode: false,
+            isGlobalsatMode: true, // включение/выключение режима интеграции с globalsat
             globalsatInfoModalSource: {
                 parentKey: '',
                 type: GlobalsatInfoType.BANG,
@@ -229,6 +229,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 globalsatInfoModalSource: infoSource
             })
         );
+
+        Emit.Emitter.addListener('closeGlobalsatInfoModal', () => this.setState({isGlobalsatInfoModal: false}));
 
         Emit.Emitter.addListener('setSelectedUnit', this.setMapUnit);
         Emit.Emitter.addListener('setGlobalsatData', this.setGlobalsatData);

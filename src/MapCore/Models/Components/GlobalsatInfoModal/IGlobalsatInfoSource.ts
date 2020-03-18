@@ -4,7 +4,9 @@ import GlobalsatInfoType from './../../Enums/GlobalsatInfoType';
 import StillageItem from './../../ArrayItems/StillageItem';
 
 export default interface IGlobalsatInfoSource {
-    parentKey: string
+    parentKey: string,
+    bangSource?: GlobalsatBang,
+    deviationSource?: GlobalsatDeviation,
     type: GlobalsatInfoType,
     bangsList?: Array<GlobalsatBang>,
     deviationsList?: Array<GlobalsatDeviation>,

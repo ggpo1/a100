@@ -7,6 +7,7 @@ import StillageItem from './../../../Models/ArrayItems/StillageItem';
 import Orientation from './../../../Models/Enums/Orientation';
 import GlobalsatDeviation from './../../../../A100/model/GlobalsatDeviation';
 import GlobalsatBang from '../../../Models/ArrayItems/GlobalsatBang';
+import Emit from "../../../Data/Emit";
 
 function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
     const [source] = useState<typeof props.source>(props.source);
@@ -17,15 +18,17 @@ function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
     //     if (type === GlobalsatInfoType.DEVIATION) return source as GlobalsatDeviation;
     // }
 
+    console.log(source);
+
     let sts: { LOW?: StillageItem, HIGH?: StillageItem } = {};
 
     if (source.stillagesList !== undefined && source !== undefined) {
         source.stillagesList.forEach(el => {
             if (el.id === (
-                source.type === GlobalsatInfoType.BANG ? source.bangsList![selectedInfo].section1ID : source.deviationsList![selectedInfo].section1ID
+                source.type === GlobalsatInfoType.BANG ? source.bangSource!.section1ID : source.deviationSource!.section1ID
             )) sts.LOW = el;
             if (el.id === (
-                source.type === GlobalsatInfoType.BANG ? source.bangsList![selectedInfo].section2ID : source.deviationsList![selectedInfo].section2ID
+                source.type === GlobalsatInfoType.BANG ? source.bangSource!.section2ID : source.deviationSource!.section2ID
             )) sts.HIGH = el;
         });
 
@@ -83,7 +86,7 @@ function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
                     text={'закрыть'}
                     fontStyle={'bold'}
                     fill={'#BDBDBD'}
-                    // onClick={() => this.setState({isInfoRect: false})}
+                    onClick={() => Emit.Emitter.emit('closeGlobalsatInfoModal')}
                 />,
                 <Text
                     key={`${source.parentKey}_deviation_rowTitle`}
@@ -99,7 +102,7 @@ function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
                     x={_x + 150}
                     y={_y + 40}
                     fontSize={15}
-                    text={source.deviationsList![selectedInfo].row}
+                    text={source.deviationSource!.row}
                     fontStyle={'normal'}
                     fill={'#666666'}
                 />,
@@ -117,7 +120,7 @@ function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
                     x={_x + 150}
                     y={_y + 65}
                     fontSize={15}
-                    text={source.deviationsList![selectedInfo].place2}
+                    text={source.deviationSource!.place2}
                     fontStyle={'normal'}
                     fill={'#666666'}
                 />,
@@ -135,7 +138,7 @@ function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
                     x={_x + 150}
                     y={_y + 90}
                     fontSize={15}
-                    text={`${source.deviationsList![selectedInfo].deviationDate.split('T')[0]}`}
+                    text={`${source.deviationSource!.deviationDate.split('T')[0]}`}
                     fontStyle={'normal'}
                     fill={'#666666'}
                 />,
@@ -153,7 +156,7 @@ function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
                     x={_x + 150}
                     y={_y + 115}
                     fontSize={15}
-                    text={`${source.deviationsList![selectedInfo].deviationDate.split('T')[1]}`}
+                    text={`${source.deviationSource!.deviationDate.split('T')[1]}`}
                     fontStyle={'normal'}
                     fill={'#666666'}
                 />,
@@ -171,36 +174,36 @@ function GlobalsatInfoModal(props: GlobalsatInfoModalProps): any {
                     x={_x + 150}
                     y={_y + 140}
                     fontSize={15}
-                    text={`${parseFloat(source.deviationsList![selectedInfo].deviationValue).toFixed(2)}`}
+                    text={`${parseFloat(source.deviationSource!.deviationValue).toFixed(2)}`}
                     fontStyle={'normal'}
                     fill={'#666666'}
                 />,
-                <Text
-                    key={`${source.parentKey}_deviation_backButton`}
-                    x={_x + 65}
-                    y={_y + 175}
-                    // ref={node => backTextNode = node}
-                    // onMouseOver={() => backTextNode.fill('red')}
-                    // onMouseLeave={() => backTextNode.fill('blue')}
-                    fontSize={15}
-                    text={'назад'}
-                    fontStyle={'bold'}
-                    fill={'blue'}
-                    // onClick={() => this.setState({selectedBangIndex: selectedBangIndex === 0 ? selectedBangIndex : selectedBangIndex - 1})}
-                />,
-                <Text
-                    key={`${source.parentKey}_deviation_forwardButton`}
-                    x={_x + 130}
-                    y={_y + 175}
-                    // ref={node => forwardTextNode = node}
-                    // onMouseOver={() => forwardTextNode.fill('red')}
-                    // onMouseLeave={() => forwardTextNode.fill('blue')}
-                    fontSize={15}
-                    text={'вперёд'}
-                    fontStyle={'bold'}
-                    fill={'blue'}
-                    // onClick={() => this.setState({selectedBangIndex: selectedBangIndex + 1})}
-                />,
+                // <Text
+                //     key={`${source.parentKey}_deviation_backButton`}
+                //     x={_x + 65}
+                //     y={_y + 175}
+                //     // ref={node => backTextNode = node}
+                //     // onMouseOver={() => backTextNode.fill('red')}
+                //     // onMouseLeave={() => backTextNode.fill('blue')}
+                //     fontSize={15}
+                //     text={'назад'}
+                //     fontStyle={'bold'}
+                //     fill={'blue'}
+                //     // onClick={() => this.setState({selectedBangIndex: selectedBangIndex === 0 ? selectedBangIndex : selectedBangIndex - 1})}
+                // />,
+                // <Text
+                //     key={`${source.parentKey}_deviation_forwardButton`}
+                //     x={_x + 130}
+                //     y={_y + 175}
+                //     // ref={node => forwardTextNode = node}
+                //     // onMouseOver={() => forwardTextNode.fill('red')}
+                //     // onMouseLeave={() => forwardTextNode.fill('blue')}
+                //     fontSize={15}
+                //     text={'вперёд'}
+                //     fontStyle={'bold'}
+                //     fill={'blue'}
+                //     // onClick={() => this.setState({selectedBangIndex: selectedBangIndex + 1})}
+                // />,
             ];
         }
         return [
