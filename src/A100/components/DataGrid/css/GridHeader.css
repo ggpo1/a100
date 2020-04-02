@@ -1,0 +1,30 @@
+.girdheader-wrapper {
+    display: flex;
+    padding: 0 1%;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+}
+
+.header-cell {
+    display: flex;
+    font-size: 1.2vw;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    height: 50%;
+    cursor: pointer;
+    /* background: red; */
+    /* border: 1px solid #d1d1d1; */
+}
+
+.header-cell:not(:first-child) {
+    margin-left: 1%;
+}
+
+.sorting-header {
+    color: blue;
+}

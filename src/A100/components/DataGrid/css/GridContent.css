@@ -1,0 +1,18 @@
+.grid-block {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.gridcontent-wrapper {
+    flex-direction: column;
+    padding: 0.4%;
+}
+
+.grid-row {
+    height: 7%;
+    border: 1px dashed orange;
+    margin-top: 1%;
+    /* background: red; */
+}
