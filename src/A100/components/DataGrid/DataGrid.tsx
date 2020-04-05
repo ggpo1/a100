@@ -5,6 +5,7 @@ import IDataGridState from './models/components/DataGrid/IDataGridState';
 import IDataGridProps from './models/components/DataGrid/IDataGridProps';
 
 import './css/DataGrid.css';
+import GridPager from './components/GridPager';
 // import { IGridHeaderSource } from './models/sources/IDataGridSource';
 
 
@@ -21,10 +22,10 @@ function DataGrid(props: IDataGridProps) {
 				<GridHeader source={source.headers} />
 			</div>
 			<div className={'grid-content'}>
-				<GridContent  />
+				<GridContent source={source} />
 			</div>
 			<div className={'grid-pager'}>
-				
+				<GridPager pages={source.pages.length} />
 			</div>
 		</div>
 	);

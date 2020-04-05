@@ -49,7 +49,33 @@ function DefectsView() {
 						title: 'Исправлен'
 					}
 				],
-				pages: []
+				pages: [
+					{
+						page: 1,
+						rows: [
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Красный',
+								comment: 'Коммент',
+								browseDate: '2019-12-12',
+								isDone: false,
+							}
+						]
+					},
+					{
+						page: 2,
+						rows: []
+					},
+					{
+						page: 3,
+						rows: []
+					},
+				]
 			}} />
 		</div>
 	);
