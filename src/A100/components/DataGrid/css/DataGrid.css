@@ -5,7 +5,7 @@
     height: 100%;
     border: 1px solid #868686;
     box-sizing: border-box;
-    background: gray;
+    /* background: gray; */
 }
 
 .grid-header {
@@ -13,14 +13,17 @@
     width: 100%;
     height: 10%;
     color: #868686;
+    border-bottom: 2px solid grey; 
 }
 
 .grid-content {
     display: flex;
     /* color: white; */
+    /* padding: 0 1%; */
 }
 
 .grid-pager {
+    border-top: 2px solid grey;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -10,43 +10,63 @@ function DefectsView() {
 				headers: [
 					{
 						key: 'row',
-						title: 'Ряд'
+						type: 'string',
+						title: 'Ряд',
+						isHide: false
 					},
 					{
 						key: 'place',
-						title: 'Место'
+						type: 'string',
+						title: 'Место',
+						isHide: false
 					},
 					{
 						key: 'level',
-						title: 'Уровень'
+						type: 'string',
+						title: 'Уровень',
+						isHide: false
 					},
 					{
 						key: 'elementName',
-						title: 'Элемент'
+						type: 'string',
+						title: 'Элемент',
+						isHide: false
 					},
 					{
 						key: 'size',
-						title: 'Размер'
+						type: 'string',
+						title: 'Размер',
+						isHide: false
 					},
 					{
 						key: 'defectType',
-						title: 'Тип дефекта'
+						type: 'string',
+						title: 'Тип дефекта',
+						isHide: false
 					},
 					{
 						key: 'riskLevel',
-						title: 'Уровень риска'
+						type: 'string',
+						title: 'Уровень риска',
+						isHide: false
 					},
 					{
 						key: 'comment',
-						title: 'Комментарий'
+						type: 'string',
+						title: 'Комментарий',
+						isHide: true
 					},
 					{
 						key: 'browseDate',
-						title: 'Дата обнаружения'
+						type: 'string',
+						title: 'Дата обнаружения',
+						isHide: false
 					},
 					{
 						key: 'isDone',
-						title: 'Исправлен'
+						type: 'boolean',
+						title: 'Исправлен',
+						isHide: false
 					}
 				],
 				pages: [
@@ -61,20 +81,174 @@ function DefectsView() {
 								size: '1204x134',
 								defectType: 'Скручивание',
 								riskLevel: 'Красный',
-								comment: 'Коммент',
+								comment: 'Комментарий к данному повреждению',
 								browseDate: '2019-12-12',
 								isDone: false,
+								backColor: '#f08080'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Жёлтый',
+								comment: 'Комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#fffacd'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Зелёный',
+								comment: 'Еще один комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#90ee90'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Красный',
+								comment: 'Комментарий к данному повреждению',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#f08080'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Жёлтый',
+								comment: 'Комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#fffacd'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Зелёный',
+								comment: 'Еще один комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#90ee90'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Красный',
+								comment: 'Комментарий к данному повреждению',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#f08080'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Жёлтый',
+								comment: 'Комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#fffacd'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Зелёный',
+								comment: 'Еще один комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#90ee90'
 							}
 						]
 					},
 					{
 						page: 2,
-						rows: []
-					},
-					{
-						page: 3,
-						rows: []
-					},
+						rows: [
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Зелёный',
+								comment: 'Еще один комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#90ee90'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Красный',
+								comment: 'Комментарий к данному повреждению',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#f08080'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Жёлтый',
+								comment: 'Комментарий',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#fffacd'
+							},
+							{
+								row: '1',
+								place: '3',
+								level: '1',
+								elementName: 'Балка',
+								size: '1204x134',
+								defectType: 'Скручивание',
+								riskLevel: 'Красный',
+								comment: 'Комментарий к данному повреждению',
+								browseDate: '2019-12-12',
+								isDone: false,
+								backColor: '#f08080'
+							},
+						]
+					}
 				]
 			}} />
 		</div>

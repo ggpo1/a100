@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import '../css/GridPager.css';
+import Emit from '../../../../MapCore/Data/Emit';
 
 interface IGridPagerProps {
     pages: number
@@ -8,11 +9,24 @@ interface IGridPagerProps {
 
 function GridPager(props: IGridPagerProps) {
     const [pages] = useState<typeof props.pages>(props.pages);
+    const [page, setPage] = useState<number>(0);
+
+    let pageTitleClickHanadle = (newPage: number) => {
+        Emit.Emitter.emit('setPage', newPage);
+        setPage(newPage);
+    };
 
     let pagesTitles: Array<JSX.Element> = [];
     for (let i = 1; i <= pages; i++) {
         pagesTitles.push(
-            <div key={`pageTitle_${i}`} className={'pager-page-title'}>{i}</div>
+            <div
+                key={`pageTitle_${i}`}
+                style={{ color: (i === page + 1 ? 'blue' : '') }}
+                className={'pager-page-title'}
+                onClick={() => pageTitleClickHanadle(i-1)}
+            >
+                {i}
+            </div>
         );
     }
 

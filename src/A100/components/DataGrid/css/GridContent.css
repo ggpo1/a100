@@ -7,13 +7,53 @@
 
 .gridcontent-wrapper {
     flex-direction: column;
-    padding: 0.4%;
+    /* padding-top: 1%; */
+    padding-bottom: 1%;
+    /* padding: 0.4%; */
+    
+    /* justify-content: flex-start; */
+    /* align-items: space-between; */
 }
 
 .grid-row {
-    height: 7%;
-    border: 1px dashed orange;
-    margin-top: 1%;
-    color: white;
+    display: flex;
+    align-items: center;
+    min-height: 7%;
+    height: auto;
+    padding: 0 1%;
+    /* border: 1px dashed orange; */
+    /* margin-top: 1%; */
+    color: #4f4a4a;
+    box-sizing: border-box;
+    padding-top: 1%;
+    padding-bottom: 1%;
     /* background: red; */
+}
+
+.row-cell {
+    /* background: red; */
+    display: flex;
+    align-items: center;
+    font-size: 1.2vw;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    /* height: 50; */
+    cursor: pointer;
+}
+
+.row-cell:not(:first-child) {
+    margin-left: 1%;
+}
+
+.row-cell-is-hide {
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.row-input {
+    cursor: text;
+    border-radius: 5;
+    box-shadow: none;
 }

@@ -10,6 +10,7 @@
 }
 
 .header-cell {
+    /* background: red; */
     display: flex;
     font-size: 1.2vw;
     width: 100%;
