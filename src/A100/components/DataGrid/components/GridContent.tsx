@@ -23,11 +23,11 @@ function GridContent(props: IDataGridProps) {
 		// console.log(`${key}: ${value}`);
 		if (value === '') {
 			delete filters[key];
-			setFilters(filters);
 			let _isFiltering = false;
 			source.headers.forEach(el => {
 				if (filters[el.key] !== undefined) _isFiltering = true;
-			})
+			});
+			setFilters(filters);
 			!_isFiltering && setIsFiltering(_isFiltering);
 		}
 		else {
@@ -55,6 +55,8 @@ function GridContent(props: IDataGridProps) {
 				{filterRow}
 			</div>
 		);	
+
+		console.log(filters);
 
 		let _pages = source.pages;
 		_pages.forEach((el, i) => {
