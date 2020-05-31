@@ -12,6 +12,9 @@
     height: auto;
     width: 5%;
     cursor: pointer;
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    user-select: none;
 }
 
 .pager-page-title:hover {

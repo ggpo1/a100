@@ -7,15 +7,21 @@ import '../css/GridHeader.css';
 
 function GridHeader(props: IGridHeaderProps) {
 	const [source, setSource] = useState<typeof props.source>(props.source),
-		  [sortingHeaders] = useState<Array<number>>([]);
+		  [sortingHeaders, setSortingHeaders] = useState<Array<number>>([]);
 
-	let headerCellClickHandler = (cellNum: number) => sortingHeaders.push(cellNum); 
+	let headerCellClickHandler = (cellNum: number) => {
+		console.log('sortingCell: ' + cellNum);
+		sortingHeaders.push(cellNum);
+		console.log(sortingHeaders);
+		setSortingHeaders(sortingHeaders);
+	}; 
 
 	let headerCells: Array<JSX.Element> = [];
 	source.forEach((el, i) => {
 		headerCells.push(
 			<div 
 				key={`${el.key}`}
+				style={{ color: (sortingHeaders.indexOf(i) !== -1 ? 'blue' : '') }}
 				className={`header-cell ${sortingHeaders.indexOf(i) !== -1 && 'sorting-header'}`}
 				onClick={() => headerCellClickHandler(i)}
 			>

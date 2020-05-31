@@ -1,258 +1,62 @@
 import React, { useState } from 'react';
-
+import queryString from 'query-string';
 import DataGrid from '../components/DataGrid/DataGrid';
+import LogType from '../model/enums/LogType';
+import LogHandler from '../../LogHandler/LogHandler';
+import SeparatedDataAPI from '../api/SeparatedDataAPI';
+import IDataGridSource from '../components/DataGrid/models/sources/IDataGridSource';
+import DefectsGridData from '../data/DefectsGridData';
 
-
-function DefectsView() {
-	return (
-		<div className={'defectsview-wrapper'}>
-			<DataGrid source={{
-				headers: [
-					{
-						key: 'row',
-						type: 'string',
-						title: 'Ряд',
-						isHide: false
-					},
-					{
-						key: 'place',
-						type: 'string',
-						title: 'Место',
-						isHide: false
-					},
-					{
-						key: 'level',
-						type: 'string',
-						title: 'Уровень',
-						isHide: false
-					},
-					{
-						key: 'elementName',
-						type: 'string',
-						title: 'Элемент',
-						isHide: false
-					},
-					{
-						key: 'size',
-						type: 'string',
-						title: 'Размер',
-						isHide: false
-					},
-					{
-						key: 'defectType',
-						type: 'string',
-						title: 'Тип дефекта',
-						isHide: false
-					},
-					{
-						key: 'riskLevel',
-						type: 'string',
-						title: 'Уровень риска',
-						isHide: false
-					},
-					{
-						key: 'comment',
-						type: 'string',
-						title: 'Комментарий',
-						isHide: true
-					},
-					{
-						key: 'browseDate',
-						type: 'string',
-						title: 'Дата обнаружения',
-						isHide: false
-					},
-					{
-						key: 'isDone',
-						type: 'boolean',
-						title: 'Исправлен',
-						isHide: false
-					}
-				],
-				pages: [
-					{
-						page: 1,
-						rows: [
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Красный',
-								comment: 'Комментарий к данному повреждению',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#f08080'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Жёлтый',
-								comment: 'Комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#fffacd'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Зелёный',
-								comment: 'Еще один комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#90ee90'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Красный',
-								comment: 'Комментарий к данному повреждению',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#f08080'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Жёлтый',
-								comment: 'Комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#fffacd'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Зелёный',
-								comment: 'Еще один комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#90ee90'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Красный',
-								comment: 'Комментарий к данному повреждению',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#f08080'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Жёлтый',
-								comment: 'Комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#fffacd'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Зелёный',
-								comment: 'Еще один комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#90ee90'
-							}
-						]
-					},
-					{
-						page: 2,
-						rows: [
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Зелёный',
-								comment: 'Еще один комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#90ee90'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Красный',
-								comment: 'Комментарий к данному повреждению',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#f08080'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Жёлтый',
-								comment: 'Комментарий',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#fffacd'
-							},
-							{
-								row: '1',
-								place: '3',
-								level: '1',
-								elementName: 'Балка',
-								size: '1204x134',
-								defectType: 'Скручивание',
-								riskLevel: 'Красный',
-								comment: 'Комментарий к данному повреждению',
-								browseDate: '2019-12-12',
-								isDone: false,
-								backColor: '#f08080'
-							},
-						]
-					}
-				]
-			}} />
-		</div>
-	);
+interface IDefectsViewState {
+	resoultID: number,
+	datagridSource: IDataGridSource
 }
 
-export default DefectsView;
+interface IDefectsViewProps {
+	match: any
+    location: any
+}
+
+export default class DefectsView extends React.Component<IDefectsViewProps, IDefectsViewState> {
+
+	constructor(props: IDefectsViewProps) {
+		super(props);
+		let url = this.props.location.search;	
+		let urlParams = queryString.parse(url);
+		try {
+			LogHandler.handle('MapView', LogType.LOG, 'url params parsed successfully!');
+			this.state = {
+				resoultID: parseInt(urlParams['resoultID']!.toString()),
+				datagridSource: {	
+					headers: [
+						
+					],
+					pages: [
+						
+					]
+				}
+			};
+			
+		} catch (e) {
+			LogHandler.handle('MapView', LogType.ERROR, 'error while parsing parameters or they are empty!');
+		}
+	}
+	componentDidMount() {
+		let headers = (async () => await SeparatedDataAPI.getDefectsHeaders());
+		headers().then((datagridSource: any) => {
+			DefectsGridData.DefectsHeaders = datagridSource;
+			// console.log(DefectsGridData.DefectsHeaders);
+		});
+		// console.log(DefectsGridData.DefectsHeaders);
+	}
+
+	render() {
+		console.log(DefectsGridData.DefectsHeaders)
+		return (
+			<div className={'defectsview-wrapper'}>
+				<DataGrid source={this.state.datagridSource} />
+			</div>
+		);
+	}
+}
+

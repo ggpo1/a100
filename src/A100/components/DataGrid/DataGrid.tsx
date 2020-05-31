@@ -25,7 +25,7 @@ function DataGrid(props: IDataGridProps) {
 				<GridContent source={source} />
 			</div>
 			<div className={'grid-pager'}>
-				<GridPager pages={source.pages.length} />
+				<GridPager pages={1} />
 			</div>
 		</div>
 	);

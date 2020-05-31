@@ -16,6 +16,7 @@
 }
 
 .grid-row {
+    overflow: auto;
     display: flex;
     align-items: center;
     min-height: 7%;
@@ -54,6 +55,10 @@
 
 .row-input {
     cursor: text;
-    border-radius: 5;
-    box-shadow: none;
+    /* text-align: center; */
+    /* padding-left: 5px; */
+    /* border-radius: 5px; */
+    /* box-sizing: border-box; */
+    /* box-shadow: none; */
+    /* border-radius: 5px; */
 }
