@@ -29,7 +29,7 @@ export default class MapAPI {
             }).then((response) => response.json()).then((body) => {
                 resolve(body);
             }).catch(() => {
-                setTimeout(() => MapSource.GetMap(), 2000);
+                setTimeout(() => MapSource.GetUnits(), 2000);
             })
         }));
     }
@@ -46,6 +46,7 @@ export default class MapAPI {
                 resolve(body);
             }).catch(e => {
                 LogHandler.handle('MapAPI', LogType.ERROR, 'error while fetching GLOBALSAT bangs!');
+                setTimeout(() => MapSource.GetGlobalsatData(), 2000);
             });
         });
     }
@@ -61,6 +62,7 @@ export default class MapAPI {
                 resolve(body)
             }).catch(e => {
                 LogHandler.handle('MapAPI', LogType.ERROR, 'error while fetching GLOBALSAT deviations!');
+                setTimeout(() => MapSource.GetGlobalsatData(), 2000);
             });
         });
     }

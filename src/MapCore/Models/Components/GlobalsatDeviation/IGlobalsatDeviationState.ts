@@ -7,5 +7,9 @@ export default interface IGlobalsatDeviationState {
     stillages: Array<StillageItem>
     needStillages: { LOW?: StillageItem, HIGH?: StillageItem },
     isInfoRect: boolean,
-    deviations: Array<GlobalsatDeviation>
+    deviations: Array<GlobalsatDeviation>,
+    _x: number,
+    _y: number,
+    _width: number,
+    _height: number
 }

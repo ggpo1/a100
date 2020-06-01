@@ -1,5 +1,5 @@
 import React from 'react';
-import {Layer, Stage} from 'react-konva';
+import { Layer, Stage } from 'react-konva';
 
 import IMapProps from './Models/Components/Map/IMapProps';
 import IMapState from './Models/Components/Map/IMapState';
@@ -52,6 +52,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
     public animates: Array<any> = [];
 
+    public stillageLayer: number = -1;
+
     constructor(props: IMapProps) {
         super(props);
 
@@ -79,7 +81,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         for (let i = 0; i < props.source.length; i++) {
             unitsOptions.push(
                 <option className={'units-blocks-option'} key={props.source[i].key + '_unitNameOption_' + i}
-                        value={i}>{props.source[i].title}</option>
+                    value={i}>{props.source[i].title}</option>
             );
         }
 
@@ -166,6 +168,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             }
         };
 
+        this.stillageLayer = this.layerService.getLayerIndexByTypeBinary(this.state.source[this.state.selectedUnit].layers, LayerType.STILLAGES);
+
         this.filtersOnChangeAction = this.filtersOnChangeAction.bind(this);
         this.ElementOnDrop = this.ElementOnDrop.bind(this);
         this.MapWrapperOnMouseMove = this.MapWrapperOnMouseMove.bind(this);
@@ -230,7 +234,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             })
         );
 
-        Emit.Emitter.addListener('closeGlobalsatInfoModal', () => this.setState({isGlobalsatInfoModal: false}));
+        Emit.Emitter.addListener('closeGlobalsatInfoModal', () => this.setState({ isGlobalsatInfoModal: false }));
 
         Emit.Emitter.addListener('setSelectedUnit', this.setMapUnit);
         Emit.Emitter.addListener('setGlobalsatData', this.setGlobalsatData);
@@ -240,7 +244,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     componentDidMount(): void {
-        const {lazyLoading} = this.state;
+        const { lazyLoading } = this.state;
         try {
             // if (lazyLoading) {
             //   this.animationIDs.forEach(el => {
@@ -264,8 +268,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     }
 
     public addSameShape(type: LayerType, prevShape: any, position: Position) {
-        this.setState({isAddCircleAdding: true});
-        const {source, selectedUnit} = this.state;
+        this.setState({ isAddCircleAdding: true });
+        const { source, selectedUnit } = this.state;
         let toMin = position === Position.TOP || position === Position.LEFT;
         let layerIndex;
         if (type !== undefined && prevShape !== undefined) {
@@ -347,7 +351,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 source[selectedUnit].layers[layerIndex].stillages!.push(nextStillage);
                 // this.setAddCirclesVisibility();
                 console.log(nextStillage);
-                this.forceUpdate(() => this.setState({source}));
+                this.forceUpdate(() => this.setState({ source }));
                 // Изменение видимости кнопок плюс у добавленного стеллажа
                 Emit.Emitter.emit('forceSetIsAddingChange', true);
             }
@@ -359,7 +363,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     }
 
     public deleteShape(type: LayerType, id) {
-        const {source, selectedUnit} = this.state;
+        const { source, selectedUnit } = this.state;
         let layerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, type);
         if (type === LayerType.STILLAGES) {
             let obj = this.stillageService.stillageSearchByID(source[selectedUnit].layers[layerIndex].stillages!, id);
@@ -371,7 +375,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             let obj = this.wallService.getWallIndexByID(source[selectedUnit].layers[layerIndex].walls!, id);
             source[selectedUnit].layers[layerIndex].walls!.splice(obj.index, 1);
         }
-        this.forceUpdate(() => this.setState({source}));
+        this.forceUpdate(() => this.setState({ source }));
     }
 
     public mapShapeClick(which: number, e: any, id: number, shapeType: LayerType) {
@@ -380,7 +384,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
     // перемещение фигур с помощью стрелочек
     public moveShapeByStep(shapeSource, type: LayerType, vector: Vectors) {
-        const {source, selectedUnit} = this.state;
+        const { source, selectedUnit } = this.state;
         const step = 1;
         if (type === LayerType.STILLAGES) {
             let stillageLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
@@ -401,27 +405,27 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             Emit.Emitter.emit('placeSignaturesForceUpdate', stillage.key, stillage.x, stillage.y);
             Emit.Emitter.emit('defectsForceUpdate', stillage.key, stillage.x, stillage.y);
 
-            this.forceUpdate(() => this.setState({source}));
+            this.forceUpdate(() => this.setState({ source }));
         }
 
     }
 
     public setIsShapeMoveEnable(value) {
-        this.setState({isShapeMoveEnable: value});
+        this.setState({ isShapeMoveEnable: value });
     }
 
     public setIsShapeMovingNow(value, shape) {
         if (shape !== undefined) {
-            this.setState({isShapeMovingNow: value, selectedShapeForMove: shape});
+            this.setState({ isShapeMovingNow: value, selectedShapeForMove: shape });
         } else {
-            this.setState({isShapeMovingNow: value});
+            this.setState({ isShapeMovingNow: value });
         }
     }
 
     // saving cur pos and wall resizing move rendering
     public MapWrapperOnMouseMove(e) {
-        const {source, selectedUnit, layersSelected, selectedWallToResize, wallLayerIndex, resizingWallIndex, isStart, stageScale, stageScales} = this.state;
-        let {selectedLayer} = this.state;
+        const { source, selectedUnit, layersSelected, selectedWallToResize, wallLayerIndex, resizingWallIndex, isStart, stageScale, stageScales } = this.state;
+        let { selectedLayer } = this.state;
         // TODO: rows and columns checks
         // TODO: small stillages checks
         // перемещение фигуры
@@ -489,7 +493,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     Emit.Emitter.emit('stillageSignatureForceUpdate', stillage.key, stillage.x, stillage.y);
                     Emit.Emitter.emit('placeSignaturesForceUpdate', stillage.key, stillage.x, stillage.y);
                     Emit.Emitter.emit('defectsForceUpdate', stillage.key, stillage.x, stillage.y);
-                    this.forceUpdate(() => this.setState({source}));
+                    this.forceUpdate(() => this.setState({ source }));
                 } else if (this.state.selectedShapeForMove!.type === LayerType.LIGHTING) {
                     let lightingLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.LIGHTING);
                     let searchedObj = this.objectService.searchByID(source[selectedUnit].layers[lightingLayerIndex].objects!, this.state.selectedShapeForMove.shape.id);
@@ -498,7 +502,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     light.x = e.clientX - this.state.moveStageParams.x;
                     light.y = e.clientY - this.state.moveStageParams.y;
                     source[selectedUnit].layers[lightingLayerIndex].objects![searchedObj.index] = light;
-                    this.forceUpdate(() => this.setState({source}))
+                    this.forceUpdate(() => this.setState({ source }))
                 } else if (this.state.selectedShapeForMove!.type === LayerType.WALLS) {
                     let wallsLayerIndex = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
                     let searchedObj = this.wallService.getWallIndexByID(source[selectedUnit].layers[wallsLayerIndex].walls!, this.state.selectedShapeForMove.shape.id);
@@ -507,7 +511,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     wall.startX = e.clientX - this.state.moveStageParams.x;
                     wall.startY = e.clientY - this.state.moveStageParams.y;
                     source[selectedUnit].layers[wallsLayerIndex].walls![searchedObj.index] = wall;
-                    this.forceUpdate(() => this.setState({source}));
+                    this.forceUpdate(() => this.setState({ source }));
                 }
             }
         }
@@ -524,7 +528,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
             source[selectedUnit].layers[wallLayerIndex].walls![resizingWallIndex] = _wall;
 
-            this.setState({source});
+            this.setState({ source });
 
         }
         if (this.state.isDrawing) {
@@ -542,9 +546,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     // Событие отпускания левой кноки или пальца для дорисовки стены с помощью ползунка
     // PAGE MOUSE UP
     private wallLabelButtonInteractionWayUp(e) {
-        const {source, isStart, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize, wallLayerIndex} = this.state;
-        let {selectedLayer} = this.state;
-        this.setState({isShapeMovingNow: false});
+        const { source, isStart, selectedUnit, layersSelected, isWallResizingNow, selectedWallToResize, wallLayerIndex } = this.state;
+        let { selectedLayer } = this.state;
+        this.setState({ isShapeMovingNow: false });
         if (isWallResizingNow && selectedWallToResize) {
             let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[wallLayerIndex].walls!, selectedWallToResize.id);
             let _wall: WallItem = found.item;
@@ -569,7 +573,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     // Событие зажатия левой кноки или пальца для дорисовки стены с помощью ползунка
     private wallLabelButtonInteractionWayDown(e, wallSource: WallItem, isStart: boolean) {
         Emit.Emitter.emit('wallMouseDbl', false);
-        const {source, layersSelected, selectedUnit} = this.state;
+        const { source, layersSelected, selectedUnit } = this.state;
         let selectedLayer = -1;
         let layerFlag = this.layerService.getLayerIndex(layersSelected, source[selectedUnit].layers, LayerType.WALLS);
 
@@ -585,10 +589,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
         _index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
         if (selectedLayer === -1) {
-            this.setState({wallLayerIndex: _index, selectedLayer: -1});
+            this.setState({ wallLayerIndex: _index, selectedLayer: -1 });
         } else {
             layersSelected.push(_index);
-            this.setState({layersSelected, selectedLayer: _index, wallLayerIndex: _index});
+            this.setState({ layersSelected, selectedLayer: _index, wallLayerIndex: _index });
         }
         let found = this.wallService.getWallIndexByID(source[selectedUnit].layers[_index].walls!, wallSource.id);
         this.setState({
@@ -612,7 +616,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     }
 
     private addLayerModalWorker(modalMode: boolean) {
-        this.setState({isAddLayerModal: modalMode});
+        this.setState({ isAddLayerModal: modalMode });
     }
 
     public defectBrowsePanelWorker(value: boolean) {
@@ -623,7 +627,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     private StageOnMouseMoveHandler(e) {
-        const {source, selectedUnit, selectedLayer, isDrawing, wallIndex, moveStageParams, cursorCoords, wallLayerIndex} = this.state;
+        const { source, selectedUnit, selectedLayer, isDrawing, wallIndex, moveStageParams, cursorCoords, wallLayerIndex } = this.state;
 
         if (this.state.cncFlag) {
             if (isDrawing) {
@@ -650,7 +654,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     }
 
     private StageOnMouseDownHandler(e) {
-        const {source, selectedUnit, selectedLayer, layersSelected} = this.state;
+        const { source, selectedUnit, selectedLayer, layersSelected } = this.state;
         if (this.state.cncFlag) {
             let selected: ElementItem = AppState.State.selectedEl;
             if (selected !== undefined) {
@@ -682,10 +686,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
                 index = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.WALLS);
                 if (selectedLayer === -1) {
-                    this.setState({wallLayerIndex: index, selectedLayer: -1});
+                    this.setState({ wallLayerIndex: index, selectedLayer: -1 });
                 } else {
                     layersSelected.push(index);
-                    this.setState({layersSelected, selectedLayer: index, wallLayerIndex: index});
+                    this.setState({ layersSelected, selectedLayer: index, wallLayerIndex: index });
                 }
 
                 let clientX = e.evt.clientX - this.state.moveStageParams.x;
@@ -710,7 +714,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     let walls = source[selectedUnit].layers[index].walls!;
                     let wallIndex = this.wallService.getWallIndexByID(walls, walls[walls.length - 1].id).index;
                     source[selectedUnit].layers[index].walls = walls;
-                    this.setState({wallIndex, source});
+                    this.setState({ wallIndex, source });
                 }
             }
         }
@@ -718,7 +722,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
     private StageOnMouseUpHandler(e) {
         if (this.state.isWallResizingNow) {
-            this.setState({isWallResizingNow: false, isDrawing: false})
+            this.setState({ isWallResizingNow: false, isDrawing: false })
         }
         if (this.state.cncFlag) {
             this.setState({
@@ -742,7 +746,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     }
 
     public selectLayerToList(i) {
-        const {source, layersSelected} = this.state;
+        const { source, layersSelected } = this.state;
         if (layersSelected.includes(i)) {
             let index = layersSelected.indexOf(i);
             layersSelected.splice(index, 1);
@@ -779,7 +783,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
 
     public addElement(clientX: number, clientY: number) {
-        const {source, selectedUnit, selectedLayer, layersSelected, cncFlag} = this.state;
+        const { source, selectedUnit, selectedLayer, layersSelected, cncFlag } = this.state;
         let selected: ElementItem = AppState.State.selectedEl;
 
 
@@ -804,7 +808,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     layer.stillages!.push(
                         this.stillageService.getStillageSourceItem(
                             source[selectedUnit].layers[_layerIndex],
-                            {x: (clientX - this.state.moveStageParams.x), y: (clientY - this.state.moveStageParams.y)},
+                            { x: (clientX - this.state.moveStageParams.x), y: (clientY - this.state.moveStageParams.y) },
                             selected.stillageType!
                         )
                     );
@@ -814,7 +818,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     layer.objects!.push(
                         this.objectService.getObjectSourceItem(
                             source[selectedUnit].layers[_layerIndex],
-                            {x: (clientX - this.state.moveStageParams.x), y: (clientY - this.state.moveStageParams.y)},
+                            { x: (clientX - this.state.moveStageParams.x), y: (clientY - this.state.moveStageParams.y) },
                             selected.photo
                         )
                     );
@@ -823,10 +827,10 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             if (selectedLayer !== -1) {
                 layersSelected.push(_layerIndex);
                 source[selectedUnit].layers[_layerIndex] = layer;
-                this.forceUpdate(() => this.setState({source, selectedLayer: _layerIndex}));
+                this.forceUpdate(() => this.setState({ source, selectedLayer: _layerIndex }));
             } else {
                 source[selectedUnit].layers[_layerIndex] = layer;
-                this.forceUpdate(() => this.setState({source, selectedLayer: -1}));
+                this.forceUpdate(() => this.setState({ source, selectedLayer: -1 }));
             }
             // Изменение видимости кнопок плюс у добавленного стеллажа
             this.forceUpdate(() => Emit.Emitter.emit('forceSetIsAddingChange', true));
@@ -835,7 +839,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
     public stageOnClickHandler(e) {
         if (this.state.isAddCircleAdding) {
-            this.setState({isAddCircleAdding: false});
+            this.setState({ isAddCircleAdding: false });
             return;
         }
         // cnc element adding
@@ -878,9 +882,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
         const newScale =
             e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-        stage.scale({x: newScale, y: newScale});
+        stage.scale({ x: newScale, y: newScale });
 
-        stage.scale({x: (newScale * -1), y: (newScale * -1)});
+        stage.scale({ x: (newScale * -1), y: (newScale * -1) });
 
         this.setState({
             stageScales: {
@@ -896,7 +900,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
     };
 
     setMapUnit = (selectedUnit: number) => {
-        this.setState({selectedUnit: selectedUnit, selectedLayer: -1, layersSelected: []});
+        this.setState({ selectedUnit: selectedUnit, selectedLayer: -1, layersSelected: [] });
     };
 
     public setGlobalsatData() {
@@ -913,7 +917,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             for (let i = 0; i < this.state.source.length; i++) {
                 unitsOptions.push(
                     <option className={'units-blocks-option'} key={this.state.source[i].key + '_unitNameOption_' + i}
-                            value={i}>{this.state.source[i].title}</option>
+                        value={i}>{this.state.source[i].title}</option>
                 );
             }
             // const { layersSelected } = this.state;
@@ -927,7 +931,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             });
         } catch (e) {
             console.error('[Component: Map] - invalid data!');
-            this.setState({lazyLoading: false});
+            this.setState({ lazyLoading: false });
         }
     }
 
@@ -958,7 +962,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             let globalsatBangsElements: Array<JSX.Element> = [];
             let globalsatDeviationElements: Array<JSX.Element> = [];
 
-            let absStageCoords = {x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y)};
+            let absStageCoords = { x: Math.abs(this.state.moveStageParams.x), y: Math.abs(this.state.moveStageParams.y) };
 
             let width = window.innerWidth;
             let height = window.innerHeight;
@@ -969,21 +973,21 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
 
             // globalsat bang elements
 
-            if (isGlobalsatMode) {
-                let stillageLayer = this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers, LayerType.STILLAGES);
+            if (isGlobalsatMode && (selectedLayer === -1 || layersSelected.indexOf(this.stillageLayer) !== -1)) {
+                // globalsatBangsElements.push();
                 try {
-                    // globalsatBangsElements.push();
                     globalsatBangs.forEach((el, i) => globalsatBangsElements.push(
                         <GlobalsatBang
                             key={`${source[selectedUnit].key}_globalsatBang_${i}`}
                             parentKey={`${source[selectedUnit].key}_globalsatBang_${i}`}
                             source={globalsatBangs[i]}
-                            stillages={source[selectedUnit].layers[stillageLayer].stillages!}
-                            bangs={globalsatBangs}
+                            stillages={
+                                (source[selectedUnit].layers[this.stillageLayer].stillages! === undefined ? [] : source[selectedUnit].layers[this.stillageLayer].stillages!)
+                            }
+                            bangs={(globalsatBangs === undefined ? [] : globalsatBangs)}
                         />
                     ));
-                } catch {
-                }
+                } catch {}
 
                 try {
                     globalsatDeviations.forEach((el, i) => globalsatDeviationElements.push(
@@ -991,13 +995,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                             key={`${source[selectedUnit].key}_globalsatDeviation_${i}`}
                             parentKey={`${source[selectedUnit].key}_globalsatDeviation_${i}`}
                             source={el}
-                            stillages={source[selectedUnit].layers[stillageLayer].stillages!}
-                            deviations={globalsatDeviations}
+                            stillages={
+                                (source[selectedUnit].layers[this.stillageLayer].stillages! === undefined ? [] : source[selectedUnit].layers[this.stillageLayer].stillages!)
+                            }
+                            deviations={(globalsatDeviations === undefined ? [] : globalsatDeviations)}
                         />
                     ));
-                } catch {
-                }
-
+                } catch {}
             }
 
             let layersTitles: Array<JSX.Element> = [
@@ -1005,7 +1009,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     fontWeight: this.state.selectedLayer === -1 ? 'bold' : 'normal',
                     color: this.state.selectedLayer === -1 ? '#2f00ff' : 'black'
                 }} className="layer-title" onClick={() => {
-                    this.setState({layersSelected, selectedLayer: -1})
+                    this.setState({ layersSelected, selectedLayer: -1 })
                 }}>
                     все слои
                 </div>
@@ -1022,9 +1026,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                             key={this.state.source[this.state.selectedUnit].layers[i].key + '_layerNameDivInput_' + i}
                             onChange={() => {
                             }}
-                            style={{outline: 'none', marginRight: 5}}
+                            style={{ outline: 'none', marginRight: 5 }}
                             checked={this.state.layersSelected.includes(i, 0)}
-                            type={'checkbox'}/>
+                            type={'checkbox'} />
                         {this.state.source[this.state.selectedUnit].layers[i].title}</div>
                 );
             }
@@ -1041,7 +1045,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                                 (textElement.y > absStageCoords.y && textElement.y < (absStageCoords.y + height));
                             if (isInChunk) {
                                 texts.push(
-                                    <Text key={textElement.key} source={textElement}/>
+                                    <Text key={textElement.key} source={textElement} />
                                 );
                             }
                         });
@@ -1061,45 +1065,45 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     if (element.stillages !== undefined) {
                         let _mapStillages = source[selectedUnit].layers[this.layerService.getLayerIndexByTypeBinary(source[selectedUnit].layers!, LayerType.STILLAGES)].stillages;
                         for (let i = 0; i < element.stillages!.length; i++) {
-                            let scale = 30 * this.state.stageScale;
-                            let scaledX = element.stillages[i].x - scale;
-                            let scaledY = element.stillages[i].y - scale;
-                            let scaledAbsStageCoordsX = absStageCoords.x - scale;
-                            let scaledAbsStageCoordsY = absStageCoords.y - scale;
+                            // let scale = 30 * this.state.stageScale;
+                            // let scaledX = element.stillages[i].x - scale;
+                            // let scaledY = element.stillages[i].y - scale;
+                            // let scaledAbsStageCoordsX = absStageCoords.x - scale;
+                            // let scaledAbsStageCoordsY = absStageCoords.y - scale;
 
                             // isInChunk = (scaledX > scaledAbsStageCoordsX - 500 && scaledX < (scaledAbsStageCoordsX + width + 500)) &&
                             //     (scaledY > scaledAbsStageCoordsY - 500 && scaledY < (scaledAbsStageCoordsY + height + 500));
                             // console.log('this scale: ' + this.state.stageScale);
-                            if (this.state.stageScale === 1) {
-                                isInChunk = (element.stillages[i].x > absStageCoords.x - 150 && element.stillages[i].x < (absStageCoords.x + width + 150)) &&
-                                    (element.stillages[i].y > absStageCoords.y - 150 && element.stillages[i].y < (absStageCoords.y + height + 150));
-                            } else {
-                                isInChunk = (scaledX > scaledAbsStageCoordsX - 150 && scaledX < (scaledAbsStageCoordsX + width + 150)) &&
-                                    (scaledY > scaledAbsStageCoordsY - 150 && scaledY < (scaledAbsStageCoordsY + height + 150));
-                            }
+                            // if (this.state.stageScale === 1) {
+                            //     isInChunk = (element.stillages[i].x > absStageCoords.x - 150 && element.stillages[i].x < (absStageCoords.x + width + 150)) &&
+                            //         (element.stillages[i].y > absStageCoords.y - 150 && element.stillages[i].y < (absStageCoords.y + height + 150));
+                            // } else {
+                            //     isInChunk = (scaledX > scaledAbsStageCoordsX - 150 && scaledX < (scaledAbsStageCoordsX + width + 150)) &&
+                            //         (scaledY > scaledAbsStageCoordsY - 150 && scaledY < (scaledAbsStageCoordsY + height + 150));
+                            // }
                             // if (isInChunk) {
-                                stillages.push(
-                                    <Stillage
-                                        key={element.stillages[i].key}
-                                        source={element.stillages![i]}
-                                        mapStillages={_mapStillages!}
-                                    />
-                                );
+                            stillages.push(
+                                <Stillage
+                                    key={element.stillages[i].key}
+                                    source={element.stillages![i]}
+                                    mapStillages={_mapStillages!}
+                                />
+                            );
                             // }
                         }
                     }
                     isInChunk = false;
                     if (element.walls !== undefined) {
                         for (let i = 0; i < element.walls!.length; i++) {
-                            isInChunk = (element.walls[i].startX > absStageCoords.x - 500 && element.walls[i].startX < (absStageCoords.x + width + 500)) &&
-                                (element.walls[i].startX > absStageCoords.y - 500 && element.walls[i].startY < (absStageCoords.y + height + 500));
-                            // if (isInChunk) {
-                                walls.push(
-                                    <Wall
-                                        key={element.walls[i].key}
-                                        source={element.walls[i]}
-                                    />
-                                );
+                            // isInChunk = (element.walls[i].startX > absStageCoords.x - 500 && element.walls[i].startX < (absStageCoords.x + width + 500)) &&
+                            //     (element.walls[i].startX > absStageCoords.y - 500 && element.walls[i].startY < (absStageCoords.y + height + 500));
+                            // // if (isInChunk) {
+                            walls.push(
+                                <Wall
+                                    key={element.walls[i].key}
+                                    source={element.walls[i]}
+                                />
+                            );
                             // }
                         }
                     }
@@ -1112,9 +1116,9 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                             isInChunk = false;
                             if (source[selectedUnit].layers[el].stillages !== undefined) {
                                 for (let i = 0; i < source[selectedUnit].layers[el].stillages!.length; i++) {
-                                    isInChunk = (source[selectedUnit].layers[el].stillages![i].x > absStageCoords.x - 150 && source[selectedUnit].layers[el].stillages![i].x < (absStageCoords.x + width + 150)) &&
-                                        (source[selectedUnit].layers[el].stillages![i].y > absStageCoords.y - 150 && source[selectedUnit].layers[el].stillages![i].y < (absStageCoords.y + height + 150));
-                                    if (isInChunk) {
+                                    // isInChunk = (source[selectedUnit].layers[el].stillages![i].x > absStageCoords.x - 150 && source[selectedUnit].layers[el].stillages![i].x < (absStageCoords.x + width + 150)) &&
+                                    //     (source[selectedUnit].layers[el].stillages![i].y > absStageCoords.y - 150 && source[selectedUnit].layers[el].stillages![i].y < (absStageCoords.y + height + 150));
+                                    // if (isInChunk) {
                                         stillages.push(
                                             <Stillage
                                                 key={source[selectedUnit].layers[el].stillages![i].key}
@@ -1122,23 +1126,23 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                                                 mapStillages={source[selectedUnit].layers[el].stillages!}
                                             />
                                         );
-                                    }
+                                    // }
                                 }
                             }
                             if (source[selectedUnit].layers[el].walls !== undefined) {
                                 isInChunk = false;
                                 for (let i = 0; i < source[selectedUnit].layers[el].walls!.length; i++) {
                                     let element = source[selectedUnit].layers[el].walls![i];
-                                    isInChunk = (element.startX > absStageCoords.x - 150 && element.startX < (absStageCoords.x + width + 150)) &&
-                                        (element.startX > absStageCoords.y - 150 && element.startY < (absStageCoords.y + height + 150));
-                                    if (isInChunk) {
+                                    // isInChunk = (element.startX > absStageCoords.x - 150 && element.startX < (absStageCoords.x + width + 150)) &&
+                                    //     (element.startX > absStageCoords.y - 150 && element.startY < (absStageCoords.y + height + 150));
+                                    // if (isInChunk) {
                                         walls.push(
                                             <Wall
                                                 key={element.key}
                                                 source={source[selectedUnit].layers[el].walls![i]}
                                             />
                                         );
-                                    }
+                                    // }
                                 }
                             }
                             if (source[selectedUnit].layers[el].objects !== undefined) {
@@ -1154,7 +1158,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                             }
                             if (source[selectedUnit].layers[el].texts !== undefined) {
                                 source[selectedUnit].layers[el].texts!.forEach(textEl => texts.push(<Text
-                                    key={textEl.key} source={textEl}/>));
+                                    key={textEl.key} source={textEl} />));
                             }
                         }
                     });
@@ -1200,11 +1204,11 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
             //   </div>
             // );
 
-            elementsPanel = <ElementsPanel source={ElementSource}/>;
+            elementsPanel = <ElementsPanel source={ElementSource} />;
 
             if (isDefectBrowsePanel) {
                 defectBrowsePanel =
-                    <DefectBrowsePanel parentSource={this.state.selectedStillage!} source={this.state.selectedVik}/>;
+                    <DefectBrowsePanel parentSource={this.state.selectedStillage!} source={this.state.selectedVik} />;
             }
 
             let check = false;
@@ -1238,23 +1242,23 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 >
 
                     <div className="stage-wrapper"
-                         key={this.state.parentKey + '_stageWrapper_div'}
-                         onDrop={(e) => {
-                             if (!IsReadOnlyMode) this.ElementOnDrop(e)
-                         }}
-                         onClick={(e) => {
-                             if (!IsReadOnlyMode) this.stageOnClickHandler(e)
-                         }}
-                         onMouseMove={(e) => {
-                             if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
-                         }}
-                         onTouchMove={(e) => {
-                             if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
-                         }}
-                         onMouseUp={(e) => {
-                             if (!IsReadOnlyMode) this.wallLabelButtonInteractionWayUp(e)
-                         }}
-                         id={"stageWrapper"}
+                        key={this.state.parentKey + '_stageWrapper_div'}
+                        onDrop={(e) => {
+                            if (!IsReadOnlyMode) this.ElementOnDrop(e)
+                        }}
+                        onClick={(e) => {
+                            if (!IsReadOnlyMode) this.stageOnClickHandler(e)
+                        }}
+                        onMouseMove={(e) => {
+                            if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
+                        }}
+                        onTouchMove={(e) => {
+                            if (!IsReadOnlyMode) this.MapWrapperOnMouseMove(e)
+                        }}
+                        onMouseUp={(e) => {
+                            if (!IsReadOnlyMode) this.wallLabelButtonInteractionWayUp(e)
+                        }}
+                        id={"stageWrapper"}
                     >
                         <Stage
                             key={this.state.parentKey + '_mapStage_stage'}
@@ -1294,7 +1298,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                                 if (!IsReadOnlyMode) this.StageOnMouseUpHandler(e)
                             } : () => {
                             }}
-                            style={{cursor: 'pointer'}}
+                            style={{ cursor: 'pointer' }}
                             width={width}
                             height={height}
                             onWheel={this.handleWheel}
@@ -1346,8 +1350,8 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                     {/*  {IsReadOnlyMode ? '' : filters}*/}
                     {/*</div>*/}
                     <div id={'layers-block'} key={this.state.parentKey + '_layersSelectorWrapper_div'}
-                         style={{background: '#E0E0E0'}}
-                         className="layers-selector-wrapper">
+                        style={{ background: '#E0E0E0' }}
+                        className="layers-selector-wrapper">
                         {layersTitles}
                     </div>
                     {defectBrowsePanel}

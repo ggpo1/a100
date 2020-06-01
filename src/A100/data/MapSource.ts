@@ -114,7 +114,7 @@ export default class MapSource {
                     Emit.Emitter.emit('setSelectedUnit', selectedUnit);
                 }, 1000);
 
-                LogHandler.handle('MapSource', LogType.LOG, 'OK');
+                // LogHandler.handle('MapSource', LogType.LOG, 'OK');
                 // } else {
                 //     Emit.Emitter.emit('setSelectedUnit', selectedUnit);
                 // }

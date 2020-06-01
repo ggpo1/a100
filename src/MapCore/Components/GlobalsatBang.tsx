@@ -16,7 +16,7 @@ let forwardTextNode;
 
 let animation;
 
-export default class GlobalsatBang extends React.Component<GlobalsatBangProps, GlobalsatBangState> {
+export default class GlobalsatBang extends React.PureComponent<GlobalsatBangProps, GlobalsatBangState> {
     constructor(props: GlobalsatBangProps) {
         super(props);
 
@@ -51,25 +51,25 @@ export default class GlobalsatBang extends React.Component<GlobalsatBangProps, G
     };
 
     componentDidMount(): void {
-        let amplitude = 1;
-        let period = 1200;
-        try {
-            [bigRect, transRect, smallRect].forEach(el => {
-                animation = new Konva.Animation(frame => {
-                    try {
-                        el.opacity((Math.sin(frame!.time / period) + 1) / 2);
-                    } catch {
-                    }
-                }, el.getLayer());
-                // animation.start();
-            });
-        } catch { }
+        // let amplitude = 1;
+        // let period = 1200;
+        // try {
+        //     [bigRect, transRect, smallRect].forEach(el => {
+        //         animation = new Konva.Animation(frame => {
+        //             try {
+        //                 el.opacity((Math.sin(frame!.time / period) + 1) / 2);
+        //             } catch {
+        //             }
+        //         }, el.getLayer());
+        //         // animation.start();
+        //     });
+        // } catch { }
     }
 
     render() {
         const { needStillages, parentKey, stillages, source, isInfoRect, bangs, selectedBangIndex } = this.state;
 
-        let circles: Array<JSX.Element> = [];
+        // let circles: Array<JSX.Element> = [];
 
         let _x, _y = 0;
         try {
