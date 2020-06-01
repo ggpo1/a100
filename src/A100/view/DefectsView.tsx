@@ -68,39 +68,29 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 
 		
 		Emit.Emitter.addListener(PagerEmitGenerator.generate(ViewType.DEFECTS_VIEW), this.pagerRequester);
-		// Emit.Emitter.addListener('defectsTestEmit', this.test);
-		
-		// this.setDatagridHeaders(this.state.datagridSource.headers);
+
 	}
 
-	// public test = (name: Array<HeaderItem>) => console.log(`hello, ${name}`);
-
 	public pagerRequester = (requestedPage: number) => {
-		(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, requestedPage))();
+		(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, requestedPage))(); // смена страниц
 	}
 
 	public setDatagridHeaders = (newHeaders: Array<HeaderItem>) => {
-		// console.log(newHeaders);
 		let _gSource = this.state.datagridSource;
 		_gSource.headers = newHeaders;
-
 		Emit.Emitter.emit('setDataGridHeaderSource', _gSource.headers);
 		this.setState({ datagridSource: _gSource });
 	};
 
 	public setDefectsElements = (newDefectsElements: Array<IDefectElementItem>) => {
-		// console.log(newDefectsElements);
 		this.setState({ defectElements: newDefectsElements });
 	}
 
 	public setDefectTypes = (newDefectTypes: Array<IDefectType>) => {
-		// console.log(newDefectTypes);
 		this.setState({ defectTypes: newDefectTypes });
 	}
 
 	public setDatagridPages = (data: Array<any>, page: number) => {
-		// console.log(data);
-		// console.log(this.state.defectElements);
 		let newPage: IPageItem = {
 			page: page,
 			rows: data
@@ -114,22 +104,15 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 
 		let _gSource = this.state.datagridSource;
 		_gSource.pages.push(newPage);
-		// this.state.datagridSource.headers.forEach((el, i) => {  });
 		this.setState({ datagridSource: _gSource });
-
 	}
 
 	componentDidMount() {
-		// запросы на получение данных
+		// запросы на получение первоначальных данных проекта
 		(async () => await SeparatedDataAPI.getElements())();
 		(async () => await SeparatedDataAPI.getDefectTypes())();
 		(async () => await SeparatedDataAPI.getDefectsHeaders())();
 		(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, 0))();
-		// headers().then((datagridSource: any) => {
-		// 	DefectsGridData.DefectsHeaders = datagridSource;
-		// 	console.log(DefectsGridData.DefectsHeaders);
-		// });
-		// console.log(DefectsGridData.DefectsHeaders);
 	}
 
 	public getElementName = (value: number): string => {
@@ -141,15 +124,17 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 	} 
 
 	public getDefectColor = (value: number): string => {
-		if (value === 1) return 'Зелёный';
-		else if (value === 2) return 'Жёлтый';
-		else if (value === 3) return 'Красный';
+		if (value === 1) 
+			return 'Зелёный';
+		else if (value === 2) 
+			return 'Жёлтый';
+		else if (value === 3) 
+			return 'Красный';
 		
 		return '';
 	}
 
 	render() {
-		// console.log(DefectsGridData.DefectsHeaders)
 		return (
 			<div className={'defectsview-wrapper'}>
 				<DataGrid viewType={ViewType.DEFECTS_VIEW} source={this.state.datagridSource} />
