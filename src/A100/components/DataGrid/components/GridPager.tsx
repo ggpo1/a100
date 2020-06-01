@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 
 import '../css/GridPager.css';
 import Emit from '../../../../MapCore/Data/Emit';
+import ViewType from './../../../model/enums/ViewType';
+import PagerEmitGenerator from './../../../data/PagerEmitGenerator';
 
 interface IGridPagerProps {
-    pages: number
+    pages: number,
+    viewType: ViewType
 }
 
 enum PageChangingType {
@@ -15,6 +18,7 @@ enum PageChangingType {
 function GridPager(props: IGridPagerProps) {
     const [pages] = useState<typeof props.pages>(props.pages);
     const [page, setPage] = useState<number>(0);
+    const [viewType] = useState<ViewType>(props.viewType);
 
     // обработка нажатия кнопок с номерами страниц
     let pageTitleClickHanadle = (newPage: number) => {
@@ -25,6 +29,8 @@ function GridPager(props: IGridPagerProps) {
     // обработка нажатия кнопок вперед/назад
     let pageBackOrForwardClickHandle = (where: PageChangingType) => {
         let newPage = page;
+        
+        
 
         if (where === PageChangingType.BACK) { // если нажата кнопка назад
             if (page !== 0) newPage = page - 1; // проверка, чтобы мы не вышли в отрицательные страницы
@@ -32,6 +38,8 @@ function GridPager(props: IGridPagerProps) {
             if (pages > (page + 1)) newPage = page + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
         }
         
+        Emit.Emitter.emit(PagerEmitGenerator.generate(viewType), newPage); // запрос на отправку запроса для новой страницы
+
         Emit.Emitter.emit('setPage', newPage); // проброс события в соседний компонент
         setPage(newPage); // обновление state новым значением страницы
     };

@@ -9,6 +9,8 @@ import DefectsGridData from '../data/DefectsGridData';
 import Emit from './../../MapCore/Data/Emit';
 import HeaderItem from './../components/DataGrid/models/HeaderItem';
 import IPageItem from './../components/DataGrid/models/IPageItem';
+import ViewType from './../model/enums/ViewType';
+import PagerEmitGenerator from './../data/PagerEmitGenerator';
 
 interface IDefectElementItem {
 	elementId: number,
@@ -63,12 +65,19 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 		Emit.Emitter.addListener('setDefectsViewDatagridPages', this.setDatagridPages);
 		Emit.Emitter.addListener('setDefectsElements', this.setDefectsElements);
 		Emit.Emitter.addListener('setDefectTypes', this.setDefectTypes);
+
+		
+		Emit.Emitter.addListener(PagerEmitGenerator.generate(ViewType.DEFECTS_VIEW), this.pagerRequester);
 		// Emit.Emitter.addListener('defectsTestEmit', this.test);
 		
 		// this.setDatagridHeaders(this.state.datagridSource.headers);
 	}
 
 	// public test = (name: Array<HeaderItem>) => console.log(`hello, ${name}`);
+
+	public pagerRequester = (requestedPage: number) => {
+		(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, requestedPage))();
+	}
 
 	public setDatagridHeaders = (newHeaders: Array<HeaderItem>) => {
 		// console.log(newHeaders);
@@ -115,7 +124,7 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 		(async () => await SeparatedDataAPI.getElements())();
 		(async () => await SeparatedDataAPI.getDefectTypes())();
 		(async () => await SeparatedDataAPI.getDefectsHeaders())();
-		(async () => await SeparatedDataAPI.getSeparatedDefects(5020, 0))();
+		(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, 0))();
 		// headers().then((datagridSource: any) => {
 		// 	DefectsGridData.DefectsHeaders = datagridSource;
 		// 	console.log(DefectsGridData.DefectsHeaders);
@@ -143,7 +152,7 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 		// console.log(DefectsGridData.DefectsHeaders)
 		return (
 			<div className={'defectsview-wrapper'}>
-				<DataGrid source={this.state.datagridSource} />
+				<DataGrid viewType={ViewType.DEFECTS_VIEW} source={this.state.datagridSource} />
 			</div>
 		);
 	}

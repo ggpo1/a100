@@ -7,10 +7,12 @@ import IDataGridProps from './models/components/DataGrid/IDataGridProps';
 import './css/DataGrid.css';
 import GridPager from './components/GridPager';
 // import { IGridHeaderSource } from './models/sources/IDataGridSource';
+import ViewType from './../../model/enums/ViewType';
 
 
 function DataGrid(props: IDataGridProps) {
 	const [source, setSource] = useState<typeof props.source>(props.source);
+	const [viewType] = useState<ViewType>(props.viewType);
 	
 	// let headerSource: IGridHeaderSource = {
 	// 	source: source.headers
@@ -22,10 +24,10 @@ function DataGrid(props: IDataGridProps) {
 				<GridHeader source={source.headers} />
 			</div>
 			<div className={'grid-content'}>
-				<GridContent source={source} />
+				<GridContent viewType={viewType} source={source} />
 			</div>
 			<div className={'grid-pager'}>
-				<GridPager pages={1000} />
+				<GridPager viewType={viewType} pages={1000} />
 			</div>
 		</div>
 	);
