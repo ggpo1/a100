@@ -31,7 +31,7 @@ export default class SeparatedDataAPI {
                 DefectsGridData.DefectsHeaders = body;
                 resolve(body);
                 // console.log(body);
-                Emit.Emitter.emit('setDefectsViewDatagridPages', body);
+                Emit.Emitter.emit('setDefectsViewDatagridPages', body, page);
             }).catch(() => {
                 // setTimeout(() => MapSource.GetMap(), 2000);
             })

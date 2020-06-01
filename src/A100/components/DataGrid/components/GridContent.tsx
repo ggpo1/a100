@@ -160,10 +160,17 @@ function Cell(props: ICell) {
 				{props.value ? 'Да' : 'Нет'}
 			</div>
 		);
+	} else if (props.dataType === 'dateTime') {
+		let date = props.value.toString().split('T')[0];
+		return (
+			<div title={props.value} key={`${props.column}_${props.row}`} className={'row-cell'}>
+				{date}
+			</div>
+		);
 	} else {
 		return (
 			<div title={props.value} key={`${props.column}_${props.row}`} className={'row-cell'}>
-				{props.isHide ? '...' : props.value}
+				{props.isHide ? (props.value.length === 0 ? '-' : '. . .') : props.value}
 			</div>
 		);
 	}

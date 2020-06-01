@@ -71,7 +71,7 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 	// public test = (name: Array<HeaderItem>) => console.log(`hello, ${name}`);
 
 	public setDatagridHeaders = (newHeaders: Array<HeaderItem>) => {
-		console.log(newHeaders);
+		// console.log(newHeaders);
 		let _gSource = this.state.datagridSource;
 		_gSource.headers = newHeaders;
 
@@ -89,13 +89,20 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 		this.setState({ defectTypes: newDefectTypes });
 	}
 
-	public setDatagridPages = (data: Array<any>) => {
-		console.log(data);
+	public setDatagridPages = (data: Array<any>, page: number) => {
+		// console.log(data);
 		// console.log(this.state.defectElements);
 		let newPage: IPageItem = {
-			page: 0,
+			page: page,
 			rows: data
 		}
+		// подстановка значений	вместо айдишников
+		for (let i = 0; i < data.length; i++) {
+			data[i]['ElementID'] = this.getElementName(data[i]['ElementID']);
+			data[i]['DefectID'] = this.getDefectType(data[i]['DefectID']);
+			data[i]['RiskLevelID'] = this.getDefectColor(data[i]['RiskLevelID'])
+		}
+
 		let _gSource = this.state.datagridSource;
 		_gSource.pages.push(newPage);
 		// this.state.datagridSource.headers.forEach((el, i) => {  });
@@ -104,15 +111,32 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 	}
 
 	componentDidMount() {
+		// запросы на получение данных
 		(async () => await SeparatedDataAPI.getElements())();
 		(async () => await SeparatedDataAPI.getDefectTypes())();
 		(async () => await SeparatedDataAPI.getDefectsHeaders())();
-		(async () => await SeparatedDataAPI.getSeparatedDefects(5020, 1))();
+		(async () => await SeparatedDataAPI.getSeparatedDefects(5020, 0))();
 		// headers().then((datagridSource: any) => {
 		// 	DefectsGridData.DefectsHeaders = datagridSource;
 		// 	console.log(DefectsGridData.DefectsHeaders);
 		// });
 		// console.log(DefectsGridData.DefectsHeaders);
+	}
+
+	public getElementName = (value: number): string => {
+		return this.state.defectElements.filter(el => el.elementId === value)[0].elementName;
+	}
+
+	public getDefectType = (value: number): string => {
+		return this.state.defectTypes.filter(el => el.defectId === value)[0].defectName;
+	} 
+
+	public getDefectColor = (value: number): string => {
+		if (value === 1) return 'Зелёный';
+		else if (value === 2) return 'Жёлтый';
+		else if (value === 3) return 'Красный';
+		
+		return '';
 	}
 
 	render() {
