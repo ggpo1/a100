@@ -53,7 +53,7 @@ function GridPager(props: IGridPagerProps) {
     return (
         <div className={'grid-pager-wrapper'}>
             <div onClick={() => pageBackOrForwardClickHandle(PageChangingType.BACK)} className={'pager-page-title'}>назад</div>
-            {pagesTitles}
+            <div style={{display: 'flex', justifyContent: 'center',color: 'blue', width: '25%'}}>{page + 1}</div>
             <div onClick={() => pageBackOrForwardClickHandle(PageChangingType.FORWARD)} className={'pager-page-title'}>вперёд</div>
         </div>
     );
