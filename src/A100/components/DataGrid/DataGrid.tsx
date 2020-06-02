@@ -6,7 +6,6 @@ import IDataGridProps from './models/components/DataGrid/IDataGridProps';
 
 import './css/DataGrid.css';
 import GridPager from './components/GridPager';
-// import { IGridHeaderSource } from './models/sources/IDataGridSource';
 import ViewType from './../../model/enums/ViewType';
 
 
@@ -24,7 +23,7 @@ function DataGrid(props: IDataGridProps) {
 				<GridHeader source={source.headers} />
 			</div>
 			<div className={'grid-content'}>
-				<GridContent viewType={viewType} source={source} />
+				<GridContent wholeData={props.wholeData} viewType={viewType} source={source} />
 			</div>
 			<div className={'grid-pager'}>
 				<GridPager viewType={viewType} pages={1000} />

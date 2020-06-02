@@ -38,7 +38,7 @@ function GridPager(props: IGridPagerProps) {
             if (pages > (page + 1)) newPage = page + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
         }
         
-        Emit.Emitter.emit(PagerEmitGenerator.generate(viewType), newPage); // запрос на отправку запроса для новой страницы
+        Emit.Emitter.emit(PagerEmitGenerator.generate(viewType), newPage); // запрос на отправку запроса для получения новой страницы
 
         Emit.Emitter.emit('setPage', newPage); // проброс события в соседний компонент
         setPage(newPage); // обновление state новым значением страницы

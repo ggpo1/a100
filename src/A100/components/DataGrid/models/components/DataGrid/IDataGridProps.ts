@@ -3,5 +3,6 @@ import ViewType from './../../../../../model/enums/ViewType';
 
 export default interface IDataGridProps {
 	source: IDataGridSource,
-	viewType: ViewType
+	viewType: ViewType,
+	wholeData: Array<any>
 }

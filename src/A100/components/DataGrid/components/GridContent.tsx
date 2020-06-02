@@ -3,19 +3,30 @@ import React, { useState } from 'react';
 import '../css/GridContent.css';
 import IDataGridProps from '../models/components/DataGrid/IDataGridProps';
 import Emit from '../../../../MapCore/Data/Emit';
+import IDataGridSource from '../models/sources/IDataGridSource';
+import ViewType from './../../../model/enums/ViewType';
+import LogHandler from './../../../../LogHandler/LogHandler';
+import LogType from './../../../model/enums/LogType';
 
 interface IGridContentProps {
-	source: IDataGridProps
+	source: IDataGridSource,
+	viewType: ViewType
+	wholeData: Array<any>
 }
 
-function GridContent(props: IDataGridProps) {
+function GridContent(props: IGridContentProps) {
 	const [source, setSource] = useState<typeof props.source>(props.source),
 		[page, setPage] = useState<number>(0),
 		[filters, setFilters] = useState<any>({}),
-		[isFiltering, setIsFiltering] = useState<boolean>(false);
+		[isFiltering, setIsFiltering] = useState<boolean>(false),
+		[wholeData, setWholeData] = useState<Array<any>>(props.wholeData)
+	// [filteringPages, setFiltering] = useState
 
 	if (Emit.Emitter.listeners('setPage').length === 0)
 		Emit.Emitter.addListener('setPage', (newPage) => setPage(newPage));
+
+	if (Emit.Emitter.listeners('setWholeData').length === 0)
+		Emit.Emitter.addListener('setWholeData', (newWholeData) => setWholeData(newWholeData))
 
 	// console.log('_____FILTERS_____');
 	// console.log(filters);
@@ -33,16 +44,16 @@ function GridContent(props: IDataGridProps) {
 			!_isFiltering && setIsFiltering(_isFiltering);
 		}
 		else {
-			console.log('eKey: ' + key);
-			console.log('eVal: ' + value);
-			console.log('eFilVal: ' + filters[key]);
+			// console.log('eKey: ' + key);
+			// console.log('eVal: ' + value);
+			// console.log('eFilVal: ' + filters[key]);
 
 			// if (filters[key] === undefined) 
 			// filters[key] = '';
 
 			filters[key] = value;
-			console.log('eFilValUp: ' + filters[key]);
-			console.log('__________');
+			// console.log('eFilValUp: ' + filters[key]);
+			// console.log('__________');
 			setFilters(filters);
 			if (!isFiltering) setIsFiltering(true);
 		}
@@ -69,47 +80,94 @@ function GridContent(props: IDataGridProps) {
 	);
 
 	// console.log('isFiltering: ' + isFiltering);
-	let _isFiltering;
+	// let _isFiltering;
+
+	let firstLetterTLC = (key: string) => {
+		return (`${key[0].toLowerCase()}${key.slice(1)}`);
+	}
 
 	if (isFiltering) {
-		// FILTERING
-		// console.log(filters);
-		let _pages = source.pages;
-		let _notPaged: Array<any> = [];
-		_pages.forEach((el, i) => { // преобразование данных с пагинацией в данные без пагинации
-			el.rows.forEach((rowEl: any) => _notPaged.push(rowEl));
-		});
+		// console.log(wholeData);
 
 		let _filters = Object.keys(filters).map((key) => {
-			return { key: key, value: filters[key] }
+			return { key: firstLetterTLC(key), value: filters[key] }
 		});
 
-		let _filteredRows: Array<any> = [];
-		_filters.forEach((_filter) => { // фильтрация
-			_filteredRows = _notPaged.filter(pred => pred[_filter.key].toString().toLowerCase().includes(_filter.value.toString().toLowerCase()))// _filter.value);
-		});
-
-		_filteredRows.forEach((element, i) => {
-			let cellEls: Array<JSX.Element> = [];
-			source.headers.forEach((headerEl, j) => {
-				cellEls.push(
-					<Cell
-						key={`cell_${j}_${i}`}
-						dataType={headerEl.type}
-						value={element[headerEl.key]}
-						row={j}
-						column={i}
-						isHide={headerEl.isHide}
-					/>
-				);
-
+		// console.log(_filters);
+		let data = wholeData;
+		try {
+			_filters.forEach(filter => {
+				data = data.filter(predicate => predicate[filter.key].toString().toLowerCase().includes(filter.value.toString().toLowerCase()));
 			});
-			rowsEls.push(
-				<div style={{ background: element['backColor'] }} key={i} className={'grid-block grid-row'}>
-					{cellEls}
-				</div>
-			);
-		})
+		} catch (e) {
+			LogHandler.handle('GridContent', LogType.ERROR, "error while filtering!");
+			data = [];
+		}
+		console.log(data);
+
+		let pagesCount = Math.ceil(data.length / 10);
+		let page = 0;
+		for (let i = 0; i < pagesCount - 1; i++) {
+
+		}
+
+		// data.forEach((dataEl, i) => {
+		// 	let cellEls: Array<JSX.Element> = [];
+		// 	source.headers.forEach((headerEl, j) => {
+		// 		cellEls.push(
+		// 			<div key={`${i}_${j}`} className={'row-cell'}>
+		// 				{dataEl[headerEl.key]}
+		// 			</div>
+		// 		);
+
+		// 	});
+		// 	rowsEls.push(
+		// 		<div style={{ background: dataEl['backColor'] }} key={i} className={'grid-block grid-row'}>
+		// 			{cellEls}
+		// 		</div>
+		// 	);
+		// });
+
+
+
+		// FILTERING
+		// console.log(filters);
+		// let _pages = source.pages;
+		// let _notPaged: Array<any> = [];
+		// _pages.forEach((el, i) => { // преобразование данных с пагинацией в данные без пагинации
+		// 	el.rows.forEach((rowEl: any) => _notPaged.push(rowEl));
+		// });
+
+		// let _filters = Object.keys(filters).map((key) => {
+		// 	return { key: key, value: filters[key] }
+		// });
+
+		// let _filteredRows: Array<any> = [];
+		// _filters.forEach((_filter) => { // фильтрация
+		// 	_filteredRows = _notPaged.filter(pred => pred[_filter.key].toString().toLowerCase().includes(_filter.value.toString().toLowerCase()))// _filter.value);
+		// });
+
+		// _filteredRows.forEach((element, i) => {
+		// 	let cellEls: Array<JSX.Element> = [];
+		// 	source.headers.forEach((headerEl, j) => {
+		// 		cellEls.push(
+		// 			<Cell
+		// 				key={`cell_${j}_${i}`}
+		// 				dataType={headerEl.type}
+		// 				value={element[headerEl.key]}
+		// 				row={j}
+		// 				column={i}
+		// 				isHide={headerEl.isHide}
+		// 			/>
+		// 		);
+
+		// 	});
+		// 	rowsEls.push(
+		// 		<div style={{ background: element['backColor'] }} key={i} className={'grid-block grid-row'}>
+		// 			{cellEls}
+		// 		</div>
+		// 	);
+		// })
 
 
 	} else {
@@ -153,25 +211,31 @@ interface ICell {
 }
 
 function Cell(props: ICell) {
-	// console.log(props);
-	if (props.dataType === 'boolean') { // DO ENUM
+	try {
+		// console.log(props);
+		if (props.dataType === 'boolean') { // DO ENUM
+			return (
+				<div key={`${props.column}_${props.row}`} className={'row-cell'}>
+					{props.value ? 'Да' : 'Нет'}
+				</div>
+			);
+		} else if (props.dataType === 'dateTime') {
+			let date = props.value.toString().split('T')[0];
+			return (
+				<div title={props.value} key={`${props.column}_${props.row}`} className={'row-cell'}>
+					{date}
+				</div>
+			);
+		} else {
+			return (
+				<div title={props.value} key={`${props.column}_${props.row}`} className={'row-cell'}>
+					{props.isHide ? (props.value.length === 0 ? '-' : '. . .') : props.value}
+				</div>
+			);
+		}
+	} catch (ex) {
 		return (
-			<div key={`${props.column}_${props.row}`} className={'row-cell'}>
-				{props.value ? 'Да' : 'Нет'}
-			</div>
-		);
-	} else if (props.dataType === 'dateTime') {
-		let date = props.value.toString().split('T')[0];
-		return (
-			<div title={props.value} key={`${props.column}_${props.row}`} className={'row-cell'}>
-				{date}
-			</div>
-		);
-	} else {
-		return (
-			<div title={props.value} key={`${props.column}_${props.row}`} className={'row-cell'}>
-				{props.isHide ? (props.value.length === 0 ? '-' : '. . .') : props.value}
-			</div>
+			<div key={`empty`} className={'row-cell'}></div>
 		);
 	}
 }

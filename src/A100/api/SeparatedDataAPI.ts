@@ -7,11 +7,12 @@ import Emit from './../../MapCore/Data/Emit';
 // https://a100.technovik.ru:1000/api/SeparatedData/defects?resoultID=5020&page=10
 // https://a100.technovik.ru:1000/api/SeparatedData/additional/elements
 // https://a100.technovik.ru:1000/api/SeparatedData/additional/defecttypes
+// https://a100.technovik.ru:1000/api/SeparatedData/all/defects?resoultID=5020
 export default class SeparatedDataAPI {
 
     public static async getDefectsHeaders(): Promise<Array<HeaderItem>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/SeparatedData/headers/defects`, {
+            fetch(`${BaseUrl.url}api/separatedData/headers/defects`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;
@@ -23,9 +24,9 @@ export default class SeparatedDataAPI {
         }));
     }
 
-    public static async getSeparatedDefects(resoultID: number, page: number): Promise<Array<HeaderItem>> {
+    public static async getSeparatedDefects(resoultID: number, page: number): Promise<Array<any>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/SeparatedData/defects?resoultID=${resoultID}&page=${page}`, {
+            fetch(`${BaseUrl.url}api/separatedData/defects?resoultID=${resoultID}&page=${page}`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;
@@ -38,9 +39,23 @@ export default class SeparatedDataAPI {
         }));
     }
 
+    public static async getWholeDefects(resoultID: number): Promise<Array<any>> {
+        return new Promise((resolve => {
+            fetch(`${BaseUrl.url}api/separatedData/all/defects?resoultID=${resoultID}`, {
+                method: 'GET',
+            }).then((response) => response.json()).then((body) => {
+                DefectsGridData.DefectsHeaders = body;
+                resolve(body);
+                Emit.Emitter.emit('setWholeDefects', body);
+            }).catch(() => {
+                // setTimeout(() => MapSource.GetMap(), 2000);
+            })
+        }));
+    }
+
     public static async getElements(): Promise<Array<any>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/SeparatedData/additional/elements`, {
+            fetch(`${BaseUrl.url}api/separatedData/additional/elements`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;
@@ -55,7 +70,7 @@ export default class SeparatedDataAPI {
 
     public static async getDefectTypes(): Promise<Array<any>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/SeparatedData/additional/defecttypes`, {
+            fetch(`${BaseUrl.url}api/separatedData/additional/defecttypes`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;

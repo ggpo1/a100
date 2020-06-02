@@ -27,7 +27,8 @@ interface IDefectsViewState {
 	resoultID: number,
 	datagridSource: IDataGridSource,
 	defectElements: Array<IDefectElementItem>,
-	defectTypes: Array<IDefectType>
+	defectTypes: Array<IDefectType>,
+	wholeDefects: Array<any>
 }
 
 interface IDefectsViewProps {
@@ -42,37 +43,38 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 		let url = this.props.location.search;	
 		let urlParams = queryString.parse(url);
 		try {
-			LogHandler.handle('MapView', LogType.LOG, 'url params parsed successfully!');
+			LogHandler.handle('DefectsView', LogType.LOG, 'url params parsed successfully!');
 			this.state = {
 				resoultID: parseInt(urlParams['resoultID']!.toString()),
 				datagridSource: {	
-					headers: [
-						
-					],
-					pages: [
-						
-					]
+					headers: [],
+					pages: []
 				},
 				defectElements: [],
-				defectTypes: []
+				defectTypes: [],
+				wholeDefects: []
 			};
-			
 		} catch (e) {
-			LogHandler.handle('MapView', LogType.ERROR, 'error while parsing parameters or they are empty!');
+			LogHandler.handle('DefectsView', LogType.ERROR, 'error while parsing parameters or they are empty!');
 		}
 
 		Emit.Emitter.addListener('setDefectsViewDatagridHeaders', this.setDatagridHeaders);
 		Emit.Emitter.addListener('setDefectsViewDatagridPages', this.setDatagridPages);
 		Emit.Emitter.addListener('setDefectsElements', this.setDefectsElements);
 		Emit.Emitter.addListener('setDefectTypes', this.setDefectTypes);
-
+		Emit.Emitter.addListener('setWholeDefects', this.setWholeDefects);
 		
 		Emit.Emitter.addListener(PagerEmitGenerator.generate(ViewType.DEFECTS_VIEW), this.pagerRequester);
 
 	}
 
+	public firstLetterTLC = (key: string) => {
+		return (`${key[0].toLowerCase()}${key.slice(1)}`);
+	}
+
 	public pagerRequester = (requestedPage: number) => {
-		(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, requestedPage))(); // смена страниц
+		if (this.state.datagridSource.pages.filter(el => el.page === requestedPage).length === 0) // проверка на то, что страница была ранее загружена
+			(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, requestedPage))(); // смена страниц
 	}
 
 	public setDatagridHeaders = (newHeaders: Array<HeaderItem>) => {
@@ -81,6 +83,19 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 		Emit.Emitter.emit('setDataGridHeaderSource', _gSource.headers);
 		this.setState({ datagridSource: _gSource });
 	};
+
+	public setWholeDefects = (newWholeDefects: Array<any>) => {
+		// подстановка значений	вместо айдишников
+		for (let i = 0; i < newWholeDefects.length; i++) {
+			newWholeDefects[i]['elementID'] = this.getElementName(newWholeDefects[i]['elementID']);
+			newWholeDefects[i]['defectID'] = this.getDefectType(newWholeDefects[i]['defectID']);
+			newWholeDefects[i]['riskLevelID'] = this.getDefectColor(newWholeDefects[i]['riskLevelID'])
+		}
+		// console.log(newWholeDefects);
+
+		Emit.Emitter.emit('setWholeData', newWholeDefects);
+		this.setState({ wholeDefects: newWholeDefects });
+	}
 
 	public setDefectsElements = (newDefectsElements: Array<IDefectElementItem>) => {
 		this.setState({ defectElements: newDefectsElements });
@@ -95,11 +110,12 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 			page: page,
 			rows: data
 		}
+
 		// подстановка значений	вместо айдишников
 		for (let i = 0; i < data.length; i++) {
-			data[i]['ElementID'] = this.getElementName(data[i]['ElementID']);
-			data[i]['DefectID'] = this.getDefectType(data[i]['DefectID']);
-			data[i]['RiskLevelID'] = this.getDefectColor(data[i]['RiskLevelID'])
+			data[i]['elementID'] = this.getElementName(data[i]['elementID']);
+			data[i]['defectID'] = this.getDefectType(data[i]['defectID']);
+			data[i]['riskLevelID'] = this.getDefectColor(data[i]['riskLevelID'])
 		}
 
 		let _gSource = this.state.datagridSource;
@@ -109,10 +125,13 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 
 	componentDidMount() {
 		// запросы на получение первоначальных данных проекта
-		(async () => await SeparatedDataAPI.getElements())();
-		(async () => await SeparatedDataAPI.getDefectTypes())();
-		(async () => await SeparatedDataAPI.getDefectsHeaders())();
-		(async () => await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, 0))();
+		(async () => {
+			await SeparatedDataAPI.getElements();
+			await SeparatedDataAPI.getDefectTypes();
+			await SeparatedDataAPI.getDefectsHeaders();
+			await SeparatedDataAPI.getSeparatedDefects(this.state.resoultID, 0);
+			await SeparatedDataAPI.getWholeDefects(this.state.resoultID);
+		})();
 	}
 
 	public getElementName = (value: number): string => {
@@ -137,7 +156,7 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 	render() {
 		return (
 			<div className={'defectsview-wrapper'}>
-				<DataGrid viewType={ViewType.DEFECTS_VIEW} source={this.state.datagridSource} />
+				<DataGrid wholeData={this.state.wholeDefects} viewType={ViewType.DEFECTS_VIEW} source={this.state.datagridSource} />
 			</div>
 		);
 	}
