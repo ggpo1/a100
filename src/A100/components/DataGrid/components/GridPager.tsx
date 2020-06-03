@@ -19,11 +19,18 @@ function GridPager(props: IGridPagerProps) {
     const [pages] = useState<typeof props.pages>(props.pages),
         [page, setPage] = useState<number>(0),
         [viewType] = useState<ViewType>(props.viewType),
-        [isFiltering, setIsFiltering] = useState<boolean>(false);
+        [isFiltering, setIsFiltering] = useState<boolean>(false),
+        [filteringPage, setFilteringPage] = useState<number>(0);
 
 
     if (Emit.Emitter.listeners('setPagerIsFiltering').length === 0)
-        Emit.Emitter.addListener('setPagerIsFiltering', (value: boolean) => setIsFiltering(value));
+        Emit.Emitter.addListener('setPagerIsFiltering', (value: boolean) => { 
+            if (!value) setFilteringPage(0);
+            setIsFiltering(value) 
+        });
+
+    if (Emit.Emitter.listeners('setPagerFilteringPage').length === 0)
+        Emit.Emitter.addListener('setPagerFilteringPage', (value: number) => setFilteringPage(value));
 
     // обработка нажатия кнопок с номерами страниц
     let pageTitleClickHanadle = (newPage: number) => {
@@ -37,19 +44,31 @@ function GridPager(props: IGridPagerProps) {
         
         
 
-        if (where === PageChangingType.BACK) { // если нажата кнопка назад
-            if (page !== 0) newPage = page - 1; // проверка, чтобы мы не вышли в отрицательные страницы
-        } else if (where === PageChangingType.FORWARD) { // если нажата кнопка вперед
-            if (pages > (page + 1)) newPage = page + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
-        }
+        
         
         if (isFiltering) {
 
+            if (where === PageChangingType.BACK) { // если нажата кнопка назад
+                if (filteringPage !== 0) newPage = filteringPage - 1; // проверка, чтобы мы не вышли в отрицательные страницы
+            } else if (where === PageChangingType.FORWARD) { // если нажата кнопка вперед
+                if (pages > (filteringPage + 1)) newPage = filteringPage + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
+            }
+
+
+            Emit.Emitter.emit('setContentFilteringPage', newPage);
+            setFilteringPage(newPage);
         } else {
+            if (where === PageChangingType.BACK) { // если нажата кнопка назад
+                if (page !== 0) newPage = page - 1; // проверка, чтобы мы не вышли в отрицательные страницы
+            } else if (where === PageChangingType.FORWARD) { // если нажата кнопка вперед
+                if (pages > (page + 1)) newPage = page + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
+            }
+
             Emit.Emitter.emit(PagerEmitGenerator.generate(viewType), newPage); // запрос на отправку запроса для получения новой страницы
             Emit.Emitter.emit('setPage', newPage); // проброс события в соседний компонент
+            setPage(newPage); // обновление state новым значением страницы
         }
-        setPage(newPage); // обновление state новым значением страницы
+        
     };
 
     let pagesTitles: Array<JSX.Element> = []; // массив, куда будут сохранятся заголовки страниц
@@ -69,7 +88,7 @@ function GridPager(props: IGridPagerProps) {
     return (
         <div className={'grid-pager-wrapper'}>
             <div onClick={() => pageBackOrForwardClickHandle(PageChangingType.BACK)} className={'pager-page-title'}>назад</div>
-            <div style={{display: 'flex', justifyContent: 'center',color: 'blue', width: '25%'}}>{page + 1}</div>
+            <div style={{display: 'flex', justifyContent: 'center',color: 'blue', width: '25%'}}>{isFiltering ? filteringPage + 1 : page + 1}</div>
             <div onClick={() => pageBackOrForwardClickHandle(PageChangingType.FORWARD)} className={'pager-page-title'}>вперёд</div>
         </div>
     );
