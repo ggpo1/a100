@@ -7,6 +7,7 @@ import IDataGridSource from '../models/sources/IDataGridSource';
 import ViewType from './../../../model/enums/ViewType';
 import LogHandler from './../../../../LogHandler/LogHandler';
 import LogType from './../../../model/enums/LogType';
+import IPageItem from './../models/IPageItem';
 
 interface IGridContentProps {
 	source: IDataGridSource,
@@ -17,6 +18,7 @@ interface IGridContentProps {
 function GridContent(props: IGridContentProps) {
 	const [source, setSource] = useState<typeof props.source>(props.source),
 		[page, setPage] = useState<number>(0),
+		[filterPage, setFilterPage] = useState(0),
 		[filters, setFilters] = useState<any>({}),
 		[isFiltering, setIsFiltering] = useState<boolean>(false),
 		[wholeData, setWholeData] = useState<Array<any>>(props.wholeData)
@@ -86,6 +88,8 @@ function GridContent(props: IGridContentProps) {
 		return (`${key[0].toLowerCase()}${key.slice(1)}`);
 	}
 
+	Emit.Emitter.emit('setPagerIsFiltering', isFiltering); // НЕ РАБОТАЕТ
+
 	if (isFiltering) {
 		// console.log(wholeData);
 
@@ -106,28 +110,48 @@ function GridContent(props: IGridContentProps) {
 		console.log(data);
 
 		let pagesCount = Math.ceil(data.length / 10);
-		let page = 0;
+		// let page = 0;
+		let pages: Array<IPageItem> = [];
 		for (let i = 0; i < pagesCount - 1; i++) {
+			let from = i * 10;
+			let to = from + 10;
 
+			let pageRows: Array<any> = [];			
+			for (let j = from; j < to; j++) {
+				pageRows.push(data[j]);
+			}
+			pages.push({
+				page: i,
+				rows: pageRows
+			});
 		}
+		console.log(pages);
 
-		// data.forEach((dataEl, i) => {
-		// 	let cellEls: Array<JSX.Element> = [];
-		// 	source.headers.forEach((headerEl, j) => {
-		// 		cellEls.push(
-		// 			<div key={`${i}_${j}`} className={'row-cell'}>
-		// 				{dataEl[headerEl.key]}
-		// 			</div>
-		// 		);
 
-		// 	});
-		// 	rowsEls.push(
-		// 		<div style={{ background: dataEl['backColor'] }} key={i} className={'grid-block grid-row'}>
-		// 			{cellEls}
-		// 		</div>
-		// 	);
-		// });
 
+		try {
+			pages[filterPage].rows.forEach((element, i) => {
+				let cellEls: Array<JSX.Element> = [];
+				source.headers.forEach((headerEl, j) => {
+					cellEls.push(
+						<Cell
+							key={`cell_${j}_${i}`}
+							dataType={headerEl.type}
+							value={element[headerEl.key]}
+							row={j}
+							column={i}
+							isHide={headerEl.isHide}
+						/>
+					);
+				});
+				
+				rowsEls.push(
+					<div style={{ background: element['backColor'] }} key={i} className={'grid-block grid-row'}>
+						{cellEls}
+					</div>
+				);
+			});
+		} catch (e) { }
 
 
 		// FILTERING
@@ -196,7 +220,7 @@ function GridContent(props: IGridContentProps) {
 	}
 
 	return (
-		<div className={'grid-block gridcontent-wrapper'}>
+		<div style={{ overflow: 'auto' }} className={'grid-block gridcontent-wrapper'}>
 			{rowsEls}
 		</div>
 	);

@@ -16,9 +16,14 @@ enum PageChangingType {
 }
 
 function GridPager(props: IGridPagerProps) {
-    const [pages] = useState<typeof props.pages>(props.pages);
-    const [page, setPage] = useState<number>(0);
-    const [viewType] = useState<ViewType>(props.viewType);
+    const [pages] = useState<typeof props.pages>(props.pages),
+        [page, setPage] = useState<number>(0),
+        [viewType] = useState<ViewType>(props.viewType),
+        [isFiltering, setIsFiltering] = useState<boolean>(false);
+
+
+    if (Emit.Emitter.listeners('setPagerIsFiltering').length === 0)
+        Emit.Emitter.addListener('setPagerIsFiltering', (value: boolean) => setIsFiltering(value));
 
     // обработка нажатия кнопок с номерами страниц
     let pageTitleClickHanadle = (newPage: number) => {
@@ -38,9 +43,12 @@ function GridPager(props: IGridPagerProps) {
             if (pages > (page + 1)) newPage = page + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
         }
         
-        Emit.Emitter.emit(PagerEmitGenerator.generate(viewType), newPage); // запрос на отправку запроса для получения новой страницы
+        if (isFiltering) {
 
-        Emit.Emitter.emit('setPage', newPage); // проброс события в соседний компонент
+        } else {
+            Emit.Emitter.emit(PagerEmitGenerator.generate(viewType), newPage); // запрос на отправку запроса для получения новой страницы
+            Emit.Emitter.emit('setPage', newPage); // проброс события в соседний компонент
+        }
         setPage(newPage); // обновление state новым значением страницы
     };
 
