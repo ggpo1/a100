@@ -145,6 +145,7 @@ export default class GridContent extends React.Component<IGridContentProps, IGri
 			// console.log(data);
 
 			let pagesCount = Math.ceil(data.length / 10);
+			Emit.Emitter.emit('setFilterstPagesCount', pagesCount)
 			console.log(`PAGES: ${pagesCount}`);
 			// let page = 0;
 			let pages: Array<IPageItem> = [];

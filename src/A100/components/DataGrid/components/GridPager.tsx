@@ -20,7 +20,8 @@ function GridPager(props: IGridPagerProps) {
         [page, setPage] = useState<number>(0),
         [viewType] = useState<ViewType>(props.viewType),
         [isFiltering, setIsFiltering] = useState<boolean>(false),
-        [filteringPage, setFilteringPage] = useState<number>(0);
+        [filteringPage, setFilteringPage] = useState<number>(0),
+        [filterPagesCount, setFiltersPagesCount] = useState<number>(0);
 
 
     if (Emit.Emitter.listeners('setPagerIsFiltering').length === 0)
@@ -28,6 +29,9 @@ function GridPager(props: IGridPagerProps) {
             if (!value) setFilteringPage(0);
             setIsFiltering(value) 
         });
+
+    if (Emit.Emitter.listeners('setFilterstPagesCount').length === 0)
+        Emit.Emitter.addListener('setFilterstPagesCount', (value: number) => setFiltersPagesCount(value));
 
     if (Emit.Emitter.listeners('setPagerFilteringPage').length === 0)
         Emit.Emitter.addListener('setPagerFilteringPage', (value: number) => setFilteringPage(value));
@@ -40,30 +44,20 @@ function GridPager(props: IGridPagerProps) {
 
     // обработка нажатия кнопок вперед/назад
     let pageBackOrForwardClickHandle = (where: PageChangingType) => {
-        let newPage = page;
+        let newPage;
         
-        
+        let calcPage = isFiltering ? filteringPage : page;
 
-        
-        
+        if (where === PageChangingType.BACK) { // если нажата кнопка назад
+            if (calcPage !== 0) newPage = calcPage - 1; // проверка, чтобы мы не вышли в отрицательные страницы
+        } else if (where === PageChangingType.FORWARD) { // если нажата кнопка вперед
+            if (pages > (calcPage + 1)) newPage = calcPage + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
+        }
+
         if (isFiltering) {
-
-            if (where === PageChangingType.BACK) { // если нажата кнопка назад
-                if (filteringPage !== 0) newPage = filteringPage - 1; // проверка, чтобы мы не вышли в отрицательные страницы
-            } else if (where === PageChangingType.FORWARD) { // если нажата кнопка вперед
-                if (pages > (filteringPage + 1)) newPage = filteringPage + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
-            }
-
-
             Emit.Emitter.emit('setContentFilteringPage', newPage);
             setFilteringPage(newPage);
         } else {
-            if (where === PageChangingType.BACK) { // если нажата кнопка назад
-                if (page !== 0) newPage = page - 1; // проверка, чтобы мы не вышли в отрицательные страницы
-            } else if (where === PageChangingType.FORWARD) { // если нажата кнопка вперед
-                if (pages > (page + 1)) newPage = page + 1; // проверка, чтобы невозможно было листать по несуществующим страницам
-            }
-
             Emit.Emitter.emit(PagerEmitGenerator.generate(viewType), newPage); // запрос на отправку запроса для получения новой страницы
             Emit.Emitter.emit('setPage', newPage); // проброс события в соседний компонент
             setPage(newPage); // обновление state новым значением страницы
