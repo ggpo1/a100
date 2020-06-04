@@ -1,0 +1,25 @@
+
+.address-settings-view-wrapper {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.view-header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    font-size: 18pt;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    /* background: red; */
+}
+
+.view-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    /* background: black; */
+}
