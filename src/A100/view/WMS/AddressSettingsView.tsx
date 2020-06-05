@@ -97,15 +97,26 @@ export default class AddressSettingsView extends React.Component<IAddressSetting
         if (isSensorModal) {
             let fields = blockWmsFields.filter(el => el.sensorID === blockSensors[selectedSensor].sensorID);
             let fieldsBlocks: Array<JSX.Element> = [];
-            fields.forEach(field => fieldsBlocks.push(
-                <div key={`field_${field.fieldName}`}>
+            fields.forEach((field, i) => fieldsBlocks.push(
+                <div className={'wms-field-row'} key={`field_${i}`}>
                     <input type="text" value={field.fieldName} />
-                </div>))
+                    <input type="text" value={field.value} />
+                </div>));
+
+            fieldsBlocks.push(
+                <div key={'addInputsBlock'} className={'wms-field-row'}>
+                    <input placeholder={'+ название поля'} type="text" value='' />
+                    <input placeholder={'+ значение по умолчанию'} type="text" value='' />
+                </div>
+            );
+
             sensorModal = [
-                <div className={'absolute-opacity-block'}></div>,
-                <div className={'absolute-wrapper'}>
+                <div key={'modalAbsoluteOpacityBlock'} className={'absolute-opacity-block'}></div>,
+                <div key={'modalAbsoluteWrapper'} className={'absolute-wrapper'}>
                     <div className={'sensor-modal'}>
-                        {fieldsBlocks}
+                        <div>
+                            {fieldsBlocks}
+                        </div>
                     </div>
                 </div>
             ];

@@ -72,7 +72,7 @@
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     height: auto;
     font-weight: 400;
-    color: #616161;
+    color: #164980;
     font-size: 14pt;
     cursor: pointer;
     border-radius: 5px;
@@ -120,6 +120,7 @@
 
 .sensor-modal {
     display: flex;
+    flex-direction: column;
     box-sizing: border-box;
     padding: 15px;
     font-size: 16pt;
@@ -129,3 +130,28 @@
     border-radius: 10px;
     background: white;
 }
+
+.wms-field-row {
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    justify-content: space-between;
+    height: 6%;
+}
+
+
+
+.wms-field-row:not(:first-child) {
+    margin-top: 1%;
+}
+
+.wms-field-row > input {
+    width: 49%;
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 1px solid #E0E0E0;
+    border-radius: 5px;
+    outline-color: #0368db;
+}
+
