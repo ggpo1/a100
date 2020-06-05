@@ -12,7 +12,7 @@ export default class SeparatedDataAPI {
 
     public static async getDefectsHeaders(): Promise<Array<HeaderItem>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/separatedData/headers/defects`, {
+            fetch(`${BaseUrl.Url}api/separatedData/headers/defects`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;
@@ -26,7 +26,7 @@ export default class SeparatedDataAPI {
 
     public static async getSeparatedDefects(resoultID: number, page: number): Promise<Array<any>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/separatedData/defects?resoultID=${resoultID}&page=${page}`, {
+            fetch(`${BaseUrl.Url}api/separatedData/defects?resoultID=${resoultID}&page=${page}`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;
@@ -41,7 +41,7 @@ export default class SeparatedDataAPI {
 
     public static async getWholeDefects(resoultID: number): Promise<Array<any>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/separatedData/all/defects?resoultID=${resoultID}`, {
+            fetch(`${BaseUrl.Url}api/separatedData/all/defects?resoultID=${resoultID}`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;
@@ -55,7 +55,7 @@ export default class SeparatedDataAPI {
 
     public static async getElements(): Promise<Array<any>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/separatedData/additional/elements`, {
+            fetch(`${BaseUrl.Url}api/separatedData/additional/elements`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;
@@ -70,7 +70,7 @@ export default class SeparatedDataAPI {
 
     public static async getDefectTypes(): Promise<Array<any>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/separatedData/additional/defecttypes`, {
+            fetch(`${BaseUrl.Url}api/separatedData/additional/defecttypes`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 DefectsGridData.DefectsHeaders = body;

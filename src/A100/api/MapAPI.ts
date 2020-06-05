@@ -11,7 +11,7 @@ import Emit from "../../MapCore/Data/Emit";
 export default class MapAPI {
     public static async getMap(connectionData: A100ConnectionDataType): Promise<Array<MapSourceUnit>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/mapengine/map?resoultID=${connectionData.resoultID}`, {
+            fetch(`${BaseUrl.Url}api/mapengine/map?resoultID=${connectionData.resoultID}`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 resolve(body);
@@ -24,7 +24,7 @@ export default class MapAPI {
     ///api/mapengine/map/unitnames?resoultID=5020
     public static async getUnitNames(connectionData: A100ConnectionDataType): Promise<Array<string>> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/mapengine/map/unitnames?resoultID=${connectionData.resoultID}`, {
+            fetch(`${BaseUrl.Url}api/mapengine/map/unitnames?resoultID=${connectionData.resoultID}`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 resolve(body);
@@ -37,7 +37,7 @@ export default class MapAPI {
     public static async getGlobalsatBangs(connectionData: A100ConnectionDataType): Promise<Array<GlobalsatBang>> {
         return new Promise(resolve => {
             fetch(
-                `${BaseUrl.url}api/globalsat/bangs?resoultID=${connectionData.resoultID}`,
+                `${BaseUrl.Url}api/globalsat/bangs?resoultID=${connectionData.resoultID}`,
                 { method: 'GET' }
             ).then(response => response.json()).then(body => {
                 LogHandler.handle('MapSource', LogType.LOG, 'fetching GLOBALSAT data...');
@@ -54,7 +54,7 @@ export default class MapAPI {
     public static async getClobalsatDeviations(connectionData: A100ConnectionDataType): Promise<Array<GlobalsatDeviation>> {
         return new Promise(resolve => {
             fetch(
-                `${BaseUrl.url}api/globalsat/corners?resoultID=${connectionData.resoultID}`,
+                `${BaseUrl.Url}api/globalsat/corners?resoultID=${connectionData.resoultID}`,
                 { method: 'GET' }
             ).then(response => response.json()).then(body => {
                 MapSource.globalsatDeviations = body;
@@ -70,7 +70,7 @@ export default class MapAPI {
     // api/mapengine/map/byparams?resoultID=5020&UnitName=5%20Техноавиа%20Екатеринбург&UnitKey=unit_1
     public static async GetMapByParams(connectionData: A100ConnectionDataType, unitName: string, unitKey: string): Promise<any> {
         return new Promise((resolve => {
-            fetch(`${BaseUrl.url}api/mapengine/map/byparams?resoultID=${connectionData.resoultID}&UnitName=${unitName}&UnitKey=${unitKey}`, {
+            fetch(`${BaseUrl.Url}api/mapengine/map/byparams?resoultID=${connectionData.resoultID}&UnitName=${unitName}&UnitKey=${unitKey}`, {
                 method: 'GET',
             }).then((response) => response.json()).then((body) => {
                 resolve(body);

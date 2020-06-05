@@ -43,7 +43,6 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 		let url = this.props.location.search;	
 		let urlParams = queryString.parse(url);
 		try {
-			LogHandler.handle('DefectsView', LogType.LOG, 'url params parsed successfully!');
 			this.state = {
 				resoultID: parseInt(urlParams['resoultID']!.toString()),
 				datagridSource: {	
@@ -54,6 +53,7 @@ export default class DefectsView extends React.Component<IDefectsViewProps, IDef
 				defectTypes: [],
 				wholeDefects: []
 			};
+			LogHandler.handle('DefectsView', LogType.LOG, 'url params parsed successfully!');
 		} catch (e) {
 			LogHandler.handle('DefectsView', LogType.ERROR, 'error while parsing parameters or they are empty!');
 		}
