@@ -6,6 +6,7 @@ import Introducing from '../view/Introducing';
 import MapView from '../view/MapView';
 import DefectsView from '../view/DefectsView';
 import AddressSettingsView from './../view/WMS/AddressSettingsView';
+import DashboardView from './../view/WMS/DashboardView';
 
 
 export default class Router extends React.Component<IRouterProps, IRouterState> {
@@ -23,6 +24,7 @@ export default class Router extends React.Component<IRouterProps, IRouterState> 
                 <Route path='/map' component={MapView} />
                 <Route path='/defects' component={DefectsView} />
                 <Route path='/wms/adresssettings' component={AddressSettingsView} />
+                <Route path='/wms' component={DashboardView} />
             </Switch>
         );
     }
