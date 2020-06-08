@@ -33,9 +33,14 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
     render() {
         return (<div className={'dashboard-wrapper'}>
             <div className={'dashboard-pins-wrapper'}>
-                <a href={`/wms/adresssettings?resoultID=${this.state.resoultID}`}>Дополнительные поля</a>
+            <div id="dashboard-pins-grid">
+                <div className={'dashboard-pin'}>1</div>
+                <div className={'dashboard-pin'}>2</div>
+                <div className={'dashboard-pin'}>3</div>
+                <div className={'dashboard-pin'}>4</div>
             </div>
-
+                {/* <a href={`/wms/adresssettings?resoultID=${this.state.resoultID}`}>Дополнительные поля</a> */}
+            </div>
         </div>);
     }
 }
