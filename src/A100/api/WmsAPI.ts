@@ -3,6 +3,7 @@ import BaseUrl from './../data/BaseUrl';
 import GlobalsatSensor from './../model/GlobalsatSensor';
 import Emit from './../../MapCore/Data/Emit';
 import WmsFields from './../model/WmsFields';
+import AddNewWmsFieldDTO from './../model/DTO/AddNewWmsFieldDTO';
 
 export default class WmsAPI {
 
@@ -41,6 +42,38 @@ export default class WmsAPI {
                 resolve(body);
                 // console.log(body);
                 Emit.Emitter.emit('setWmsFieldsEmit', body);
+            }).catch(() => {
+
+            })
+        }));
+    }
+
+    public static async addField(field: AddNewWmsFieldDTO): Promise<any> {
+        return new Promise((resolve) => {
+            fetch(`${BaseUrl.Url}api/wms/fields`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(field),
+            }).then((response) => response.json()).then((body) => {
+                // resolve(body);
+                // console.log(body);
+                Emit.Emitter.emit('addNewFieldToSource', body);
+            }).catch(() => {
+
+            })
+        });
+    }
+
+    public static async removeField(id: number): Promise<Array<WmsFields>> {
+        return new Promise((resolve => {
+            fetch(`${BaseUrl.Url}api/wms/fields?ID=${id}`, {
+                method: 'DELETE',
+            }).then((response) => response.json()).then((body) => {
+                resolve(body);
+                // console.log(body);
+                // Emit.Emitter.emit('setWmsFieldsEmit', body);
             }).catch(() => {
 
             })
