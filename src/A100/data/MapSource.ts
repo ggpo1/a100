@@ -126,7 +126,7 @@ export default class MapSource {
 
     public static async GetGlobalsatData() {
         let bangs = await MapAPI.getGlobalsatBangs(A100ConnectionData.data);
-        let deviations = await MapAPI.getClobalsatDeviations(A100ConnectionData.data);
+        let deviations = await MapAPI.getGlobalsatDeviations(A100ConnectionData.data);
     }
 
     public static async GetUnits() {

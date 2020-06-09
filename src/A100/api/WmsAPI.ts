@@ -4,6 +4,9 @@ import GlobalsatSensor from './../model/GlobalsatSensor';
 import Emit from './../../MapCore/Data/Emit';
 import WmsFields from './../model/WmsFields';
 import AddNewWmsFieldDTO from './../model/DTO/AddNewWmsFieldDTO';
+import GlobalsatBang from './../../MapCore/Components/GlobalsatBang';
+import LogType from './../model/enums/LogType';
+import LogHandler from './../../LogHandler/LogHandler';
 
 export default class WmsAPI {
 
@@ -78,6 +81,20 @@ export default class WmsAPI {
 
             })
         }));
+    }
+
+    public static async getGlobalsatBangs(resoultID: number): Promise<Array<GlobalsatBang>> {
+        return new Promise(resolve => {
+            fetch(`${BaseUrl.Url}api/globalsat/bangs?resoultID=${resoultID}`,
+                { method: 'GET' }
+            ).then(response => response.json()).then(body => {
+                LogHandler.handle('MapSource', LogType.LOG, 'fetching GLOBALSAT data...');
+                console.log(body);
+                resolve(body);
+            }).catch(e => {
+                LogHandler.handle('MapAPI', LogType.ERROR, 'error while fetching GLOBALSAT bangs!');
+            });
+        });
     }
 
 }

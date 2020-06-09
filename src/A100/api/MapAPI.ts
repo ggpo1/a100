@@ -51,7 +51,7 @@ export default class MapAPI {
         });
     }
 
-    public static async getClobalsatDeviations(connectionData: A100ConnectionDataType): Promise<Array<GlobalsatDeviation>> {
+    public static async getGlobalsatDeviations(connectionData: A100ConnectionDataType): Promise<Array<GlobalsatDeviation>> {
         return new Promise(resolve => {
             fetch(
                 `${BaseUrl.Url}api/globalsat/corners?resoultID=${connectionData.resoultID}`,
