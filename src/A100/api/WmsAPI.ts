@@ -88,11 +88,11 @@ export default class WmsAPI {
             fetch(`${BaseUrl.Url}api/globalsat/bangs?resoultID=${resoultID}`,
                 { method: 'GET' }
             ).then(response => response.json()).then(body => {
-                LogHandler.handle('MapSource', LogType.LOG, 'fetching GLOBALSAT data...');
-                console.log(body);
+                LogHandler.handle('DashboardView', LogType.LOG, 'fetching GLOBALSAT data...');
+                Emit.Emitter.emit('setDashboardGlobalsatBangsList', body);
                 resolve(body);
             }).catch(e => {
-                LogHandler.handle('MapAPI', LogType.ERROR, 'error while fetching GLOBALSAT bangs!');
+                LogHandler.handle('WmsAPI', LogType.ERROR, 'error while fetching GLOBALSAT bangs!');
             });
         });
     }

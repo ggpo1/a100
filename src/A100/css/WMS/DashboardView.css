@@ -67,15 +67,6 @@
     height: 15%;
 }
 
-.pin-body {
-    height: 85%;
-    /* padding: 1%; */
-    border-left: 1px solid #009688;
-    border-right: 1px solid #009688;
-    border-bottom: 1px solid #009688;
-    justify-content: center;
-    align-items: center;
-}
 
 .settings-button {
     width: 100%;
@@ -94,4 +85,45 @@
 
 .settings-button:active {
     background: #00ccb8;
+}
+
+.pin-body {
+    flex-direction: column;
+    height: 85%;
+    border-left: 1px solid #009688;
+    border-right: 1px solid #009688;
+    border-bottom: 1px solid #009688;
+    /* justify-content: center; */
+    /* align-items: center; */
+}
+
+.pin-table-header {
+    box-sizing: border-box;
+    justify-content: space-between;
+    display: flex;
+    width: 100%;
+    height: 15%;
+    border-bottom: 1px solid #E0E0E0;
+    /* background: red; */
+}
+
+.pin-table-content {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    /* background: black; */
+}
+
+.header-el {
+    width: 100%;
+    display: flex;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+    /* background: red; */
+}
+
+.header-el:not(:last-child) {
+    border-right: 1px solid #E0E0E0;
 }
