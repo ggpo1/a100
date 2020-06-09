@@ -5,6 +5,12 @@ import LogType from './../../model/enums/LogType';
 import '../../css/WMS/DashboardView.css';
 import WmsAPI from './../../api/WmsAPI';
 import downArrow from '../../assets/downArrow.png';
+import upArrow from '../../assets/upArrow.png';
+
+enum PageType {
+    PINS,
+    LINKS
+}
 
 interface IDashboardViewProps {
     match: any,
@@ -12,7 +18,8 @@ interface IDashboardViewProps {
 }
 
 interface IDashboardViewState {
-    resoultID: number
+    resoultID: number,
+    page: PageType
 }
 
 export default class DashboardView extends React.Component<IDashboardViewProps, IDashboardViewState> {
@@ -24,7 +31,8 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
 
         try {
             this.state = {
-                resoultID: parseInt(urlParams['resoultID']!.toString())
+                resoultID: parseInt(urlParams['resoultID']!.toString()),
+                page: PageType.PINS
             }
             LogHandler.handle('AddressSettingsView', LogType.LOG, 'url params parsed successfully!');
         } catch (ex) {
@@ -32,25 +40,48 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
         }
     }
 
+    public arrowClick = () => {
+        const { page } = this.state;
+        if (page === PageType.PINS) this.setState({ page: PageType.LINKS })
+        else this.setState({ page: PageType.PINS });
+    };
+
     componentDidMount() {
+        document.title = "Dashboard";
+
         (async () => {
             await WmsAPI.getGlobalsatBangs(this.state.resoultID);
         })();
     }
 
     render() {
+        const { page } = this.state;
+
+        let pageContent;
+        if (page === PageType.PINS) {
+            pageContent = (
+                <div id="dashboard-pins-grid">
+                    <DashboardPin title={'Вибрации'} />
+                    <DashboardPin title={'Отклонения'} />
+                    <DashboardPin title={'Техника'} />
+                    <DashboardPin title={'События'} />
+                </div>
+            );
+        } else {
+            pageContent = (
+                <div>
+                    <a target="_blank" href={`/wms/adresssettings?resoultID=${this.state.resoultID}`}>Дополнительные поля</a>
+                </div>
+            );
+        }
+
         return (
             <div className={'dashboard-wrapper'}>
                 <div className={'dashboard-pins-wrapper'}>
-                    <div id="dashboard-pins-grid">
-                        <DashboardPin title={'Вибрации'} />
-                        <DashboardPin title={'Отклонения'} />
-                        <DashboardPin title={'Техника'} />
-                        <DashboardPin title={'События'} />
-                    </div>
-                    {/* <a href={`/wms/adresssettings?resoultID=${this.state.resoultID}`}>Дополнительные поля</a> */}
-                    <div className={'down-arrow-wrapper'}>
-                        <img src={downArrow} alt=""/>
+                    {pageContent}
+                    {/*  */}
+                    <div onClick={this.arrowClick} className={'down-arrow-wrapper'}>
+                        <img src={page === PageType.PINS ? downArrow : upArrow} alt="" />
                     </div>
                 </div>
             </div>

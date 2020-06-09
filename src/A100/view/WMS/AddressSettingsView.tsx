@@ -57,6 +57,8 @@ export default class AddressSettingsView extends React.Component<IAddressSetting
     }
 
     componentDidMount() {
+        document.title = "Дополнительные поля";
+
         (async () => {
             await WmsAPI.getUnitsByResoult(this.state.resoultID);
             await WmsAPI.getResoultSensors(this.state.resoultID);
