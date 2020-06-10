@@ -44,7 +44,7 @@
     appearance: none;
     padding-left: 10px;
     font-weight: bold;
-    outline-color: #0368db;
+    font-size: 1vw;
 }
 
 .sensors-list-wrapper {
@@ -111,12 +111,21 @@
 
 .absolute-wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     position: absolute;
     width: 100%;
     height: 100%;
 }
+
+.modal-closer {
+    display: flex;
+    width: 19%;
+    height: 100%;
+    /* background: red; */
+
+}
+
 
 .sensor-modal {
     display: flex;
@@ -127,8 +136,9 @@
     width: 60%;
     margin-right: 0.5%;
     height: 75%;
-    border-radius: 10px;
+    border-radius: 1vw;
     background: white;
+    
 }
 
 .wms-field-row {
@@ -136,22 +146,73 @@
     display: flex;
     box-sizing: border-box;
     justify-content: space-between;
+    align-items: center;
     height: 6%;
 }
 
 
 
 .wms-field-row:not(:first-child) {
-    margin-top: 1%;
+    margin-top: 2vw;
 }
 
 .wms-field-row > input {
-    width: 49%;
+    height: 3vw;
+    width: 28vw;
     box-sizing: border-box;
-    padding-left: 20px;
-    padding-right: 20px;
-    border: 1px solid #E0E0E0;
-    border-radius: 5px;
+    padding-left: 1vw;
+    font-size: 1vw;
+    padding-right: 1vw;
+    border: 0.1vw solid #E0E0E0;
+    border-radius: 0.5vw;
     outline-color: #0368db;
+    color: #164980;
 }
 
+
+
+.modal-title {
+    display: flex;
+    justify-content: center;
+    font-weight: 500;
+    box-sizing: border-box;
+    height: auto;
+    font-size: 1.5vw;
+    /* background: red; */
+}
+
+.modal-fields {
+    padding-top: 5%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+
+.field-name-input {
+    font-size: bold;
+}
+
+.field-input {
+    border: none;
+}
+
+.modal-add-button {
+    width: 100%;
+    height: 2.5vw;
+    outline-color: #0368db;
+    background: #009688;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2vw;
+    font-weight: bold;
+}
+
+.delete-button {
+    height: auto;
+    margin-bottom: 0.8%;
+    color: red;
+    font-size: 1.5vw;
+    cursor: pointer;
+}

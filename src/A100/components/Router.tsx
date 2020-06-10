@@ -6,6 +6,8 @@ import Introducing from '../view/Introducing';
 import MapView from '../view/MapView';
 import DefectsView from '../view/DefectsView';
 import AddressSettingsView from './../view/WMS/AddressSettingsView';
+import DashboardView from './../view/WMS/DashboardView';
+import StillagesRowsSettingsView from './../view/WMS/StillagesRowsSettingsView';
 
 
 export default class Router extends React.Component<IRouterProps, IRouterState> {
@@ -22,7 +24,10 @@ export default class Router extends React.Component<IRouterProps, IRouterState> 
                 </Route>
                 <Route path='/map' component={MapView} />
                 <Route path='/defects' component={DefectsView} />
-                <Route path='/wms/adresssettings' component={AddressSettingsView} />
+                
+                <Route path='/wms/props' component={AddressSettingsView} />
+                <Route path='/wms/rows' component={StillagesRowsSettingsView} />
+                <Route path='/wms' component={DashboardView} />
             </Switch>
         );
     }
