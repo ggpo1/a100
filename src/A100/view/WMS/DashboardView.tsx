@@ -29,15 +29,15 @@ const BANGS_HEADERS = [
     {
         key: 'row',
         title: 'ряд'
-    }, 
+    },
     {
         key: 'place',
         title: 'место'
-    }, 
+    },
     {
         key: 'strength',
         title: 'сила'
-    }, 
+    },
     {
         key: 'unitName',
         title: 'блок'
@@ -58,7 +58,7 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
         try {
             this.state = {
                 resoultID: parseInt(urlParams['resoultID']!.toString()),
-                page: PageType.PINS,
+                page: PageType.LINKS,
                 globalsatBangs: []
             }
             LogHandler.handle('AddressSettingsView', LogType.LOG, 'url params parsed successfully!');
@@ -88,7 +88,15 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
     render() {
         const { page, globalsatBangs } = this.state;
 
-        console.log(globalsatBangs);
+        if (globalsatBangs.length === 0) return null;
+
+        // if (page === PageType.PINS) {
+        // globalsatBangs.map(el => {
+        //     el['strength'] = el['strength'].toFixed(2)
+        //     el['bangDate'] = el['bangDate'].replace('T', ' ');
+        //     return el;
+        // });
+        // }
 
         let pageContent;
         if (page === PageType.PINS) {
@@ -102,8 +110,13 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
             );
         } else {
             pageContent = (
-                <div>
-                    <a target="_blank" href={`/wms/adresssettings?resoultID=${this.state.resoultID}`}>Дополнительные поля</a>
+                <div className={'links-wrapper'}>
+                    <div className={'link-block'}>
+                        <a target="_blank" href={`/wms/rows?resoultID=${this.state.resoultID}`}>таблица адресации</a>
+                    </div>
+                    <div className={'link-block'}>
+                        <a target="_blank" href={`/wms/props?resoultID=${this.state.resoultID}`}>дополнительные поля</a>
+                    </div>
                 </div>
             );
         }
@@ -124,7 +137,7 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
 
 interface IDashboardPinProps {
     title: string,
-    headers: Array<{key: string, title: string}>,
+    headers: Array<{ key: string, title: string }>,
     rows: Array<any>
 }
 
@@ -133,10 +146,25 @@ function DashboardPin(props: IDashboardPinProps) {
         [headers] = useState<typeof props.headers>(props.headers),
         [rows, setRows] = useState<Array<any>>(props.rows);
 
-    let headerEls: Array<JSX.Element> = [];
+    let headerEls: Array<JSX.Element> = [],
+        rowEls: Array<JSX.Element> = [];
     headers.forEach((hEl, i) => {
         headerEls.push(
             <div key={`headerEl_${i}`} className={'header-el'}>{hEl.title}</div>
+        );
+    });
+
+    rows.forEach((rEl, i) => {
+        let cells: Array<JSX.Element> = [];
+        headers.forEach((hEl, j) => {
+            cells.push(
+                <div key={`row_${i}_cell_${j}`} className={'pin-table-row-cell'}>{rEl[hEl.key]}</div>
+            );
+        });
+        rowEls.push(
+            <div key={`row_${i}`} className={'pin-table-row'}>
+                {cells}
+            </div>
         );
     });
 
@@ -149,7 +177,9 @@ function DashboardPin(props: IDashboardPinProps) {
                 <div className={'pin-table-header'}>
                     {headerEls}
                 </div>
-                <div className={'pin-table-content'}></div>
+                <div className={'pin-table-content'}>
+                    {/* {rowEls} */}
+                </div>
             </div>
         </div>
     );

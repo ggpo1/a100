@@ -97,4 +97,17 @@ export default class WmsAPI {
         });
     }
 
+    public static async getUniqRows(resoultID: number): Promise<Array<any>> {
+        return new Promise(resolve => {
+            fetch(`${BaseUrl.Url}api/wms/rows?resoultID=${resoultID}`,
+                { method: 'GET' }
+            ).then(response => response.json()).then(body => {
+                console.log(body);
+                resolve(body);
+            }).catch(e => {
+
+            });
+        });
+    }
+
 }
