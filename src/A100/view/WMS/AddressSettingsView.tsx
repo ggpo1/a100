@@ -90,7 +90,7 @@ export default class AddressSettingsView extends React.Component<IAddressSetting
                 key={`sensorRow_${i}`}
                 className={'sensor-row'}
                 onClick={() => this.setState({ selectedSensor: i, isSensorModal: true })}
-            >{`Ряд ${el.row}, место ${el.place1}`}</div>
+            >{`ряд ${el.row}, место ${el.place1}`}</div>
         ));
 
         let sensorModal;
