@@ -30,6 +30,14 @@
     padding-left: 10px;
     font-weight: bold;
     font-size: 1vw;
+    outline: none;
+    border-radius: 5px;
+}
+
+.wms-units-address-view-select:focus {
+    box-shadow: none;
+    border: none;
+    box-shadow: 0 0 1pt 1pt #0368db;
 }
 
 .rows-table {
@@ -86,7 +94,7 @@
 }
 
 .sys-cell {
-
+    font-weight: bold;
 }
 
 .wms-cell {
