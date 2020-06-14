@@ -9,7 +9,7 @@ const URLS = {
 }
 
 export default class BaseUrl {
-    public static mode: ApiModeType = ApiModeType.PROD;
+    public static mode: ApiModeType = ApiModeType.TEST;
 
     public static get Url(): string {
         return BaseUrl.mode === ApiModeType.TEST ? URLS.test : URLS.prod;

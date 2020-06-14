@@ -97,17 +97,43 @@ export default class WmsAPI {
         });
     }
 
-    public static async getUniqRows(resoultID: number): Promise<Array<any>> {
+    public static async getSysRows(resoultID: number): Promise<Array<any>> {
         return new Promise(resolve => {
-            fetch(`${BaseUrl.Url}api/wms/rows?resoultID=${resoultID}`,
+            fetch(`${BaseUrl.Url}api/wms/sysrows?resoultID=${resoultID}`,
                 { method: 'GET' }
             ).then(response => response.json()).then(body => {
-                console.log(body);
+                // console.log(body);
                 resolve(body);
             }).catch(e => {
 
             });
         });
+    }
+
+    public static async getWmsRows(resoultID: number): Promise<Array<any>> {
+        return new Promise(resolve => {
+            fetch(`${BaseUrl.Url}api/wms/wmsrows?resoultID=${resoultID}`,
+                { method: 'GET' }
+            ).then(response => response.json()).then(body => {
+                // console.log(body);
+                resolve(body);
+            }).catch(e => {
+
+            });
+        });
+    }
+
+    public static async addressingGetUnitsByResoult(resoultID): Promise<Array<string>> {
+        return new Promise((resolve => {
+            fetch(`${BaseUrl.Url}api/wms/units?resoultID=${resoultID}`, {
+                method: 'GET',
+            }).then((response) => response.json()).then((body) => {
+                resolve(body);
+                // console.log(body);
+            }).catch(() => {
+
+            })
+        }));
     }
 
 }

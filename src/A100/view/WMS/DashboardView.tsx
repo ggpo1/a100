@@ -58,7 +58,7 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
         try {
             this.state = {
                 resoultID: parseInt(urlParams['resoultID']!.toString()),
-                page: PageType.LINKS,
+                page: PageType.PINS,
                 globalsatBangs: []
             }
             LogHandler.handle('AddressSettingsView', LogType.LOG, 'url params parsed successfully!');
@@ -78,7 +78,7 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
     };
 
     componentDidMount() {
-        document.title = "Dashboard";
+        document.title = "A100 API";
 
         (async () => {
             await WmsAPI.getGlobalsatBangs(this.state.resoultID);
