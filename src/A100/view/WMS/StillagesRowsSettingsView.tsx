@@ -17,7 +17,7 @@ interface IStillagesRowsSettingsViewState {
     sysRows: Array<ISysRow>,
     wmsRows: Array<IWmsRow>,
     wmsValues: Array<{
-        wmsRow: string,
+        wmsRow: IWmsRow,
         sysRow: ISysRow
     }>
 }
@@ -41,17 +41,15 @@ export default class StillagesRowsSettingsView extends React.Component<IStillage
 
     public addressationChange = (sysRow: ISysRow, newValue: string, index: number) => {
         const { wmsValues } = this.state;
-        // console.log(sysRow);
-        // console.log(newValue);
-        // console.log(wmsValues[index]);
-        wmsValues[index].wmsRow = newValue;
-        console.log(wmsValues);
+        wmsValues[index].wmsRow.wmsRow = newValue;
         this.setState({ wmsValues });
     }
 
     public saveButtonClick = () => {
         (async () => {
-            await WmsAPI.setAddressingRows(this.state.wmsValues);
+            let valid = this.state.wmsValues.filter(el => el.wmsRow.wmsRow.length !== 0).map(el => el.wmsRow);
+            // console.log(valid);
+            await WmsAPI.setAddressingRows(valid);
         })();
     }
 
@@ -64,22 +62,26 @@ export default class StillagesRowsSettingsView extends React.Component<IStillage
             let wmsRows = await WmsAPI.getWmsRows(this.state.resoultID);
 
             let wmsValues: Array<{
-                wmsRow: string,
+                wmsRow: IWmsRow,
                 sysRow: ISysRow
             }> = [];
             sysRows.forEach((sysRow, i) => {
                 let wmsField = wmsRows.filter(wmsRow => wmsRow.a100Row === sysRow.row)[0];
+                if (wmsField === undefined)
+                    wmsField = {
+                        id: -1,
+                        a100Row: sysRow.row,
+                        wmsRow: '',
+                        resoultID: this.state.resoultID,
+                        mapUnit: units[this.state.selectedUnit]
+                    };
                 wmsValues[i] = {
-                    wmsRow: '',
-                    sysRow: {
-                        row: '',
-                        mapUnit: '',
-                        resoultID: -1
-                    }
+                    wmsRow: wmsField,
+                    sysRow: sysRow
                 }
 
-                wmsValues[i].wmsRow = wmsField !== undefined ? wmsField.wmsRow : '';
-                wmsValues[i].sysRow = sysRow;
+                // wmsValues[i].wmsRow = wmsField !== undefined ? wmsField : '';
+                // wmsValues[i].sysRow = sysRow;
             });
 
             this.setState({ units, sysRows, wmsRows, wmsValues });
@@ -114,7 +116,7 @@ export default class StillagesRowsSettingsView extends React.Component<IStillage
                         onChange={(e) => this.addressationChange(sysRow, e.target.value, i)} 
                         className={'wms-cell'} 
                         type="text" 
-                        value={wmsValues[i].wmsRow}
+                        value={wmsValues[i].wmsRow.wmsRow}
                         placeholder={'поставьте желаемый номер ряда'}
                     />
                 </div>
