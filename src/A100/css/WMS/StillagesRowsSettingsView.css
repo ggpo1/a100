@@ -100,3 +100,34 @@
 .wms-cell {
 
 }
+
+.value-row > .header-cell {
+    font-weight: bold;
+    font-size: 12pt;
+    box-shadow: none;
+    border: none;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+.value-row > .header-cell:focus {
+    box-shadow: none;
+}
+
+.addressation-save-button-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.addressation-save-button-wrapper > button {
+    width: 100%;
+    outline-color: #0368db;
+    background: #009688;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2vw;
+    font-weight: bold;
+}

@@ -136,4 +136,21 @@ export default class WmsAPI {
         }));
     }
 
+    public static async setAddressingRows(rows: Array<any>): Promise<any> {
+        return new Promise((resolve) => {
+            fetch(`${BaseUrl.Url}api/wms/wmsrows`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rows),
+            }).then((response) => response.json()).then((body) => {
+                resolve(body);
+                console.log(body);
+            }).catch(() => {
+
+            })
+        });
+    }
+
 }
