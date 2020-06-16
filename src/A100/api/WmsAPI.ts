@@ -7,6 +7,8 @@ import AddNewWmsFieldDTO from './../model/DTO/AddNewWmsFieldDTO';
 import GlobalsatBang from './../../MapCore/Components/GlobalsatBang';
 import LogType from './../model/enums/LogType';
 import LogHandler from './../../LogHandler/LogHandler';
+import IWmsRow from './../model/IWmsRow';
+import ISysRow from './../model/ISysRow';
 
 export default class WmsAPI {
 
@@ -97,7 +99,7 @@ export default class WmsAPI {
         });
     }
 
-    public static async getSysRows(resoultID: number): Promise<Array<any>> {
+    public static async getSysRows(resoultID: number): Promise<Array<ISysRow>> {
         return new Promise(resolve => {
             fetch(`${BaseUrl.Url}api/wms/sysrows?resoultID=${resoultID}`,
                 { method: 'GET' }
@@ -110,7 +112,7 @@ export default class WmsAPI {
         });
     }
 
-    public static async getWmsRows(resoultID: number): Promise<Array<any>> {
+    public static async getWmsRows(resoultID: number): Promise<Array<IWmsRow>> {
         return new Promise(resolve => {
             fetch(`${BaseUrl.Url}api/wms/wmsrows?resoultID=${resoultID}`,
                 { method: 'GET' }

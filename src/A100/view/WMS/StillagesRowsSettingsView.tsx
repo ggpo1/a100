@@ -4,10 +4,19 @@ import queryString from 'query-string';
 import '../../css/WMS/StillagesRowsSettingsView.css';
 import ISysRow from '../../model/ISysRow';
 import IWmsRow from '../../model/IWmsRow';
+import src from '*.bmp';
 
 interface IStillagesRowsSettingsViewProps {
     match: any,
     location: any
+}
+
+interface IDTORow {
+    unit: string,
+    rows: Array<{
+        wmsRow: IWmsRow,
+        sysRow: ISysRow
+    }>
 }
 
 interface IStillagesRowsSettingsViewState {
@@ -16,10 +25,7 @@ interface IStillagesRowsSettingsViewState {
     units: Array<string>,
     sysRows: Array<ISysRow>,
     wmsRows: Array<IWmsRow>,
-    wmsValues: Array<{
-        wmsRow: IWmsRow,
-        sysRow: ISysRow
-    }>
+    wmsValues: Array<IDTORow>
 }
 
 export default class StillagesRowsSettingsView extends React.Component<IStillagesRowsSettingsViewProps, IStillagesRowsSettingsViewState> {
@@ -40,14 +46,15 @@ export default class StillagesRowsSettingsView extends React.Component<IStillage
     }
 
     public addressationChange = (sysRow: ISysRow, newValue: string, index: number) => {
-        const { wmsValues } = this.state;
-        wmsValues[index].wmsRow.wmsRow = newValue;
+        const { wmsValues, selectedUnit } = this.state;
+        wmsValues[selectedUnit].rows[index].wmsRow.wmsRow = newValue;
         this.setState({ wmsValues });
     }
 
     public saveButtonClick = () => {
         (async () => {
-            let valid = this.state.wmsValues.filter(el => el.wmsRow.wmsRow.length !== 0).map(el => el.wmsRow);
+            // let valid = this.state.wmsValues.filter(el => el.wmsRow.wmsRow.length !== 0).map(el => el.wmsRow);
+            let valid = this.state.wmsValues[this.state.selectedUnit].rows.filter(el => el.wmsRow.wmsRow.length !== 0).map(el => el.wmsRow);
             // console.log(valid);
             await WmsAPI.setAddressingRows(valid);
         })();
@@ -61,27 +68,69 @@ export default class StillagesRowsSettingsView extends React.Component<IStillage
             let sysRows = await WmsAPI.getSysRows(this.state.resoultID);
             let wmsRows = await WmsAPI.getWmsRows(this.state.resoultID);
 
-            let wmsValues: Array<{
-                wmsRow: IWmsRow,
-                sysRow: ISysRow
-            }> = [];
+            // console.log(wmsRows);
+
+            let wmsValues: Array<IDTORow> = [];
+
+            units.forEach((unit, i) => {
+
+                let _sRs = sysRows.filter(sRow => sRow.mapUnit === unit);
+                let _wRs = wmsRows.filter(wRow => wRow.mapUnit === unit);
+
+                // if (unit === '5 Техноавиа Екатеринбург') {
+                //     console.log(_sRs);
+                //     console.log(_wRs);
+                // }
+
+                let rows: Array<{
+                    wmsRow: IWmsRow,
+                    sysRow: ISysRow
+                }> = [];
+                _sRs.forEach((sR => {
+                    let temp = _wRs.filter(el => el.a100Row === sR.row)[0];
+                    if (temp === undefined)
+                    temp = {
+                            id: -1,
+                            a100Row: sR.row,
+                            wmsRow: '',
+                            resoultID: this.state.resoultID,
+                            mapUnit: unit
+                        };
+
+                    rows.push({
+                        sysRow: sR,
+                        wmsRow: temp
+                    });
+                }));
+
+                wmsValues.push({
+                    unit: unit,
+                    rows: rows
+                });
+            });
+            console.log(wmsValues);
+
             sysRows.forEach((sysRow, i) => {
-                let wmsField = wmsRows.filter(wmsRow => wmsRow.a100Row === sysRow.row)[0];
-                if (wmsField === undefined)
-                    wmsField = {
-                        id: -1,
-                        a100Row: sysRow.row,
-                        wmsRow: '',
-                        resoultID: this.state.resoultID,
-                        mapUnit: units[this.state.selectedUnit]
-                    };
-                wmsValues[i] = {
-                    wmsRow: wmsField,
-                    sysRow: sysRow
-                }
+                // let wmsField = wmsRows.filter(wmsRow => wmsRow.a100Row === sysRow.row)[0];
+                // if (wmsField === undefined)
+                //     wmsField = {
+                //         id: -1,
+                //         a100Row: sysRow.row,
+                //         wmsRow: '',
+                //         resoultID: this.state.resoultID,
+                //         mapUnit: units[this.state.selectedUnit]
+                //     };
+                // wmsValues[this.state.selectedUnit] = [];
+                // wmsValues[this.state.selectedUnit].push({
+                //     wmsRow: wmsField,
+                //     sysRow: sysRow
+                // });
 
                 // wmsValues[i].wmsRow = wmsField !== undefined ? wmsField : '';
                 // wmsValues[i].sysRow = sysRow;
+
+
+
             });
 
             this.setState({ units, sysRows, wmsRows, wmsValues });
@@ -89,7 +138,9 @@ export default class StillagesRowsSettingsView extends React.Component<IStillage
     }
 
     render() {
-        const { units, sysRows, wmsRows, wmsValues } = this.state;
+        const { units, sysRows, wmsRows, wmsValues, selectedUnit } = this.state;
+
+        let _sysRows = sysRows.filter(el => el.mapUnit === units[selectedUnit]);
 
         let unitsOptions: Array<JSX.Element> = [];
         units.forEach((unit, i) => {
@@ -107,16 +158,16 @@ export default class StillagesRowsSettingsView extends React.Component<IStillage
             </div>
         );
 
-        sysRows.forEach((sysRow, i) => {
-            let wmsField = wmsRows.filter(wmsRow => wmsRow.a100Row === sysRow.row)[0];
+        _sysRows.forEach((sysRow, i) => {
+            // let wmsField = wmsRows.filter(wmsRow => wmsRow.a100Row === sysRow.row && wmsRow.mapUnit === units[selectedUnit])[0];
             valueRowsList.push(
                 <div key={`valueRow_${i}`} className={'value-row'}>
                     <input className={'sys-cell'} type="text" value={sysRow.row} readOnly />
-                    <input 
-                        onChange={(e) => this.addressationChange(sysRow, e.target.value, i)} 
-                        className={'wms-cell'} 
-                        type="text" 
-                        value={wmsValues[i].wmsRow.wmsRow}
+                    <input
+                        onChange={(e) => this.addressationChange(sysRow, e.target.value, i)}
+                        className={'wms-cell'}
+                        type="text"
+                        value={wmsValues[selectedUnit].rows[i].wmsRow.wmsRow}
                         placeholder={'поставьте желаемый номер ряда'}
                     />
                 </div>
