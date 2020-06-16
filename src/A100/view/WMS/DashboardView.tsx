@@ -88,7 +88,7 @@ export default class DashboardView extends React.Component<IDashboardViewProps, 
     render() {
         const { page, globalsatBangs } = this.state;
 
-        if (globalsatBangs.length === 0) return null;
+        // if (globalsatBangs.length === 0) return null;
 
         // if (page === PageType.PINS) {
         // globalsatBangs.map(el => {
